@@ -3,20 +3,24 @@ System.register([], function(exports_1) {
     return {
         setters:[],
         execute: function() {
-            /** All Attributes on <grid-col  */
             GridColumn = (function () {
-                function GridColumn() {
-                }
-                GridColumn.prototype.init = function () {
-                    // we can accept the field to be null if the column has no sorting enabled
-                    if (this.canSort) {
-                        if (!this.field) {
-                            throw new Error("field is required for column " + this.heading + " if the column is sortable.");
+                function GridColumn(config, template) {
+                    this.specialColumns = ["heading", "nosort"];
+                    this.template = template;
+                    this.field = config.field;
+                    if (!this.field)
+                        throw new Error("field is required");
+                    this.heading = config.heading || config.field;
+                    this.nosort = config.nosort || false;
+                    this.filterValue = "";
+                    this.showFilter = config["show-filter"] === "false" ? false : true;
+                    // Set attributes
+                    for (var prop in config) {
+                        if (config.hasOwnProperty(prop) && this.specialColumns.indexOf(prop) < 0) {
+                            this[prop] = config[prop];
                         }
                     }
-                    if (this.canFilter && !this.filterPlaceholder)
-                        this.filterPlaceholder = "filter...";
-                };
+                }
                 return GridColumn;
             })();
             exports_1("GridColumn", GridColumn);

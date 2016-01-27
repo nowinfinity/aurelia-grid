@@ -1,4 +1,4 @@
-System.register(['aurelia-framework', './grid-column', './grid-row', './grid-selection', './grid-builder', './grid-icons', './grid-data'], function(exports_1) {
+System.register(['aurelia-framework', './grid-column'], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,38 +8,24 @@ System.register(['aurelia-framework', './grid-column', './grid-row', './grid-sel
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var aurelia_framework_1, aurelia_framework_2, grid_column_1, grid_row_1, grid_selection_1, grid_builder_1, grid_icons_1, D;
+    var aurelia_framework_1, grid_column_1, aurelia_framework_2;
     var Grid;
     function processUserTemplate(element) {
         var cols = [];
+        // Get any col tags from the content
         var rowElement = element.querySelector("grid-row");
         var columnElements = Array.prototype.slice.call(rowElement.querySelectorAll("grid-col"));
-        var camelCaseName = function (name) {
-            return name.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
-        };
-        var columnTemplate = '<span class="grid-column-heading">${$column.heading}</span>' +
-            '<span if.bind="$column.sorting === \'desc\'" class="${$grid.icons.sortingDesc}"></span>' +
-            '<span if.bind="$column.sorting === \'asc\'" class="${$grid.icons.sortingAsc}"></span>';
-        // <grid-col can-sort="true" heading="header"> ..
-        // or <grid-col can-sort="true"><heading>header template</heading><template>cell template</template> 
         columnElements.forEach(function (c) {
-            var col = new grid_column_1.GridColumn();
-            var attrs = Array.prototype.slice.call(c.attributes);
-            attrs.forEach(function (a) { return col[camelCaseName(a.name)] = a.value; });
-            // check for inner <heading> of template
-            var headingTemplate = c.querySelector("heading");
-            col.headingTemplate = (headingTemplate && headingTemplate.innerHTML) ? headingTemplate.innerHTML : columnTemplate;
-            // check for inner content of <template> or use full content as template
-            var cellTemplate = c.querySelector("template");
-            col.template = (cellTemplate && cellTemplate.innerHTML) ? cellTemplate.innerHTML : c.innerHTML;
-            col.init();
+            var attrs = Array.prototype.slice.call(c.attributes), colHash = {};
+            attrs.forEach(function (a) { return colHash[a.name] = a.value; });
+            var col = new grid_column_1.GridColumn(colHash, c.innerHTML);
             cols.push(col);
         });
         // Pull any row attrs into a hash object
-        var rowsAttributes = new grid_row_1.GridRowAttributes();
+        var rowAttrs = {};
         var attrs = Array.prototype.slice.call(rowElement.attributes);
-        attrs.forEach(function (a) { return rowsAttributes[a.name] = a.value; });
-        return { columns: cols, rowAttributes: rowsAttributes };
+        attrs.forEach(function (a) { return rowAttrs[a.name] = a.value; });
+        return { columns: cols, rowAttrs: rowAttrs };
     }
     return {
         setters:[
@@ -49,123 +35,476 @@ System.register(['aurelia-framework', './grid-column', './grid-row', './grid-sel
             },
             function (grid_column_1_1) {
                 grid_column_1 = grid_column_1_1;
-            },
-            function (grid_row_1_1) {
-                grid_row_1 = grid_row_1_1;
-            },
-            function (grid_selection_1_1) {
-                grid_selection_1 = grid_selection_1_1;
-            },
-            function (grid_builder_1_1) {
-                grid_builder_1 = grid_builder_1_1;
-            },
-            function (grid_icons_1_1) {
-                grid_icons_1 = grid_icons_1_1;
-            },
-            function (D_1) {
-                D = D_1;
             }],
         execute: function() {
             Grid = (function () {
-                function Grid(element, vc, vr, container, targetInstruction, bindingEngine) {
-                    // Columns
-                    this.columnsShowHeaders = true;
-                    this.columnsCanSort = true;
-                    this.columnsCanFilter = false;
-                    this.sourceAutoLoad = true;
-                    this.sourceLoadingMessage = "Loading ...";
-                    this.sourceCanPage = true;
-                    // CSV with page sizes
-                    this.sourcePageSizes = [10, 25, 50];
-                    this.unbinding = false;
+                function Grid(element, viewCompiler, viewResources, container, targetInstruction, bindingEngine) {
                     this.element = element;
-                    this.viewCompiler = vc;
-                    this.viewResources = vr;
+                    this.viewCompiler = viewCompiler;
+                    this.viewResources = viewResources;
                     this.container = container;
+                    this.targetInstruction = targetInstruction;
                     this.bindingEngine = bindingEngine;
-                    this.template = (targetInstruction.behaviorInstructions[0]);
-                    this.selection = new grid_selection_1.GridSelection(this);
-                    this.builder = new grid_builder_1.GridBuilder(this, this.element);
+                    this.showNoRowsMessage = false;
+                    /* == Styling == */
+                    this.gridHeight = 0;
+                    /* == Options == */
+                    // Initial load flag (for client side)
+                    this.initialLoad = false;
+                    // Filtering
+                    this.showColumnFilters = false;
+                    this.serverFiltering = false;
+                    this.filterDebounce = 500;
+                    // Pagination
+                    this.serverPaging = false;
+                    this.pageable = true;
+                    this.pageSize = 10;
+                    this.page = 1;
+                    this.pagerSize = 10;
+                    this.showPageSizeBox = true;
+                    this.showPagingSummary = true;
+                    this.showFirstLastButtons = true;
+                    this.showJumpButtons = true;
+                    this.pageSizes = [10, 25, 50];
+                    this.firstVisibleItem = 0;
+                    this.lastVisibleItem = 0;
+                    this.pageNumber = 1;
+                    // Sortination
+                    this.serverSorting = false;
+                    this.sortable = true;
+                    this.sortProcessingOrder = []; // Represents which order to apply sorts to each column
+                    this.sorting = {};
+                    // Burnination?
+                    this.Trogdor = true;
+                    this.showColumnHeaders = true;
+                    this.columnHeaders = [];
+                    this.columns = [];
+                    // Selection
+                    this.selectable = false;
+                    this.selectedItem = null;
+                    // Misc
+                    this.noRowsMessage = "";
+                    // Data ....
+                    this.autoLoad = true;
+                    this.loading = false;
+                    this.loadingMessage = "Loading...";
+                    // Read
+                    this.read = null;
+                    this.onReadError = null;
+                    // Tracking
+                    this.cache = [];
+                    this.data = [];
+                    this.count = 0;
+                    // Subscription handling
+                    this.unbinding = false;
+                    // Visual
+                    // TODO: calc scrollbar width using browser
+                    this.scrollBarWidth = 16;
+                    var behavior = targetInstruction.behaviorInstructions[0];
+                    this.columns = behavior.gridColumns;
+                    this.rowAttrs = behavior.rowAttrs;
                 }
-                Grid.prototype.bind = function (bindingContext) {
-                    this["$parent"] = bindingContext;
-                    // todo - make glyphicons and fa icons classes
-                    this.icons = new grid_icons_1.GridIcons();
-                    if (this.sourceType == "remote") {
+                /* === Lifecycle === */
+                Grid.prototype.attached = function () {
+                    this.gridHeightChanged();
+                    if (this.autoLoad)
+                        this.refresh();
+                };
+                Grid.prototype.bind = function (executionContext) {
+                    this["$parent"] = executionContext;
+                    // Ensure the grid settings
+                    // If we can page on the server and we can't server sort, we can't sort locally
+                    if (this.serverPaging && !this.serverSorting)
+                        this.sortable = false;
+                    // The table body element will host the rows
+                    var tbody = this.element.querySelector("table>tbody");
+                    this.viewSlot = new aurelia_framework_2.ViewSlot(tbody, true);
+                    // Get the row template too and add a repeater/class
+                    var row = tbody.querySelector("tr");
+                    this.addRowAttributes(row);
+                    this.rowTemplate = document.createDocumentFragment();
+                    this.rowTemplate.appendChild(row);
+                    this.buildTemplates();
+                };
+                Grid.prototype.addRowAttributes = function (row) {
+                    row.setAttribute("repeat.for", "$item of data");
+                    row.setAttribute("class", "${ $item === $parent.selectedItem ? 'info' : '' }");
+                    // TODO: Do we allow the user to customise the row template or just
+                    // provide a callback?
+                    // Copy any user specified row attributes to the row template
+                    for (var prop in this.rowAttrs) {
+                        if (this.rowAttrs.hasOwnProperty(prop)) {
+                            row.setAttribute(prop, this.rowAttrs[prop]);
+                        }
                     }
-                    else {
-                        // local
-                        this.source = new D.LocalGridData(this);
+                };
+                Grid.prototype.buildTemplates = function () {
+                    var _this = this;
+                    // Create a fragment we will manipulate the DOM in
+                    var rowTemplate = this.rowTemplate.cloneNode(true);
+                    var row = rowTemplate.querySelector("tr");
+                    // Create the columns
+                    this.columns.forEach(function (c) {
+                        var td = document.createElement("td");
+                        // Set attributes
+                        for (var prop in c) {
+                            if (c.hasOwnProperty(prop)) {
+                                if (prop == "template")
+                                    td.innerHTML = c[prop];
+                                else
+                                    td.setAttribute(prop, c[prop]);
+                            }
+                        }
+                        row.appendChild(td);
+                    });
+                    // Now compile the row template
+                    var view = this.viewCompiler.compile(rowTemplate, this.viewResources).create(this.container);
+                    // Templating 17.x changes the API
+                    // ViewFactory.create() no longer takes a binding context (2nd parameter)
+                    // Instead, must call view.bind(context)
+                    view.bind(this);
+                    // based on viewSlot.swap() from templating 0.16.0
+                    var removeResponse = this.viewSlot.removeAll();
+                    if (removeResponse instanceof Promise) {
+                        removeResponse.then(function () { return _this.viewSlot.add(view); });
                     }
-                    this.builder.build();
+                    this.viewSlot.add(view);
+                    // code above replaces the following call
+                    //this.viewSlot.swap(view);
+                    this.viewSlot.attached();
+                    // HACK: why is the change handler not firing for noRowsMessage?
+                    this.noRowsMessageChanged();
                 };
                 Grid.prototype.unbind = function () {
                     this.unbinding = true;
-                    this.builder.unbind();
-                    this.source.unbind();
+                    this.dontWatchForChanges();
                 };
-                Grid.prototype.attached = function () {
-                    this.gridHeightChanged();
-                    this.source.attached();
+                /* === Column handling === */
+                Grid.prototype.addColumn = function (col) {
+                    // No-sort if grid is not sortable
+                    if (!this.sortable)
+                        col.nosort = true;
+                    this.columns.push(col);
                 };
-                /* ==== Visual Handling ===== */
-                Grid.prototype.gridHeightChanged = function () {
-                    if (this.gridHeight > 0) {
-                        this.gridContainer.setAttribute("style", "height:" + this.gridHeight + "px");
+                /* === Paging === */
+                Grid.prototype.pageChanged = function (page, oldValue) {
+                    if (page === oldValue)
+                        return;
+                    this.pageNumber = Number(page);
+                    this.refresh();
+                };
+                Grid.prototype.pageSizeChanged = function (newValue, oldValue) {
+                    if (newValue === oldValue)
+                        return;
+                    //this.pageChanged(1);
+                    this.updatePager();
+                };
+                Grid.prototype.filterSortPage = function (data) {
+                    // Applies filter, sort then page
+                    // 1. First filter the data down to the set we want, if we are using local data
+                    var tempData = data;
+                    if (this.showColumnFilters && !this.serverFiltering)
+                        tempData = this.applyFilter(tempData);
+                    // Count the data now before the sort/page
+                    this.count = tempData.length;
+                    // 2. Now sort the data
+                    if (this.sortable && !this.serverSorting)
+                        tempData = this.applySort(tempData);
+                    // 3. Now apply paging
+                    if (this.pageable && !this.serverPaging)
+                        tempData = this.applyPage(tempData);
+                    this.data = tempData;
+                    this.updatePager();
+                    this.watchForChanges();
+                };
+                Grid.prototype.applyPage = function (data) {
+                    var start = (Number(this.pageNumber) - 1) * Number(this.pageSize);
+                    data = data.slice(start, start + Number(this.pageSize));
+                    return data;
+                };
+                Grid.prototype.updatePager = function () {
+                    if (this.pager)
+                        this.pager.update(this.pageNumber, Number(this.pageSize), Number(this.count));
+                    this.firstVisibleItem = (this.pageNumber - 1) * Number(this.pageSize) + 1;
+                    this.lastVisibleItem = Math.min((this.pageNumber) * Number(this.pageSize), this.count);
+                };
+                /* === Sorting === */
+                Grid.prototype.fieldSorter = function (fields) {
+                    return function (a, b) {
+                        return fields
+                            .map(function (o) {
+                            var dir = 1;
+                            if (o[0] === '-') {
+                                dir = -1;
+                                o = o.substring(1);
+                            }
+                            if (a[o] > b[o])
+                                return dir;
+                            if (a[o] < b[o])
+                                return -(dir);
+                            return 0;
+                        })
+                            .reduce(function firstNonZeroValue(p, n) {
+                            return p ? p : n;
+                        }, 0);
+                    };
+                };
+                Grid.prototype.pageSizesChanged = function () {
+                    this.refresh();
+                };
+                Grid.prototype.sortChanged = function (field) {
+                    // Determine new sort
+                    var newSort = undefined;
+                    // Figure out which way this field should be sorting
+                    switch (this.sorting[field]) {
+                        case "asc":
+                            newSort = "desc";
+                            break;
+                        case "desc":
+                            newSort = "";
+                            break;
+                        default:
+                            newSort = "asc";
+                            break;
+                    }
+                    this.sorting[field] = newSort;
+                    // If the sort is present in the sort stack, slice it to the back of the stack, otherwise just add it
+                    var pos = this.sortProcessingOrder.indexOf(field);
+                    if (pos > -1)
+                        this.sortProcessingOrder.splice(pos, 1);
+                    this.sortProcessingOrder.push(field);
+                    // Apply the new sort
+                    this.refresh();
+                };
+                Grid.prototype.applySort = function (data) {
+                    // Format the sort fields
+                    var fields = [];
+                    // Get the fields in the "sortingORder"
+                    for (var i = 0; i < this.sortProcessingOrder.length; i++) {
+                        var sort = this.sortProcessingOrder[i];
+                        for (var prop in this.sorting) {
+                            if (sort == prop && this.sorting[prop] !== "")
+                                fields.push(this.sorting[prop] === "asc" ? (prop) : ("-" + prop));
+                        }
+                    }
+                    ;
+                    // If server sort, just refresh
+                    data = data.sort(this.fieldSorter(fields));
+                    return data;
+                };
+                /* === Filtering === */
+                Grid.prototype.applyFilter = function (data) {
+                    var _this = this;
+                    return data.filter(function (row) {
+                        var include = true;
+                        for (var i = _this.columns.length - 1; i >= 0; i--) {
+                            var col = _this.columns[i];
+                            if (col.filterValue !== "" && row[col.field].toString().indexOf(col.filterValue) === -1) {
+                                include = false;
+                            }
+                        }
+                        return include;
+                    });
+                };
+                Grid.prototype.getFilterColumns = function () {
+                    var cols = {};
+                    for (var i = this.columns.length - 1; i >= 0; i--) {
+                        var col = this.columns[i];
+                        if (col.filterValue !== "")
+                            cols[col.field] = col.filterValue;
+                    }
+                    return cols;
+                };
+                Grid.prototype.debounce = function (func, wait) {
+                    var timeout;
+                    // the debounced function
+                    return function () {
+                        var context = this, args = arguments;
+                        // nulls out timer and calls original function
+                        var later = function () {
+                            timeout = null;
+                            func.apply(context, args);
+                        };
+                        // restart the timer to call last function
+                        clearTimeout(timeout);
+                        timeout = setTimeout(later, wait);
+                    };
+                };
+                Grid.prototype.updateFilters = function () {
+                    // Debounce
+                    if (!this.debouncedUpdateFilters) {
+                        this.debouncedUpdateFilters = this.debounce(this.refresh.bind(this), this.filterDebounce || 100);
+                    }
+                    this.debouncedUpdateFilters();
+                };
+                /* === Data === */
+                Grid.prototype.refresh = function () {
+                    // If we have any server side stuff we need to get the data first
+                    this.dontWatchForChanges();
+                    if (this.serverPaging || this.serverSorting || this.serverFiltering || !this.initialLoad)
+                        this.getData();
+                    else
+                        this.filterSortPage(this.cache);
+                };
+                Grid.prototype.getData = function () {
+                    var _this = this;
+                    if (!this.read)
+                        throw new Error("No read method specified for grid");
+                    this.initialLoad = true;
+                    // TODO: Implement progress indicator
+                    this.loading = true;
+                    // Try to read from the data adapter
+                    this.read({
+                        sorting: this.sorting,
+                        paging: { page: this.pageNumber, size: Number(this.pageSize) },
+                        filtering: this.getFilterColumns()
+                    })
+                        .then(function (result) {
+                        // Data should be in the result so grab it and assign it to the data property
+                        _this.handleResult(result);
+                        _this.loading = false;
+                    }, function (result) {
+                        // Something went terribly wrong, notify the consumer
+                        if (_this.onReadError)
+                            _this.onReadError(result);
+                        _this.loading = false;
+                    });
+                };
+                Grid.prototype.handleResult = function (result) {
+                    // TODO: Check valid stuff was returned
+                    var data = result.data;
+                    // Is the data being paginated on the client side?
+                    // TODO: Work out when we should we use the cache... ever? If it's local data
+                    if (this.pageable && !this.serverPaging && !this.serverSorting && !this.serverFiltering) {
+                        // Cache the data
+                        this.cache = result.data;
+                        this.filterSortPage(this.cache);
                     }
                     else {
-                        this.gridContainer.removeAttribute("style");
+                        this.data = result.data;
+                        this.filterSortPage(this.data);
+                    }
+                    this.count = result.count;
+                    // Update the pager - maybe the grid options should contain an update callback instead of reffing the
+                    // pager into the current VM?
+                    this.updatePager();
+                };
+                Grid.prototype.watchForChanges = function () {
+                    var _this = this;
+                    this.dontWatchForChanges();
+                    // Guard against data refresh events hitting after the user does anything that unloads the grid
+                    if (!this.unbinding)
+                        // We can update the pager automagically
+                        this.subscription = this.bindingEngine
+                            .collectionObserver(this.cache)
+                            .subscribe(function (splices) {
+                            _this.refresh();
+                        });
+                };
+                Grid.prototype.dontWatchForChanges = function () {
+                    if (this.subscription)
+                        this.subscription.dispose();
+                };
+                /* === Selection === */
+                Grid.prototype.select = function (item) {
+                    if (this.selectable)
+                        this.selectedItem = item;
+                    return true;
+                };
+                /* === Change handlers === */
+                Grid.prototype.noRowsMessageChanged = function () {
+                    this.showNoRowsMessage = this.noRowsMessage !== "";
+                };
+                Grid.prototype.gridHeightChanged = function () {
+                    // TODO: Make this a one off
+                    var cont = this.element.querySelector(".grid-content-container");
+                    if (this.gridHeight > 0) {
+                        cont.setAttribute("style", "height:" + this.gridHeight + "px");
+                    }
+                    else {
+                        cont.removeAttribute("style");
                     }
                 };
-                Grid.prototype.refresh = function () {
-                    this.source.refresh();
-                };
-                Object.defineProperty(Grid.prototype, "gridContainer", {
-                    get: function () {
-                        this._gridContainer = this._gridContainer || this.element.querySelector(".grid-content-container");
-                        return this._gridContainer;
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Grid.prototype, "gridHeaders", {
-                    get: function () {
-                        if (!this._gridHeaders)
-                            this._gridHeaders = this.element.querySelectorAll("table>thead>tr:first-child>th");
-                        return this._gridHeaders;
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(Grid.prototype, "gridFilters", {
-                    get: function () {
-                        if (!this._gridFilters)
-                            this._gridFilters = this.element.querySelectorAll("table>thead>tr:last-child>th");
-                        return this._gridFilters;
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
                 __decorate([
                     aurelia_framework_1.bindable, 
-                    __metadata('design:type', Boolean)
-                ], Grid.prototype, "columnsShowHeaders", void 0);
-                __decorate([
-                    aurelia_framework_1.bindable, 
-                    __metadata('design:type', Boolean)
-                ], Grid.prototype, "columnsCanSort", void 0);
-                __decorate([
-                    aurelia_framework_1.bindable, 
-                    __metadata('design:type', Boolean)
-                ], Grid.prototype, "columnsCanFilter", void 0);
-                __decorate([
-                    aurelia_framework_1.bindable, 
-                    __metadata('design:type', Number)
+                    __metadata('design:type', Object)
                 ], Grid.prototype, "gridHeight", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
-                    __metadata('design:type', grid_icons_1.GridIcons)
-                ], Grid.prototype, "icons", void 0);
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "initialLoad", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "showColumnFilters", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "serverFiltering", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "filterDebounce", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "serverPaging", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "pageable", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "pageSize", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "page", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "pagerSize", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "showPageSizeBox", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "showPagingSummary", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "showFirstLastButtons", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "showJumpButtons", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "pageSizes", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "serverSorting", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "sortable", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "autoGenerateColumns", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "showColumnHeaders", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "selectable", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
@@ -173,55 +512,34 @@ System.register(['aurelia-framework', './grid-column', './grid-row', './grid-sel
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
-                ], Grid.prototype, "source", void 0);
+                ], Grid.prototype, "noRowsMessage", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
-                    __metadata('design:type', Boolean)
-                ], Grid.prototype, "sourceAutoLoad", void 0);
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "autoLoad", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
-                    __metadata('design:type', String)
-                ], Grid.prototype, "sourceType", void 0);
-                __decorate([
-                    // local, remote
-                    aurelia_framework_1.bindable, 
-                    __metadata('design:type', Function)
-                ], Grid.prototype, "sourceRead", void 0);
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "loadingMessage", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
-                    __metadata('design:type', Function)
-                ], Grid.prototype, "sourceTransform", void 0);
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "read", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
-                    __metadata('design:type', Function)
-                ], Grid.prototype, "sourceReadError", void 0);
-                __decorate([
-                    aurelia_framework_1.bindable, 
-                    __metadata('design:type', String)
-                ], Grid.prototype, "sourceLoadingMessage", void 0);
-                __decorate([
-                    aurelia_framework_1.bindable, 
-                    __metadata('design:type', Boolean)
-                ], Grid.prototype, "sourceCanPage", void 0);
-                __decorate([
-                    aurelia_framework_1.bindable, 
-                    __metadata('design:type', String)
-                ], Grid.prototype, "noDataMessage", void 0);
-                __decorate([
-                    aurelia_framework_1.bindable, 
-                    __metadata('design:type', Array)
-                ], Grid.prototype, "sourcePageSizes", void 0);
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "onReadError", void 0);
                 Grid = __decorate([
                     aurelia_framework_1.customElement('grid'),
                     aurelia_framework_1.processContent(function (viewCompiler, viewResources, element, instruction) {
                         // Do stuff
                         var result = processUserTemplate(element);
-                        instruction.columns = result.columns;
-                        instruction.rowAttributes = result.rowAttributes;
+                        instruction.gridColumns = result.columns;
+                        instruction.rowAttrs = result.rowAttrs;
                         return true;
                     }),
-                    aurelia_framework_1.inject(Element, aurelia_framework_2.ViewCompiler, aurelia_framework_2.ViewResources, aurelia_framework_2.Container, aurelia_framework_1.TargetInstruction, aurelia_framework_1.BindingEngine), 
-                    __metadata('design:paramtypes', [Object, aurelia_framework_2.ViewCompiler, aurelia_framework_2.ViewResources, aurelia_framework_2.Container, aurelia_framework_1.TargetInstruction, aurelia_framework_1.BindingEngine])
+                    aurelia_framework_1.autoinject(), 
+                    __metadata('design:paramtypes', [Element, aurelia_framework_2.ViewCompiler, aurelia_framework_2.ViewResources, aurelia_framework_2.Container, aurelia_framework_1.TargetInstruction, aurelia_framework_1.BindingEngine])
                 ], Grid);
                 return Grid;
             })();
