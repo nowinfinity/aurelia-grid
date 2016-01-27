@@ -4,3 +4,10 @@
 .aurelia-grid table.grid-header-table th.grid-column-non-sortable {
   cursor: default;
 }
+/* Pager styles */
+grid pager .pagination {
+  margin: 0;
+}
+grid pager {
+  height: 34px;
+}
