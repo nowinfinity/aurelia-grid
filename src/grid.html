@@ -1,44 +1,64 @@
 <template>
-	<require from="./aurelia-grid.css!"></require>
-	<div class="aurelia-grid grid-container">
-		<table class="table table-hover table-striped table-responsive grid-header-table">
-			<thead>
-				<tr role="button" class="grid-headings">
-					<!--<th
-					class="grid-column ${column.headerClass} ${($column.canSort && $parent.columnsCanSort) ? 'grid-column-sortable': 'grid-column-non-sortable'} ${ $column.class !== '' ? $column.class : '' }"
-					click.trigger="$parent.source.sortChanged($column, $event)"
-					>
-						<span class="grid-column-heading">${ $column.heading }</span>
-						<span if.bind="$column.sorting === 'desc'" class="${$parent.icons.sortingDesc}"></span>
-						<span if.bind="$column.sorting === 'asc'" class="${$parent.icons.sortingAsc}"></span>
-					</th>-->
-				</tr>
-				<!--<tr if.bind="columnsCanFilter" class="grid-column-filters">
-					<th repeat.for="$column of template.columns" class="${ $column.class !== '' ? $column.class : '' }">
-						<div if.bind="$column.canFilter">
-							<input class="form-control" value.bind="$column.filterValue" placeholder.bind="$column.filterPlaceholder" input.delegate="$parent.updateFilters()"></input>
-							<span class="${$parent.icons.removeFilter}"></span>
-						</div>
-					</th>
-				</tr>-->
-			</thead>
-		</table>
+    <require from="./pager"></require>
+    <require from="./aurelia-grid.css!"></require>
 
-		<!-- Content table -->
-		<div class="grid-content-container">
-			<table class="table table-hover table-striped table-responsive selectable" show.bind="!noDataMessage || (noDataMessage && data.count > 0)">
-				<tbody>
-					<tr role="button" click.delegate="$parent.selection.select($item, $event)">
-					</tr>
-				</tbody>
-			</table>
-			<div show.bind="noDataMessage && data.count === 0" class="alert alert-warning grid-no-data-message">${ noDataMessage }</div>
-		</div>
-		<div class="grid-overlay" if.bind="data.loading"></div>
-		<div if.bind="data.loading" class="progress grid-progress-indicator">
-			<div class="progress-bar progress-bar-striped active" role="progressbar">
-				<span>${ sourceLoadingMessage }</span>
-			</div>
-		</div>
-	</div>
+    <!-- row template -->
+
+
+    <!-- grid itself -->
+    <div>
+        <div class="grid-container">
+            <!-- Header table -->
+            <table class="table table-hover table-striped table-responsive grid-header-table">
+                <thead>
+                    <tr role="button" if.bind="showColumnHeaders">
+                        <th repeat.for="$column of columns" class="${ $column.class !== '' ? $column.class : '' }">
+                            <a if.bind="$column.nosort == false && $parent.sortable" click.trigger="$parent.sortChanged($column.field)">${ $column.heading }</a>
+                            <span if.bind="$column.nosort == true || !$parent.sortable">${ $column.heading }</span>
+                            <span if.bind="$parent.sorting[$column.field] === 'desc'" class="glyphicon glyphicon-triangle-top text-primary"></span>
+                            <span if.bind="$parent.sorting[$column.field] === 'asc'" class="glyphicon glyphicon-triangle-bottom text-primary"></span>
+                        </th>
+                    </tr>
+                    <tr if.bind="showColumnFilters" class="grid-column-filters">
+                        <th repeat.for="$column of columns" class="${ $column.class !== '' ? $column.class : '' }">
+                            <div if.bind="$column.showFilter">
+                                <input class="form-control" value.bind="$column.filterValue" placeholder="filter..." input.delegate="$parent.updateFilters()"></input>
+                                <span class="glyphicon glyphicon-search text-muted"></span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+            <!-- Content table -->
+            <div class="grid-content-container">
+                <table class="table table-hover table-striped table-responsive selectable" show.bind="!showNoRowsMessage || (showNoRowsMessage && count > 0)">
+                    <tbody>
+                        <tr role="button" click.delegate="$parent.select($item)">     
+                        </tr>
+                    </tbody>
+                </table>
+                <div show.bind="showNoRowsMessage && count === 0" class="alert alert-warning">${ noRowsMessage }</div>
+            </div>
+            <div class="grid-overlay" if.bind="loading"></div>
+            <div if.bind="loading" class="progress grid-progress-indicator">
+                <div class="progress-bar progress-bar-striped active" role="progressbar">
+                    <span>${ loadingMessage }</span>
+                </div>
+            </div>
+            <!-- Footer div -->
+            <div class="grid-footer-container" if.bind="pageable">
+                <pager num-to-show.bind="pagerSize" pager.ref="pager" on-page-changed.call="pageChanged($event)" show-first-last-buttons.bind="showFirstLastButtons" show-jump-buttons.bind="showJumpButtons"></pager>
+                <div class="form-inline" if.bind="showPageSizeBox">
+                    <div class="form-control-group">
+                        <select class="form-control" value.bind="pageSize">
+                            <option value.bind="size" repeat.for="size of pageSizes">${ size === '*' ? 'All' : size }</option>
+                        </select>
+                        <span> items per page</span>
+                    </div>
+                </div>
+                <span class="grid-summary" if.bind="showPagingSummary">Showing ${ firstVisibleItem } - ${ lastVisibleItem } of ${ count } items</span>
+            </div>
+        </div>
+        <!-- No rows message -->
+    </div>
 </template>

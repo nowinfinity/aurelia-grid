@@ -5,7 +5,7 @@
 		<br />
 		
         <!-- Grid definition -->
-        <grid grid-height.bind="400" source-read.call="getLocalData($event)" selected-item.two-way="selected" test.two-way="test">
+        <grid grid-height.bind="400" read.call="getLocalData($event)" selected-item.two-way="selected" test.two-way="test">
             <grid-row>
                 <grid-col can-sort="true" heading="Id" field="id" class="col-xs-1">
 					<heading><strong>${$column.heading} - ${$column.sorting}</strong></heading>
