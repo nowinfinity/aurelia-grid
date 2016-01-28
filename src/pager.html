@@ -7,8 +7,8 @@
 			<li class="active"><a href="#">2</a></li>
 			<li><a href="#">3</a></li>-->
 			<li repeat.for="curPage of pages" class="${ curPage == $parent.page ? 'active' : '' }">
-            	<a href="#" click.delegate="$parent.changePage(curPage)">${curPage}</a>
-        	</li>
+				<a href="#" click.delegate="$parent.changePage(curPage)">${curPage}</a>
+			</li>
 			<li><a href="#">...</a></li>
 			<li class="next"><a href="#" click.delegate="nextJump()" aria-label="Next">&gt;</a></li>
 			<li class="next-end"><a href="#" click.delegate="last()" aria-label="Last">»</a></li>
