@@ -1,6 +1,7 @@
-import {bindable, autoinject, BindingEngine, customElement, processContent, TargetInstruction } from 'aurelia-framework';
+import {child, bindable, autoinject, BindingEngine, customElement, processContent, TargetInstruction } from 'aurelia-framework';
 import {GridColumn} from './grid-column';
 import {ViewCompiler, ViewSlot, ViewResources, Container} from 'aurelia-framework';
+import {Pager} from "./pager";
 
 @customElement('grid')
 @processContent(function(viewCompiler, viewResources, element, instruction) {
@@ -17,7 +18,7 @@ export class Grid {
 	subscription: any;
 	showNoRowsMessage:boolean = false;
 	debouncedUpdateFilters: any;
-	pager: any;
+	@child('pager') pager: Pager;
 	/* == Styling == */
 	@bindable gridHeight = 0;
 
