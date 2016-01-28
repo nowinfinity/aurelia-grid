@@ -1,37 +1,23 @@
 <template>
 	<div class="bottom-box">
 		<ul class="pagination">
-			<li class="prev-end"><a href="#" click.delegate="first()" aria-label="First">«</a></li>
-			<li class="prev"><a href="#" click.delegate="prevJump()" aria-label="Next">&lt;</a></li>
-			<!--<li><a href="#">1</a></li>
-			<li class="active"><a href="#">2</a></li>
-			<li><a href="#">3</a></li>-->
+			<li if.bind="showFirstLastButtons" class="${ prevDisabled ? 'disabled' : '' }" class="prev-end"><a href="#" click.delegate="first()" aria-label="First">«</a></li>
+			<li class="prev"  class="${ prevDisabled ? 'disabled' : '' }"><a href="#" click.delegate="prev()" aria-label="Next">&lt;</a></li>
+			<li if.bind="showJumpButtons" class="${ prevDisabled ? 'disabled' : '' }">
+				<a href="" click.delegate="prevJump()" aria-label="Next"><span>&#8230;</span></a>
+			</li>
 			<li repeat.for="curPage of pages" class="${ curPage == $parent.page ? 'active' : '' }">
 				<a href="#" click.delegate="$parent.changePage(curPage)">${curPage}</a>
 			</li>
-			<li><a href="#">...</a></li>
-			<li class="next"><a href="#" click.delegate="nextJump()" aria-label="Next">&gt;</a></li>
-			<li class="next-end"><a href="#" click.delegate="last()" aria-label="Last">»</a></li>
+			<li if.bind="showJumpButtons" class="${ nextDisabled ? 'disabled' : '' }">
+				<a href="" click.delegate="nextJump()" aria-label="Next"><span>&#8230;</span></a>
+			</li>
+			<li class="next"  class="${ nextDisabled ? 'disabled' : '' }"><a href="#" click.delegate="next()" aria-label="Next">&gt;</a></li>
+			<li class="next-end"  if.bind="showFirstLastButtons" class="${ nextDisabled ? 'disabled' : '' }">
+				<a href="#" click.delegate="last()" aria-label="Last">»</a>
+			</li>
 		</ul>
-		<!--<div class="selected-area selected-area-nosearch select2">
-			<form action="#" class="show-form">
-				<label for="show-area2">Show</label>
-				<select id="show-area2" class="chosen-select" style="display: none;">
-					<option>10 entries</option>
-					<option>20 entries</option>
-					<option>30 entries</option>
-				</select>
-				<div class="chosen-container chosen-container-single" style="width: 85px;" title="" id="show_area2_chosen"><a class="chosen-single" tabindex="-1"><span>10 entries</span><div><b></b></div></a>
-					<div class="chosen-drop">
-						<div class="chosen-search">
-							<input type="text" autocomplete="off">
-						</div>
-						<ul class="chosen-results"></ul>
-					</div>
-				</div>
-			</form>
-		</div>-->
-
+		
 		<div class="form-inline" if.bind="showPageSizeBox">
 			<div class="form-control-group">
 				<select class="form-control" value.bind="pageSize">
