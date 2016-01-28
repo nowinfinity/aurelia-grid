@@ -1,5 +1,5 @@
-import 'twbs/bootstrap';
-import 'twbs/bootstrap/css/bootstrap.css!';
+//import 'twbs/bootstrap';
+//import 'twbs/bootstrap/css/bootstrap.css!';
 
 export class App {
   configureRouter(config, router){
