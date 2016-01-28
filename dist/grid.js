@@ -1,4 +1,4 @@
-System.register(['aurelia-framework', './grid-column'], function(exports_1) {
+System.register(['aurelia-framework', './grid-column', "./pager"], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,7 +8,7 @@ System.register(['aurelia-framework', './grid-column'], function(exports_1) {
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var aurelia_framework_1, grid_column_1, aurelia_framework_2;
+    var aurelia_framework_1, grid_column_1, aurelia_framework_2, pager_1;
     var Grid;
     function processUserTemplate(element) {
         var cols = [];
@@ -35,6 +35,9 @@ System.register(['aurelia-framework', './grid-column'], function(exports_1) {
             },
             function (grid_column_1_1) {
                 grid_column_1 = grid_column_1_1;
+            },
+            function (pager_1_1) {
+                pager_1 = pager_1_1;
             }],
         execute: function() {
             Grid = (function () {
@@ -194,9 +197,10 @@ System.register(['aurelia-framework', './grid-column'], function(exports_1) {
                     this.refresh();
                 };
                 Grid.prototype.pageSizeChanged = function (newValue, oldValue) {
+                    debugger;
                     if (newValue === oldValue)
                         return;
-                    //this.pageChanged(1);
+                    this.pageChanged(1, oldValue);
                     this.updatePager();
                 };
                 Grid.prototype.filterSortPage = function (data) {
@@ -425,6 +429,10 @@ System.register(['aurelia-framework', './grid-column'], function(exports_1) {
                         cont.removeAttribute("style");
                     }
                 };
+                __decorate([
+                    aurelia_framework_1.child('pager'), 
+                    __metadata('design:type', pager_1.Pager)
+                ], Grid.prototype, "pager", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)

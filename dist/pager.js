@@ -42,7 +42,7 @@ System.register(['aurelia-framework'], function(exports_1) {
                 Pager.prototype.update = function (page, pagesize, totalItems) {
                     this.page = page;
                     this.totalItems = totalItems;
-                    this.pageSize = pagesize;
+                    this.pSize = pagesize;
                     this.createPages();
                 };
                 Pager.prototype.cap = function (page) {
@@ -54,7 +54,7 @@ System.register(['aurelia-framework'], function(exports_1) {
                 };
                 Pager.prototype.createPages = function () {
                     // Calc the max page number
-                    this.pageCount = Math.ceil(this.totalItems / this.pageSize);
+                    this.pageCount = Math.ceil(this.totalItems / this.pSize);
                     // Cap the number of pages to render if the count is less than number to show at once
                     var numToRender = this.pageCount < this.numToShow ? this.pageCount : this.numToShow;
                     // The current page should try to appear in the middle, so get the median 
@@ -105,6 +105,10 @@ System.register(['aurelia-framework'], function(exports_1) {
                 Pager.prototype.last = function () {
                     this.changePage(this.pageCount);
                 };
+                __decorate([
+                    aurelia_framework_1.bindable({ defaultBindingMode: aurelia_framework_1.bindingMode.twoWay, defaultValue: 10 }), 
+                    __metadata('design:type', Object)
+                ], Pager.prototype, "pageSize", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
