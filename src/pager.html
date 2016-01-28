@@ -31,6 +31,6 @@
 				</div>
 			</form>
 		</div>
-		<span class="items">1 - 10 of 121 items</span>
+		<span class="items" if.bind="showPagingSummary">${ firstVisibleItem } - ${ lastVisibleItem } of ${ count } items</span>
 	</div>
 </template>
