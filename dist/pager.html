@@ -1,7 +1,7 @@
 <template>
 	<div class="bottom-box">
 		<ul class="pagination">
-			<li if.bind="showFirstLastButtons" class="${ prevDisabled ? 'disabled' : '' }" class="prev-end"><a href="#" click.delegate="first()" aria-label="First">«</a></li>
+			<li class="prev-end" if.bind="showFirstLastButtons" class="${ prevDisabled ? 'disabled' : '' }"><a href="#" click.delegate="first()" aria-label="First">«</a></li>
 			<li class="prev"  class="${ prevDisabled ? 'disabled' : '' }"><a href="#" click.delegate="prev()" aria-label="Next">&lt;</a></li>
 			<li if.bind="showJumpButtons" class="${ prevDisabled ? 'disabled' : '' }">
 				<a href="" click.delegate="prevJump()" aria-label="Next"><span>&#8230;</span></a>
