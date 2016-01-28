@@ -1,14 +1,14 @@
 <template>
 	<div class="bottom-box">
 		<ul class="pagination">
-			<li class="prev-end"><a href="#">«</a></li>
-			<li class="prev"><a href="#">&lt;</a></li>
+			<li class="prev-end"><a href="#" click.delegate="first()" aria-label="First">«</a></li>
+			<li class="prev"><a href="#" click.delegate="prevJump()" aria-label="Next">&lt;</a></li>
 			<li><a href="#">1</a></li>
 			<li class="active"><a href="#">2</a></li>
 			<li><a href="#">3</a></li>
 			<li><a href="#">...</a></li>
-			<li class="next"><a href="#">&gt;</a></li>
-			<li class="next-end"><a href="#">»</a></li>
+			<li class="next"><a href="#" click.delegate="nextJump()" aria-label="Next">&gt;</a></li>
+			<li class="next-end"><a href="#" click.delegate="last()" aria-label="Last">»</a></li>
 		</ul>
 		<div class="selected-area selected-area-nosearch select2">
 			<form action="#" class="show-form">
