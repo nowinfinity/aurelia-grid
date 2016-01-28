@@ -31,6 +31,16 @@
 				</div>
 			</form>
 		</div>-->
+
+		<div class="form-inline" if.bind="showPageSizeBox">
+			<div class="form-control-group">
+				<select class="form-control" value.bind="pageSize">
+					<option value.bind="size" repeat.for="size of pageSizes">${ size === '*' ? 'All' : size }</option>
+				</select>
+				<span> items per page</span>
+			</div>
+		</div>
+
 		<span class="items" if.bind="showPagingSummary">${ firstVisibleItem } - ${ lastVisibleItem } of ${ count } items</span>
 	</div>
 </template>

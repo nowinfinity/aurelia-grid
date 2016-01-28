@@ -1,9 +1,10 @@
-import {bindable, customElement } from 'aurelia-framework';
+import {bindable, customElement, bindingMode } from 'aurelia-framework';
 
 @customElement('pager')
 export class Pager {
 	totalItems: any;
-	pageSize: number;
+	pSize: number;
+	@bindable({defaultBindingMode: bindingMode.twoWay, defaultValue: 10}) pageSize;
 	// Called when the selected page changes
 	@bindable onPageChanged;
 
@@ -39,7 +40,7 @@ export class Pager {
 	update(page, pagesize, totalItems) {
 		this.page = page;
 		this.totalItems = totalItems;
-		this.pageSize = pagesize;
+		this.pSize = pagesize;
 
 		this.createPages();
 	}
@@ -54,7 +55,7 @@ export class Pager {
 	createPages() {
 
 		// Calc the max page number
-		this.pageCount = Math.ceil(this.totalItems / this.pageSize);
+		this.pageCount = Math.ceil(this.totalItems / this.pSize);
 
 		// Cap the number of pages to render if the count is less than number to show at once
 		var numToRender = this.pageCount < this.numToShow ? this.pageCount : this.numToShow;
