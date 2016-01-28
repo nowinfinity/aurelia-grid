@@ -2,10 +2,10 @@ var gulp = require('gulp');
 var runSequence = require('run-sequence');
 var typescript = require('gulp-typescript');
 var changed = require('gulp-changed');
-var less = require('gulp-less');
 var tsc = require('typescript');
 var paths = require('../paths');
 var plumber = require('gulp-plumber');
+var sass = require('gulp-sass');
 
 var tsProject = typescript.createProject('./tsconfig.json', { typescript: tsc });
 
@@ -19,9 +19,9 @@ gulp.task('build-system', function () {
 		.pipe(gulp.dest(paths.output));
 });
 
-gulp.task('build-less', function () {
-	return gulp.src(paths.less)
-		.pipe(less({ paths: [paths.output] }))
+gulp.task('build-sass', function () {
+	return gulp.src(paths.sass)
+		.pipe(sass())
 		.pipe(gulp.dest(paths.output));
 });
 
@@ -38,7 +38,7 @@ gulp.task('copy-html', function () {
 gulp.task('build', function (callback) {
 	return runSequence(
 		'clean',
-		['build-system', 'build-less', 'copy-html'],
+		['build-system', 'build-sass' , 'copy-html'],
 		callback
 		);
 });
