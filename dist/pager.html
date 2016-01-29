@@ -1,7 +1,7 @@
 <template>
 	<div class="bottom-box">
 		<ul class="pagination">
-			<li class="prev-end" if.bind="showFirstLastButtons" class="${ prevDisabled ? 'disabled' : '' }"><a href="#" click.delegate="first()" aria-label="First">«</a></li>
+			<li if.bind="showFirstLastButtons" class="${ prevDisabled ? 'disabled' : '' }" class="prev-end"><a href="#" click.delegate="first()" aria-label="First">«</a></li>
 			<li class="prev"  class="${ prevDisabled ? 'disabled' : '' }"><a href="#" click.delegate="prev()" aria-label="Next">&lt;</a></li>
 			<li if.bind="showJumpButtons" class="${ prevDisabled ? 'disabled' : '' }">
 				<a href="" click.delegate="prevJump()" aria-label="Next"><span>&#8230;</span></a>
@@ -18,12 +18,13 @@
 			</li>
 		</ul>
 		
-		<div class="form-inline" if.bind="showPageSizeBox">
+		<div class="selected-area selected-area-nosearch select2" if.bind="showPageSizeBox">
 			<div class="form-control-group">
+				<span>Show</span>
 				<select class="form-control" value.bind="pageSize">
 					<option value.bind="size" repeat.for="size of pageSizes">${ size === '*' ? 'All' : size }</option>
 				</select>
-				<span> items per page</span>
+				<span> entries</span>
 			</div>
 		</div>
 

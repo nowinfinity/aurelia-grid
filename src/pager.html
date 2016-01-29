@@ -18,12 +18,13 @@
 			</li>
 		</ul>
 		
-		<div class="form-inline" if.bind="showPageSizeBox">
+		<div class="selected-area selected-area-nosearch select2" if.bind="showPageSizeBox">
 			<div class="form-control-group">
+				<span>Show</span>
 				<select class="form-control" value.bind="pageSize">
 					<option value.bind="size" repeat.for="size of pageSizes">${ size === '*' ? 'All' : size }</option>
 				</select>
-				<span> items per page</span>
+				<span> entries</span>
 			</div>
 		</div>
 
