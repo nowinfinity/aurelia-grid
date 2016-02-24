@@ -54,7 +54,7 @@ export class Grid {
 
 	// Sortination
 	@bindable serverSorting = false;
-	@bindable sortable = true;
+	@bindable sortable : boolean = true;
 	sortProcessingOrder = []; // Represents which order to apply sorts to each column
 	sorting = {};
 
@@ -342,7 +342,10 @@ export class Grid {
 					fields.push(this.sorting[prop] === "asc" ? (prop) : ("-" + prop));
 			}
 		};
-
+		
+		if (!fields.length) {
+			return data;
+		}
 
 		// If server sort, just refresh
 		data = data.sort(this.fieldSorter(fields));
