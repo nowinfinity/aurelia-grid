@@ -1,4 +1,6 @@
-System.register(['aurelia-framework', './grid-column', "./pager"], function(exports_1) {
+System.register(['aurelia-framework', './grid-column', "./pager"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -292,6 +294,9 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                         }
                     }
                     ;
+                    if (!fields.length) {
+                        return data;
+                    }
                     // If server sort, just refresh
                     data = data.sort(this.fieldSorter(fields));
                     return data;
@@ -499,7 +504,7 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                 ], Grid.prototype, "serverSorting", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
-                    __metadata('design:type', Object)
+                    __metadata('design:type', Boolean)
                 ], Grid.prototype, "sortable", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
@@ -550,7 +555,7 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     __metadata('design:paramtypes', [Element, aurelia_framework_2.ViewCompiler, aurelia_framework_2.ViewResources, aurelia_framework_2.Container, aurelia_framework_1.TargetInstruction, aurelia_framework_1.BindingEngine])
                 ], Grid);
                 return Grid;
-            })();
+            }());
             exports_1("Grid", Grid);
         }
     }
