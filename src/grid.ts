@@ -45,6 +45,8 @@ export class Grid {
 	@bindable showJumpButtons = true;
 
 	@bindable pageSizes = [10, 25, 50];
+	
+	@bindable indexColumn : boolean = false;
 
 	firstVisibleItem = 0;
 	lastVisibleItem = 0;
@@ -54,7 +56,7 @@ export class Grid {
 
 	// Sortination
 	@bindable serverSorting = false;
-	@bindable sortable : boolean = true;
+	@bindable sortable: boolean = true;
 	sortProcessingOrder = []; // Represents which order to apply sorts to each column
 	sorting = {};
 
@@ -102,6 +104,7 @@ export class Grid {
 	
 	constructor(private element: Element, public viewCompiler: ViewCompiler, public viewResources: ViewResources, public container: Container, private targetInstruction: TargetInstruction, public bindingEngine: BindingEngine) {
 		var behavior = (<any>targetInstruction).behaviorInstructions[0];
+		
 		this.columns = behavior.gridColumns;
 		this.rowAttrs = behavior.rowAttrs;
 	}
@@ -116,6 +119,8 @@ export class Grid {
 
 	bind(executionContext) {
 		this["$parent"] = executionContext;
+		
+		this.indexColumnChanged(this.indexColumn, false);
 
 		// Ensure the grid settings
 		// If we can page on the server and we can't server sort, we can't sort locally
@@ -213,6 +218,17 @@ export class Grid {
 		this.columns.push(col);
 	}
 
+	indexColumnChanged(newValue: boolean, oldValue:boolean) {
+		if (!oldValue && newValue) {
+			this.columns.unshift(new GridColumn( { field: "#" }, "${ $item.rowNum }"));
+		}
+		
+		if (oldValue && !newValue) {
+			this.columns.shift();
+		}
+	}
+
+
 	/* === Paging === */
 	pageChanged(page, oldValue) {
 
@@ -248,7 +264,11 @@ export class Grid {
 		// 3. Now apply paging
 		if(this.pageable && !this.serverPaging)
 			tempData = this.applyPage(tempData);
-
+			
+		for(var i=0; i < tempData.length; i++) {
+			tempData[i].rowNum = (this.pageNumber - 1) * this.pageSize + i + 1; 
+		}
+		
 		this.data = tempData;
 
 		this.updatePager();

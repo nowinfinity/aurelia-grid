@@ -71,6 +71,7 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     this.showFirstLastButtons = true;
                     this.showJumpButtons = true;
                     this.pageSizes = [10, 25, 50];
+                    this.indexColumn = false;
                     this.firstVisibleItem = 0;
                     this.lastVisibleItem = 0;
                     this.pageNumber = 1;
@@ -117,6 +118,7 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                 };
                 Grid.prototype.bind = function (executionContext) {
                     this["$parent"] = executionContext;
+                    this.indexColumnChanged(this.indexColumn, false);
                     // Ensure the grid settings
                     // If we can page on the server and we can't server sort, we can't sort locally
                     if (this.serverPaging && !this.serverSorting)
@@ -191,6 +193,14 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                         col.nosort = true;
                     this.columns.push(col);
                 };
+                Grid.prototype.indexColumnChanged = function (newValue, oldValue) {
+                    if (!oldValue && newValue) {
+                        this.columns.unshift(new grid_column_1.GridColumn({ field: "#" }, "${ $item.rowNum }"));
+                    }
+                    if (oldValue && !newValue) {
+                        this.columns.shift();
+                    }
+                };
                 /* === Paging === */
                 Grid.prototype.pageChanged = function (page, oldValue) {
                     if (page === oldValue)
@@ -219,6 +229,9 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     // 3. Now apply paging
                     if (this.pageable && !this.serverPaging)
                         tempData = this.applyPage(tempData);
+                    for (var i = 0; i < tempData.length; i++) {
+                        tempData[i].rowNum = (this.pageNumber - 1) * this.pageSize + i + 1;
+                    }
                     this.data = tempData;
                     this.updatePager();
                     this.watchForChanges();
@@ -498,6 +511,10 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
                 ], Grid.prototype, "pageSizes", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Boolean)
+                ], Grid.prototype, "indexColumn", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)

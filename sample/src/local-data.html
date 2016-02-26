@@ -1,6 +1,6 @@
 <template>
     <section class="au-animate">
-       <grid pageable="true" read.call="getLocalData($event)" server-paging.bind="false" server-sorting.bind="false">
+       <grid pageable="true" index-column.bind="true" read.call="getLocalData($event)" sortable.bind="false" server-paging.bind="false" server-sorting.bind="false" sortable.bind="false" >
             <grid-row>
                 <grid-col can-sort="true" heading="ID" field="id">${ $item.id }</grid-col>
                 <grid-col can-sort="true" heading="Name" field="name" can-filter="false">${ $item.name }</grid-col>
