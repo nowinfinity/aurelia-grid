@@ -41,7 +41,7 @@ export class Pager {
 		this.page = page;
 		this.totalItems = totalItems;
 		this.pSize = pagesize;
-
+		this.pageCount = Math.ceil(totalItems / pagesize);
 		this.createPages();
 	}
 
