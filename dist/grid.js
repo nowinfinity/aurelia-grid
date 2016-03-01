@@ -112,6 +112,13 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     this.columns = behavior.gridColumns;
                     this.rowAttrs = behavior.rowAttrs;
                 }
+                Object.defineProperty(Grid.prototype, "visibleColumns", {
+                    get: function () {
+                        return this.columns.filter(function (c) { return !c.hiddenCol; });
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 /* === Lifecycle === */
                 Grid.prototype.attached = function () {
                     this.gridHeightChanged();
@@ -153,7 +160,7 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     var rowTemplate = this.rowTemplate.cloneNode(true);
                     var row = rowTemplate.querySelector("tr");
                     // Create the columns
-                    this.columns.forEach(function (c) {
+                    this.columns.filter(function (c) { return !c.hiddenCol; }).forEach(function (c) {
                         var td = document.createElement("td");
                         // Set attributes
                         for (var prop in c) {

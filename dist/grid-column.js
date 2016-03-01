@@ -16,6 +16,7 @@ System.register([], function(exports_1, context_1) {
                     this.nosort = config.nosort || false;
                     this.filterValue = "";
                     this.showFilter = config["show-filter"] === "false" ? false : true;
+                    this.hiddenCol = config["hidden-col"] === "true" ? true : false;
                     // Set attributes
                     for (var prop in config) {
                         if (config.hasOwnProperty(prop) && this.specialColumns.indexOf(prop) < 0) {

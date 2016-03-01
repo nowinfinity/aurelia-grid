@@ -73,6 +73,10 @@ export class Grid {
 	@bindable showColumnHeaders = true;
 	columnHeaders = [];
 	columns = [];
+	
+	get visibleColumns() {
+		return this.columns.filter(c => !c.hiddenCol);
+	}
 
 	// Selection
 	@bindable selectable = false;
@@ -167,7 +171,7 @@ export class Grid {
 		var row = rowTemplate.querySelector("tr");
 
 		// Create the columns
-		 this.columns.forEach(c => {
+		 this.columns.filter(c => !c.hiddenCol).forEach(c => {
 			var td = document.createElement("td");
 
 			// Set attributes

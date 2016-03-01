@@ -11,7 +11,7 @@
             <table class="table table-hover table-striped table-responsive grid-header-table">
                 <thead>
                     <tr role="button" if.bind="showColumnHeaders">
-                        <th repeat.for="$column of columns" class="${ $column.class !== '' ? $column.class : '' }">
+                        <th repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' }">
                             <a if.bind="$column.nosort == false && $parent.sortable" click.trigger="$parent.sortChanged($column.field)">${ $column.heading }</a>
                             <span if.bind="$column.nosort == true || !$parent.sortable">${ $column.heading }</span>
                             <span if.bind="$parent.sorting[$column.field] === 'desc'" class="glyphicon glyphicon-triangle-top text-primary"></span>
@@ -19,7 +19,7 @@
                         </th>
                     </tr>
                     <tr if.bind="showColumnFilters" class="grid-column-filters">
-                        <th repeat.for="$column of columns" class="${ $column.class !== '' ? $column.class : '' }">
+                        <th repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' }">
                             <div if.bind="$column.showFilter">
                                 <input class="form-control" value.bind="$column.filterValue" placeholder="filter..." input.delegate="$parent.updateFilters()"></input>
                                 <span class="glyphicon glyphicon-search text-muted"></span>
