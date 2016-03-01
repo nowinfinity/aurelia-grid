@@ -509,7 +509,8 @@ export class Grid {
 
 	    // Update the pager - maybe the grid options should contain an update callback instead of reffing the
 	    // pager into the current VM?
-	    this.updatePager();
+		if (!this.filteringSettings)
+		    this.updatePager();
 	}
 
 	watchForChanges() {

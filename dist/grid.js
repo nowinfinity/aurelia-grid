@@ -421,7 +421,8 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     this.count = result.count;
                     // Update the pager - maybe the grid options should contain an update callback instead of reffing the
                     // pager into the current VM?
-                    this.updatePager();
+                    if (!this.filteringSettings)
+                        this.updatePager();
                 };
                 Grid.prototype.watchForChanges = function () {
                     var _this = this;

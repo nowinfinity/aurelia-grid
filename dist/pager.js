@@ -45,7 +45,6 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                     this.page = page;
                     this.totalItems = totalItems;
                     this.pSize = pagesize;
-                    this.pageCount = Math.ceil(totalItems / pagesize);
                     this.createPages();
                 };
                 Pager.prototype.cap = function (page) {
