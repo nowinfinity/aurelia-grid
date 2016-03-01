@@ -1,8 +1,25 @@
 import {inject} from 'aurelia-framework';
+import {Grid} from 'aurelia-grid';
 
 export class LocalData {
+	
+	
+	
     constructor() {
+		this.filter = "";
+		var self = this;
+		this.filteringSettings = {
+			filterFunction(row) {
+				return row.name.indexOf(self.filter) > -1;	
+			}
+		};
     }
+
+	setFilter(f) {
+		this.filter = f;
+		this.grid.refresh();
+	}	
+
 
     getLocalData(gridOptions) {	
         // Return a promise that resolves to the data

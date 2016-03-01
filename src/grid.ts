@@ -27,10 +27,15 @@ export class Grid {
 	// Initial load flag (for client side)
 	@bindable initialLoad = false;
 
+	
+
 	// Filtering
 	@bindable showColumnFilters = false;
 	@bindable serverFiltering = false;
 	@bindable filterDebounce = 500;
+	
+	// custom filtering
+	@bindable filteringSettings = null;
 
 	// Pagination
 	@bindable serverPaging = false;
@@ -253,7 +258,10 @@ export class Grid {
 
 		if(this.showColumnFilters && !this.serverFiltering)
 			tempData = this.applyFilter(tempData);
-
+			
+		if (this.filteringSettings && this.filteringSettings.filterFunction)
+			tempData = tempData.filter(row => this.filteringSettings.filterFunction(row));
+			
 		// Count the data now before the sort/page
 		this.count = tempData.length;
 

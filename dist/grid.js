@@ -60,6 +60,8 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     this.showColumnFilters = false;
                     this.serverFiltering = false;
                     this.filterDebounce = 500;
+                    // custom filtering
+                    this.filteringSettings = null;
                     // Pagination
                     this.serverPaging = false;
                     this.pageable = true;
@@ -216,11 +218,14 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     this.updatePager();
                 };
                 Grid.prototype.filterSortPage = function (data) {
+                    var _this = this;
                     // Applies filter, sort then page
                     // 1. First filter the data down to the set we want, if we are using local data
                     var tempData = data;
                     if (this.showColumnFilters && !this.serverFiltering)
                         tempData = this.applyFilter(tempData);
+                    if (this.filteringSettings && this.filteringSettings.filterFunction)
+                        tempData = tempData.filter(function (row) { return _this.filteringSettings.filterFunction(row); });
                     // Count the data now before the sort/page
                     this.count = tempData.length;
                     // 2. Now sort the data
@@ -471,6 +476,10 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
                 ], Grid.prototype, "filterDebounce", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "filteringSettings", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)

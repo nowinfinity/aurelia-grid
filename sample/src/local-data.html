@@ -1,8 +1,9 @@
 <template>
+	<a click.delegate="setFilter('pete')">Filter PETES</a>
+	<a click.delegate="setFilter('')">All</a>
     <section class="au-animate">
-       <grid pageable="true" index-column.bind="true" read.call="getLocalData($event)" sortable.bind="false" server-paging.bind="false" server-sorting.bind="false" sortable.bind="false" >
+       <grid grid.ref="grid" pageable="true" filtering-settings.bind="filteringSettings" index-column.bind="true" read.call="getLocalData($event)" sortable.bind="false" server-paging.bind="false" server-sorting.bind="false" sortable.bind="false" >
             <grid-row>
-                <grid-col can-sort="true" heading="ID" field="id">${ $item.id }</grid-col>
                 <grid-col can-sort="true" heading="Name" field="name" can-filter="false">${ $item.name }</grid-col>
 				<grid-col can-sort="true" heading="Name" field="name" can-filter="false">${ $item.name }</grid-col>
 				<grid-col can-sort="true" heading="Name" field="name" can-filter="false">${ $item.name }</grid-col>
