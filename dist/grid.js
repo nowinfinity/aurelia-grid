@@ -127,7 +127,7 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                 };
                 Grid.prototype.bind = function (executionContext) {
                     this["$parent"] = executionContext;
-                    this.indexColumnChanged(this.indexColumn, false);
+                    this.indexColumnChanged(this.indexColumn, this.columns && this.columns[0].field == "#");
                     // Ensure the grid settings
                     // If we can page on the server and we can't server sort, we can't sort locally
                     if (this.serverPaging && !this.serverSorting)
