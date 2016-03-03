@@ -356,6 +356,7 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     });
                 };
                 Grid.prototype.searchChanged = function () {
+                    this.pageNumber = 1;
                     this.refresh();
                 };
                 /* === Filtering === */

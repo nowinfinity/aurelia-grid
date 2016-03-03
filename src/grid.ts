@@ -421,6 +421,7 @@ export class Grid {
 	}
 	
 	searchChanged() {
+		this.pageNumber = 1;
 		this.refresh();
 	}
 
