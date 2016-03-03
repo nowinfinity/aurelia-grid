@@ -1,6 +1,9 @@
 <template>
 	<a click.delegate="setFilter('pete')">Filter PETES</a>
 	<a click.delegate="setFilter('')">All</a>
+	<br>
+	<a click.delegate="sort('name')">sort by name</a>
+	<a click.delegate="sort('lastName')">sort by last name</a>
     <section class="au-animate">
        <grid grid.ref="grid" pageable="true" filtering-settings.bind="filteringSettings" index-column.bind="true" read.call="getLocalData($event)" sortable.bind="false" server-paging.bind="false" server-sorting.bind="false" sortable.bind="false" >
             <grid-row>

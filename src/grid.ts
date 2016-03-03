@@ -62,6 +62,7 @@ export class Grid {
 	// Sortination
 	@bindable serverSorting = false;
 	@bindable sortable: boolean = true;
+	@bindable customSorting: boolean = true;
 	sortProcessingOrder = []; // Represents which order to apply sorts to each column
 	sorting = {};
 
@@ -270,7 +271,7 @@ export class Grid {
 		this.count = tempData.length;
 
 		// 2. Now sort the data
-		if(this.sortable && !this.serverSorting)
+		if((this.sortable || this.customSorting) && !this.serverSorting)
 			tempData = this.applySort(tempData);
 
 		// 3. Now apply paging
@@ -325,6 +326,16 @@ export class Grid {
 	}
 
 	pageSizesChanged() {
+		this.refresh();
+	}
+	
+	sortBySingleField(field, direction) {
+		this.customSorting = true;
+		this.sortProcessingOrder = [field];
+		for(var prop in this.sorting) {
+			prop = "";
+		}
+		this.sorting[field] = direction;
 		this.refresh();
 	}
 

@@ -14,6 +14,10 @@ export class LocalData {
 			}
 		};
     }
+	
+	sort(field) {
+		this.grid.sortBySingleField(field, "asc");
+	}
 
 	setFilter(f) {
 		this.filter = f;

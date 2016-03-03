@@ -80,6 +80,7 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     // Sortination
                     this.serverSorting = false;
                     this.sortable = true;
+                    this.customSorting = true;
                     this.sortProcessingOrder = []; // Represents which order to apply sorts to each column
                     this.sorting = {};
                     // Burnination?
@@ -236,7 +237,7 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     // Count the data now before the sort/page
                     this.count = tempData.length;
                     // 2. Now sort the data
-                    if (this.sortable && !this.serverSorting)
+                    if ((this.sortable || this.customSorting) && !this.serverSorting)
                         tempData = this.applySort(tempData);
                     // 3. Now apply paging
                     if (this.pageable && !this.serverPaging)
@@ -281,6 +282,15 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     };
                 };
                 Grid.prototype.pageSizesChanged = function () {
+                    this.refresh();
+                };
+                Grid.prototype.sortBySingleField = function (field, direction) {
+                    this.customSorting = true;
+                    this.sortProcessingOrder = [field];
+                    for (var prop in this.sorting) {
+                        prop = "";
+                    }
+                    this.sorting[field] = direction;
                     this.refresh();
                 };
                 Grid.prototype.sortChanged = function (field) {
@@ -540,6 +550,10 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Boolean)
                 ], Grid.prototype, "sortable", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Boolean)
+                ], Grid.prototype, "customSorting", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
