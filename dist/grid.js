@@ -83,6 +83,8 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     this.customSorting = true;
                     this.sortProcessingOrder = []; // Represents which order to apply sorts to each column
                     this.sorting = {};
+                    // Searching
+                    this.search = "";
                     // Burnination?
                     this.Trogdor = true;
                     this.showColumnHeaders = true;
@@ -234,6 +236,9 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                         tempData = this.applyFilter(tempData);
                     if (this.filteringSettings && this.filteringSettings.filterFunction)
                         tempData = tempData.filter(function (row) { return _this.filteringSettings.filterFunction(row); });
+                    //Searching
+                    if (this.search)
+                        tempData = this.applySearch(tempData);
                     // Count the data now before the sort/page
                     this.count = tempData.length;
                     // 2. Now sort the data
@@ -336,6 +341,23 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     data = data.sort(this.fieldSorter(fields));
                     return data;
                 };
+                /* === Searching === */
+                Grid.prototype.applySearch = function (data) {
+                    var _this = this;
+                    return data.filter(function (row) {
+                        var include = false;
+                        for (var i = _this.columns.length - 1; i >= 0; i--) {
+                            var col = _this.columns[i];
+                            if (row[col.field] && row[col.field].toString().toLowerCase().indexOf(_this.search.toLowerCase()) > -1) {
+                                include = true;
+                            }
+                        }
+                        return include;
+                    });
+                };
+                Grid.prototype.searchChanged = function () {
+                    this.refresh();
+                };
                 /* === Filtering === */
                 Grid.prototype.applyFilter = function (data) {
                     var _this = this;
@@ -343,7 +365,7 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                         var include = true;
                         for (var i = _this.columns.length - 1; i >= 0; i--) {
                             var col = _this.columns[i];
-                            if (col.filterValue !== "" && row[col.field].toString().indexOf(col.filterValue) === -1) {
+                            if (col.filterValue !== "" && row[col.field] && row[col.field].toString().indexOf(col.filterValue) === -1) {
                                 include = false;
                             }
                         }
@@ -554,6 +576,10 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Boolean)
                 ], Grid.prototype, "customSorting", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', String)
+                ], Grid.prototype, "search", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)

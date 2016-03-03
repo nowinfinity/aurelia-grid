@@ -1,4 +1,4 @@
-import {inject} from 'aurelia-framework';
+import {inject, bindable} from 'aurelia-framework';
 import {Grid} from 'aurelia-grid';
 
 export class LocalData {

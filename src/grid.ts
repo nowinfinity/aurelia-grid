@@ -66,6 +66,9 @@ export class Grid {
 	sortProcessingOrder = []; // Represents which order to apply sorts to each column
 	sorting = {};
 
+	// Searching
+	@bindable search: string = "";
+	
 	// Burnination?
 	Trogdor = true;
 
@@ -266,6 +269,10 @@ export class Grid {
 			
 		if (this.filteringSettings && this.filteringSettings.filterFunction)
 			tempData = tempData.filter(row => this.filteringSettings.filterFunction(row));
+		
+		//Searching
+		if (this.search)
+			tempData = this.applySearch(tempData);			
 			
 		// Count the data now before the sort/page
 		this.count = tempData.length;
@@ -396,6 +403,27 @@ export class Grid {
 		return data;
 	}
 
+	/* === Searching === */
+	applySearch(data) {
+		return data.filter((row) => {
+			var include = false;
+
+			for (var i = this.columns.length - 1; i >= 0; i--) {
+				var col = this.columns[i];
+
+				if(row[col.field] && row[col.field].toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1) {
+					include = true;
+				}
+			}
+
+			return include;
+		});
+	}
+	
+	searchChanged() {
+		this.refresh();
+	}
+
 	/* === Filtering === */
 	applyFilter(data) {
 		return data.filter((row) => {
@@ -404,7 +432,7 @@ export class Grid {
 			for (var i = this.columns.length - 1; i >= 0; i--) {
 				var col = this.columns[i];
 
-				if(col.filterValue !== "" && row[col.field].toString().indexOf(col.filterValue) === -1) {
+				if(col.filterValue !== "" && row[col.field] && row[col.field].toString().indexOf(col.filterValue) === -1) {
 					include = false;
 				}
 			}
