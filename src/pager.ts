@@ -31,7 +31,7 @@ export class Pager {
 	page = 1;
 	pageCount = 0;
 
-	pages = [];
+	@bindable pages = [];
 
 	changePage(page) {
 
@@ -95,11 +95,11 @@ export class Pager {
 		var pages = [];
 
 		for (var i = firstPageNumber; i <= lastPageNumber; i++) {
-			pages.push(i);
+			pages.push({index : i, class: this.page == i ? "active" : "" });
 		};
 
 		this.pages = pages;
-
+		
 		this.updateButtons();
 	}
 

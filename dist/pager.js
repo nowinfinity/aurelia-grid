@@ -82,7 +82,7 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                     }
                     var pages = [];
                     for (var i = firstPageNumber; i <= lastPageNumber; i++) {
-                        pages.push(i);
+                        pages.push({ index: i, class: this.page == i ? "active" : "" });
                     }
                     ;
                     this.pages = pages;
@@ -154,6 +154,10 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
                 ], Pager.prototype, "pageSizes", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Pager.prototype, "pages", void 0);
                 Pager = __decorate([
                     aurelia_framework_1.customElement('pager'), 
                     __metadata('design:paramtypes', [])
