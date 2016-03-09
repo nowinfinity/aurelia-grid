@@ -157,6 +157,10 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
+                ], Pager.prototype, "page", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
                 ], Pager.prototype, "pages", void 0);
                 Pager = __decorate([
                     aurelia_framework_1.customElement('pager'), 

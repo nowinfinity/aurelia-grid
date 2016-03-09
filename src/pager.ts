@@ -28,7 +28,7 @@ export class Pager {
 	@bindable pageSizes;
 
 	// Total number of items in the dataset
-	page = 1;
+	@bindable page = 1;
 	pageCount = 0;
 
 	@bindable pages = [];
@@ -99,7 +99,6 @@ export class Pager {
 		};
 
 		this.pages = pages;
-		
 		this.updateButtons();
 	}
 
