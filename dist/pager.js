@@ -86,6 +86,8 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                     }
                     ;
                     this.pages = pages;
+                };
+                Pager.prototype.pageChanged = function () {
                     this.updateButtons();
                 };
                 Pager.prototype.updateButtons = function () {
@@ -154,6 +156,10 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
                 ], Pager.prototype, "pageSizes", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Pager.prototype, "page", void 0);
                 Pager = __decorate([
                     aurelia_framework_1.customElement('pager'), 
                     __metadata('design:paramtypes', [])
