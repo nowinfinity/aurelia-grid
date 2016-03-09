@@ -48,6 +48,7 @@ export class Grid {
 	@bindable showPagingSummary = true;
 	@bindable showFirstLastButtons = true;
 	@bindable showJumpButtons = true;
+	@bindable hideJumpButtonsIfNotPossible = true;
 
 	@bindable pageSizes = [10, 20, 30];
 	

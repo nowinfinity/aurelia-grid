@@ -18,6 +18,7 @@ export class Pager {
 	// Pager button options
 	@bindable showFirstLastButtons = true;
 	@bindable showJumpButtons = true;
+	@bindable hideJumpButtonsIfNotPossible = true;
 	
 	@bindable showPagingSummary;
 	@bindable showPageSizeBox;

@@ -72,6 +72,7 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     this.showPagingSummary = true;
                     this.showFirstLastButtons = true;
                     this.showJumpButtons = true;
+                    this.hideJumpButtonsIfNotPossible = true;
                     this.pageSizes = [10, 20, 30];
                     this.indexColumn = false;
                     this.firstVisibleItem = 0;
@@ -557,6 +558,10 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
                 ], Grid.prototype, "showJumpButtons", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "hideJumpButtonsIfNotPossible", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)

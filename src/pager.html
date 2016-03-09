@@ -3,13 +3,13 @@
 		<ul class="pagination">
 			<li if.bind="showFirstLastButtons" class="prev-end ${ prevDisabled ? 'disabled' : '' }"><a href="#" click.delegate="first()" aria-label="First">«</a></li>
 			<li class="prev"  class="${ prevDisabled ? 'disabled' : '' }"><a href="#" click.delegate="prev()" aria-label="Next">&lt;</a></li>
-			<li if.bind="showJumpButtons" class="${ prevDisabled ? 'disabled' : '' }">
+			<li if.bind="showJumpButtons && !(prevDisabled && hideJumpButtonsIfNotPossible)" class="${ prevDisabled ? 'disabled' : '' }">
 				<a href="" click.delegate="prevJump()" aria-label="Next"><span>&#8230;</span></a>
 			</li>
 			<li repeat.for="curPage of pages" class="${ curPage == $parent.page ? 'active' : '' }">
 				<a href="#" click.delegate="$parent.changePage(curPage)">${curPage}</a>
 			</li>
-			<li if.bind="showJumpButtons" class="${ nextDisabled ? 'disabled' : '' }">
+			<li if.bind="showJumpButtons && !(nextDisabled && hideJumpButtonsIfNotPossible)" class="${ nextDisabled ? 'disabled' : '' }">
 				<a href="" click.delegate="nextJump()" aria-label="Next"><span>&#8230;</span></a>
 			</li>
 			<li class="next"  class="${ nextDisabled ? 'disabled' : '' }"><a href="#" click.delegate="next()" aria-label="Next">&gt;</a></li>
@@ -20,11 +20,10 @@
 		
 		<div class="selected-area selected-area-nosearch select2" if.bind="showPageSizeBox">
 			<div class="form-control-group">
-				<span>Show</span>
+				<span>Show </span>
 				<select chosen-select class="form-control" value.bind="pageSize">
-					<option value.bind="size" repeat.for="size of pageSizes">${ size === '*' ? 'All' : size }</option>
+					<option value.bind="size" repeat.for="size of pageSizes">${ size === '*' ? 'All' : size + " entries" }</option>
 				</select>
-				<span> entries</span>
 			</div>
 		</div>
 
