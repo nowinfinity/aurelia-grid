@@ -47,7 +47,7 @@
             <!-- Footer div -->
             <div class="grid-footer-container" if.bind="pageable">
                 <pager page-size.bind="pageSize" num-to-show.bind="pagerSize" pager.ref="pager" on-page-changed.call="pageChanged($event)" show-first-last-buttons.bind="showFirstLastButtons" show-jump-buttons.bind="showJumpButtons" 
-				show-paging-summary.bind="showPagingSummary" show-page-size-box.bind="showPageSizeBox"></pager>
+				show-paging-summary.bind="showPagingSummary" show-page-size-box.bind="showPageSizeBox" first-visible-item.bind="firstVisibleItem" last-visible-item.bind="lastVisibleItem" page-sizes.bind="pageSizes"></pager>
             </div>
         </div>
         <!-- No rows message -->

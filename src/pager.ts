@@ -19,8 +19,12 @@ export class Pager {
 	@bindable showFirstLastButtons = true;
 	@bindable showJumpButtons = true;
 	
-	@bindable showPagingSummary = true;
-	@bindable showPageSizeBox = true;
+	@bindable showPagingSummary;
+	@bindable showPageSizeBox;
+	
+	@bindable firstVisibleItem = 0;
+	@bindable lastVisibleItem = 0;
+	@bindable pageSizes;
 
 	// Total number of items in the dataset
 	page = 1;
