@@ -67,12 +67,12 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     this.pageable = true;
                     this.pageSize = 10;
                     this.page = 1;
-                    this.pagerSize = 10;
+                    this.pagerSize = 3;
                     this.showPageSizeBox = true;
                     this.showPagingSummary = true;
                     this.showFirstLastButtons = true;
                     this.showJumpButtons = true;
-                    this.pageSizes = [10, 25, 50];
+                    this.pageSizes = [10, 20, 30];
                     this.indexColumn = false;
                     this.firstVisibleItem = 0;
                     this.lastVisibleItem = 0;

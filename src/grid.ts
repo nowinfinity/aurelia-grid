@@ -42,14 +42,14 @@ export class Grid {
 	@bindable pageable = true;
 	@bindable pageSize = 10;
 	@bindable page = 1;
-	@bindable pagerSize = 10;
+	@bindable pagerSize = 3;
 
 	@bindable showPageSizeBox = true;
 	@bindable showPagingSummary = true;
 	@bindable showFirstLastButtons = true;
 	@bindable showJumpButtons = true;
 
-	@bindable pageSizes = [10, 25, 50];
+	@bindable pageSizes = [10, 20, 30];
 	
 	@bindable indexColumn : boolean = false;
 
