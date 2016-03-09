@@ -26,6 +26,7 @@ export class Pager {
 	@bindable firstVisibleItem = 0;
 	@bindable lastVisibleItem = 0;
 	@bindable pageSizes;
+	@bindable count = 0;
 
 	// Total number of items in the dataset
 	@bindable page = 1;

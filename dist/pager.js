@@ -31,6 +31,7 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                     this.hideJumpButtonsIfNotPossible = true;
                     this.firstVisibleItem = 0;
                     this.lastVisibleItem = 0;
+                    this.count = 0;
                     // Total number of items in the dataset
                     this.page = 1;
                     this.pageCount = 0;
@@ -154,6 +155,10 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
                 ], Pager.prototype, "pageSizes", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Pager.prototype, "count", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
