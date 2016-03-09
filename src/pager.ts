@@ -1,7 +1,16 @@
-import {bindable, customElement, bindingMode } from 'aurelia-framework';
+import {bindable, customElement, bindingMode, inject } from 'aurelia-framework';
+import {BindingSignaler} from 'aurelia-templating-resources';
 
 @customElement('pager')
+@inject(BindingSignaler)
 export class Pager {
+	
+	signaler: any;
+	
+	constructor(signaler) {
+		this.signaler = signaler;
+	}
+	
 	totalItems: any;
 	pSize: number;
 	@bindable({defaultBindingMode: bindingMode.twoWay, defaultValue: 10}) pageSize;
@@ -33,6 +42,20 @@ export class Pager {
 	pageCount = 0;
 
 	@bindable pages = [];
+
+	get showJumpPrev() {
+		if (this.pages.length == 0)
+			return false;
+		
+		return this.showJumpButtons && !(this.pages[0].index == '1' && this.hideJumpButtonsIfNotPossible);
+	}
+	
+	get showJumpNext() {
+		if (this.pages.length == 0)
+			return false;
+			
+		return this.showJumpButtons && !(this.pages[this.pages.length - 1].index == this.pageCount && this.hideJumpButtonsIfNotPossible);
+	}
 
 	changePage(page) {
 
@@ -101,6 +124,8 @@ export class Pager {
 
 		this.pages = pages;
 		this.updateButtons();
+		
+		this.signaler.signal('refresh-pagination-signal');
 	}
 
 	updateButtons() {

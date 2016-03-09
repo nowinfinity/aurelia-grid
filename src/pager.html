@@ -3,13 +3,13 @@
 		<ul class="pagination">
 			<li if.bind="showFirstLastButtons" class="prev-end ${ prevDisabled ? 'disabled' : '' }"><a href="#" click.delegate="first()" aria-label="First">«</a></li>
 			<li class="prev"  class="${ prevDisabled ? 'disabled' : '' }"><a href="#" click.delegate="prev()" aria-label="Next">&lt;</a></li>
-			<li if.bind="showJumpButtons && !(prevDisabled && hideJumpButtonsIfNotPossible)" class="${ prevDisabled ? 'disabled' : '' }">
+			<li if.bind="showJumpPrev & signal:'refresh-pagination-signal'" class="${ prevDisabled ? 'disabled' : '' }">
 				<a href="" click.delegate="prevJump()" aria-label="Next"><span>&#8230;</span></a>
 			</li>
 			<li repeat.for="curPage of pages" class="${curPage.class}">
 				<a href="#" click.delegate="$parent.changePage(curPage.index)">${curPage.index}</a>
 			</li>
-			<li if.bind="showJumpButtons && !(nextDisabled && hideJumpButtonsIfNotPossible)" class="${ nextDisabled ? 'disabled' : '' }">
+			<li if.bind="showJumpNext & signal:'refresh-pagination-signal'" class="${ nextDisabled ? 'disabled' : '' }">
 				<a href="" click.delegate="nextJump()" aria-label="Next"><span>&#8230;</span></a>
 			</li>
 			<li class="next"  class="${ nextDisabled ? 'disabled' : '' }"><a href="#" click.delegate="next()" aria-label="Next">&gt;</a></li>

@@ -1,4 +1,4 @@
-System.register(['aurelia-framework'], function(exports_1, context_1) {
+System.register(['aurelia-framework', 'aurelia-templating-resources'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,16 +10,19 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var aurelia_framework_1;
+    var aurelia_framework_1, aurelia_templating_resources_1;
     var Pager;
     return {
         setters:[
             function (aurelia_framework_1_1) {
                 aurelia_framework_1 = aurelia_framework_1_1;
+            },
+            function (aurelia_templating_resources_1_1) {
+                aurelia_templating_resources_1 = aurelia_templating_resources_1_1;
             }],
         execute: function() {
             Pager = (function () {
-                function Pager() {
+                function Pager(signaler) {
                     // Max num pages to show
                     this.numToShow = 5;
                     // Disable/enable
@@ -36,7 +39,26 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                     this.page = 1;
                     this.pageCount = 0;
                     this.pages = [];
+                    this.signaler = signaler;
                 }
+                Object.defineProperty(Pager.prototype, "showJumpPrev", {
+                    get: function () {
+                        if (this.pages.length == 0)
+                            return false;
+                        return this.showJumpButtons && !(this.pages[0].index == '1' && this.hideJumpButtonsIfNotPossible);
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Pager.prototype, "showJumpNext", {
+                    get: function () {
+                        if (this.pages.length == 0)
+                            return false;
+                        return this.showJumpButtons && !(this.pages[this.pages.length - 1].index == this.pageCount && this.hideJumpButtonsIfNotPossible);
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 Pager.prototype.changePage = function (page) {
                     var oldPage = this.page;
                     this.page = this.cap(page);
@@ -88,6 +110,7 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                     ;
                     this.pages = pages;
                     this.updateButtons();
+                    this.signaler.signal('refresh-pagination-signal');
                 };
                 Pager.prototype.updateButtons = function () {
                     this.nextDisabled = this.page === this.pageCount;
@@ -168,8 +191,9 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                     __metadata('design:type', Object)
                 ], Pager.prototype, "pages", void 0);
                 Pager = __decorate([
-                    aurelia_framework_1.customElement('pager'), 
-                    __metadata('design:paramtypes', [])
+                    aurelia_framework_1.customElement('pager'),
+                    aurelia_framework_1.inject(aurelia_templating_resources_1.BindingSignaler), 
+                    __metadata('design:paramtypes', [Object])
                 ], Pager);
                 return Pager;
             }());
