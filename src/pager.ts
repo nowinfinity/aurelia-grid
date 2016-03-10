@@ -5,11 +5,12 @@ import {BindingSignaler} from 'aurelia-templating-resources';
 @inject(BindingSignaler)
 export class Pager {
 	
-	signaler: any;
 	
 	constructor(signaler) {
 		this.signaler = signaler;
 	}
+	
+	signaler: any;
 	
 	totalItems: any;
 	pSize: number;
@@ -18,7 +19,7 @@ export class Pager {
 	@bindable onPageChanged;
 
 	// Max num pages to show
-	@bindable numToShow = 5;
+	@bindable numToShow = 10;
 
 	// Disable/enable
 	nextDisabled = false;
@@ -67,7 +68,7 @@ export class Pager {
 	        this.onPageChanged(this.page);
 	    }
 	}
-
+	
 	// Called when the data source changes
 	update(page, pagesize, totalItems) {
 		this.page = page;

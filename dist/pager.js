@@ -24,7 +24,7 @@ System.register(['aurelia-framework', 'aurelia-templating-resources'], function(
             Pager = (function () {
                 function Pager(signaler) {
                     // Max num pages to show
-                    this.numToShow = 5;
+                    this.numToShow = 10;
                     // Disable/enable
                     this.nextDisabled = false;
                     this.prevDisabled = false;

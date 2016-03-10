@@ -130,6 +130,7 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                         this.refresh();
                 };
                 Grid.prototype.bind = function (executionContext) {
+                    this.parent = executionContext;
                     this["$parent"] = executionContext;
                     this.indexColumnChanged(this.indexColumn, this.columns && this.columns[0].field == "#");
                     // Ensure the grid settings
@@ -214,12 +215,21 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                         this.columns.shift();
                     }
                 };
+                Grid.prototype.removeRows = function (func) {
+                    if (!func)
+                        return;
+                    this.cache = this.cache.filter(function (r) { return !func(r); });
+                    this.refresh(true);
+                    if (this.data.length == 0) {
+                        this.pager.last();
+                    }
+                };
                 /* === Paging === */
                 Grid.prototype.pageChanged = function (page, oldValue) {
                     if (page === oldValue)
                         return;
                     this.pageNumber = Number(page);
-                    this.refresh();
+                    this.refresh(true);
                 };
                 Grid.prototype.pageSizeChanged = function (newValue, oldValue) {
                     debugger;
@@ -297,7 +307,7 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                         prop = "";
                     }
                     this.sorting[field] = direction;
-                    this.refresh();
+                    this.refresh(true);
                 };
                 Grid.prototype.sortChanged = function (field) {
                     // Determine new sort
@@ -357,7 +367,6 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     });
                 };
                 Grid.prototype.searchChanged = function () {
-                    this.pageNumber = 1;
                     this.refresh();
                 };
                 /* === Filtering === */
@@ -406,8 +415,12 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     this.debouncedUpdateFilters();
                 };
                 /* === Data === */
-                Grid.prototype.refresh = function () {
+                Grid.prototype.refresh = function (stayOnCurrentPage) {
+                    if (stayOnCurrentPage === void 0) { stayOnCurrentPage = false; }
                     // If we have any server side stuff we need to get the data first
+                    if (!stayOnCurrentPage) {
+                        this.pageNumber = 1;
+                    }
                     this.dontWatchForChanges();
                     if (this.serverPaging || this.serverSorting || this.serverFiltering || !this.initialLoad)
                         this.getData();
@@ -452,7 +465,6 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                         this.data = result.data;
                         this.filterSortPage(this.data);
                     }
-                    this.count = result.count;
                     // Update the pager - maybe the grid options should contain an update callback instead of reffing the
                     // pager into the current VM?
                     if (!this.filteringSettings)

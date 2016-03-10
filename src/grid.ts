@@ -131,7 +131,10 @@ export class Grid {
 		    this.refresh();
 	}
 
+	parent: any;
+
 	bind(executionContext) {
+		this.parent = executionContext;
 		this["$parent"] = executionContext;
 		
 		this.indexColumnChanged(this.indexColumn, this.columns && this.columns[0].field == "#");
@@ -242,6 +245,18 @@ export class Grid {
 		}
 	}
 
+	removeRows(func: Function){
+		if (!func)
+			return;
+			
+		this.cache = this.cache.filter(r => !func(r));
+		
+		this.refresh(true);
+		if (this.data.length == 0)
+		{
+			this.pager.last();
+		}
+	}
 
 	/* === Paging === */
 	pageChanged(page, oldValue) {
@@ -249,7 +264,7 @@ export class Grid {
 		if(page === oldValue) return;
 
 		this.pageNumber = Number(page);
-		this.refresh();
+		this.refresh(true);
 	}
 
 	pageSizeChanged(newValue, oldValue) {
@@ -344,7 +359,7 @@ export class Grid {
 			prop = "";
 		}
 		this.sorting[field] = direction;
-		this.refresh();
+		this.refresh(true);
 	}
 
 	sortChanged(field) {
@@ -422,7 +437,6 @@ export class Grid {
 	}
 	
 	searchChanged() {
-		this.pageNumber = 1;
 		this.refresh();
 	}
 
@@ -488,16 +502,20 @@ export class Grid {
 	}
 
 	/* === Data === */
-	refresh() {
-
+	refresh(stayOnCurrentPage:boolean = false) {
 		// If we have any server side stuff we need to get the data first
+		if (!stayOnCurrentPage)
+		{
+			this.pageNumber = 1;
+		}
+		
 		this.dontWatchForChanges();
 
-		if(this.serverPaging || this.serverSorting || this.serverFiltering || !this.initialLoad)
+		if (this.serverPaging || this.serverSorting || this.serverFiltering || !this.initialLoad)
 			this.getData();
 		else
 			this.filterSortPage(this.cache);
-
+			
 	}
 
 	getData() {
@@ -545,8 +563,6 @@ export class Grid {
 			this.data = result.data;
 			this.filterSortPage(this.data);
 		}
-
-	    this.count = result.count;
 
 	    // Update the pager - maybe the grid options should contain an update callback instead of reffing the
 	    // pager into the current VM?
