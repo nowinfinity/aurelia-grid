@@ -2,6 +2,8 @@ import {child, bindable, autoinject, BindingEngine, customElement, processConten
 import {GridColumn} from './grid-column';
 import {ViewCompiler, ViewSlot, ViewResources, Container} from 'aurelia-framework';
 import {Pager} from "./pager";
+import "eligrey/blob.js"
+import "eligrey/FileSaver.js"
 
 @customElement('grid')
 @processContent(function(viewCompiler, viewResources, element, instruction) {
@@ -116,7 +118,8 @@ export class Grid {
 	rowTemplate;
 	rowAttrs;
 	
-	constructor(private element: Element, public viewCompiler: ViewCompiler, public viewResources: ViewResources, public container: Container, private targetInstruction: TargetInstruction, public bindingEngine: BindingEngine) {
+	constructor(private element: Element, public viewCompiler: ViewCompiler, public viewResources: ViewResources, public container: Container, private targetInstruction: TargetInstruction, 
+				public bindingEngine: BindingEngine) {
 		var behavior = (<any>targetInstruction).behaviorInstructions[0];
 		
 		this.columns = behavior.gridColumns;
@@ -614,6 +617,16 @@ export class Grid {
 		} else {
 			cont.removeAttribute("style");
 		}
+	}
+	
+	exportToExcel() {
+		saveAs(
+			new Blob(
+				["ХЕЛЛОУ МАЙ ДІАР ФРЕНД!"]
+				, {type: "text/plain;charset=" + "UTF-8"}
+			)
+			, "hello.txt"
+		);
 	}
 }
 

@@ -1,4 +1,4 @@
-System.register(['aurelia-framework', './grid-column', "./pager"], function(exports_1, context_1) {
+System.register(['aurelia-framework', './grid-column', "./pager", "eligrey/blob.js", "eligrey/FileSaver.js"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -40,7 +40,9 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
             },
             function (pager_1_1) {
                 pager_1 = pager_1_1;
-            }],
+            },
+            function (_1) {},
+            function (_2) {}],
         execute: function() {
             Grid = (function () {
                 function Grid(element, viewCompiler, viewResources, container, targetInstruction, bindingEngine) {
@@ -505,6 +507,9 @@ System.register(['aurelia-framework', './grid-column', "./pager"], function(expo
                     else {
                         cont.removeAttribute("style");
                     }
+                };
+                Grid.prototype.exportToExcel = function () {
+                    saveAs(new Blob(["ХЕЛЛОУ МАЙ ДІАР ФРЕНД!"], { type: "text/plain;charset=" + "UTF-8" }), "hello.txt");
                 };
                 __decorate([
                     aurelia_framework_1.child('pager'), 

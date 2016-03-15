@@ -38,7 +38,9 @@
     },
     "dependencies": {
       "aurelia-framework": "npm:aurelia-framework@^1.0.0-beta.1.0.8",
-      "core-js": "npm:core-js@^2.0.3"
+      "core-js": "npm:core-js@^2.0.3",
+      "eligrey/FileSaver.js": "github:eligrey/FileSaver.js@master",
+      "eligrey/blob.js": "github:eligrey/blob.js@master"
     },
     "devDependencies": {}
   }
