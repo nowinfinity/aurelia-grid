@@ -88,6 +88,7 @@ System.register(['aurelia-framework', './grid-column', "./pager", "eligrey/blob.
                     this.sorting = {};
                     // Searching
                     this.search = "";
+                    this.searchColumns = [];
                     // Burnination?
                     this.Trogdor = true;
                     this.showColumnHeaders = true;
@@ -359,14 +360,34 @@ System.register(['aurelia-framework', './grid-column', "./pager", "eligrey/blob.
                     var _this = this;
                     return data.filter(function (row) {
                         var include = false;
-                        for (var i = _this.columns.length - 1; i >= 0; i--) {
-                            var col = _this.columns[i];
-                            if (row[col.field] && row[col.field].toString().toLowerCase().indexOf(_this.search.toLowerCase()) > -1) {
-                                include = true;
+                        if (_this.searchColumns.length > 0) {
+                            var columns = _this.getSearchingColumns();
+                            for (var i = 0; i < columns.length; i++) {
+                                var col = columns[i];
+                                if (row[col.field].toString().toLowerCase().indexOf(_this.search.toLowerCase()) > -1) {
+                                    include = true;
+                                }
+                            }
+                        }
+                        else {
+                            for (var i = _this.columns.length - 1; i >= 0; i--) {
+                                var col = _this.columns[i];
+                                if (row[col.field] && row[col.field].toString().toLowerCase().indexOf(_this.search.toLowerCase()) > -1) {
+                                    include = true;
+                                }
                             }
                         }
                         return include;
                     });
+                };
+                Grid.prototype.getSearchingColumns = function () {
+                    var cols = [];
+                    for (var i = this.columns.length - 1; i >= 0; i--) {
+                        var col = this.columns[i];
+                        if (this.searchColumns.includes(col.field) && col.field !== '')
+                            cols.push(col);
+                    }
+                    return cols;
                 };
                 Grid.prototype.searchChanged = function () {
                     this.refresh();
@@ -603,6 +624,10 @@ System.register(['aurelia-framework', './grid-column', "./pager", "eligrey/blob.
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', String)
                 ], Grid.prototype, "search", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "searchColumns", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
