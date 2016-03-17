@@ -35,6 +35,15 @@ export class Grid {
 	@bindable showColumnFilters = false;
 	@bindable serverFiltering = false;
 	@bindable filterDebounce = 500;
+	@bindable showColumns:string=""; 
+	
+	
+	
+	showColumnsChanged(){
+		console.log("showColumnsChanged");
+	    console.log(this.showColumns);
+
+	}
 	
 	// custom filtering
 	@bindable filteringSettings = null;
@@ -169,10 +178,11 @@ export class Grid {
 		row.setAttribute("class", "${ $item === $parent.selectedItem ? 'info' : '' }");
 		// TODO: Do we allow the user to customise the row template or just
 		// provide a callback?
-		// Copy any user specified row attributes to the row template
+		// Copy any user specified row attributes to the row template	
 		for (var prop in this.rowAttrs) {
+		
      		if (this.rowAttrs.hasOwnProperty(prop)) {
-		 		row.setAttribute(prop, this.rowAttrs[prop]);
+		 		row.setAttribute(prop, this.rowAttrs[prop]);	
       		}
 		}
 	}
@@ -194,10 +204,15 @@ export class Grid {
 	    			if(prop == "template")
 	    				td.innerHTML = c[prop];
 	    			else
-		    			td.setAttribute(prop, c[prop]);
+					{
+		    			td.setAttribute(prop, c[prop]);					
+					}											
 	        	}
 			}
-
+			
+			if(this.showColumns!="")
+				td.setAttribute("style","${isDisplayColumn("+ "'"+ c['show-col-name-if']+ "'"+" ,showColumns)?'':'display:none'}")
+	
 			row.appendChild(td);
 		});
 
@@ -489,6 +504,17 @@ export class Grid {
 
 			return include;
 		});
+	}
+	
+	
+	
+	isDisplayColumn(prop:string):bool{
+	
+	if(this.showColumns=="") return true;
+	
+	if(prop=='undefined' || prop==undefined) return true;
+	
+	return prop===this.showColumns;
 	}
 
 	getFilterColumns() {

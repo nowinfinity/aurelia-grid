@@ -62,6 +62,7 @@ System.register(['aurelia-framework', './grid-column', "./pager", "eligrey/blob.
                     this.showColumnFilters = false;
                     this.serverFiltering = false;
                     this.filterDebounce = 500;
+                    this.showColumns = "";
                     // custom filtering
                     this.filteringSettings = null;
                     // Pagination
@@ -119,6 +120,10 @@ System.register(['aurelia-framework', './grid-column', "./pager", "eligrey/blob.
                     this.columns = behavior.gridColumns;
                     this.rowAttrs = behavior.rowAttrs;
                 }
+                Grid.prototype.showColumnsChanged = function () {
+                    console.log("showColumnsChanged");
+                    console.log(this.showColumns);
+                };
                 Object.defineProperty(Grid.prototype, "visibleColumns", {
                     get: function () {
                         return this.columns.filter(function (c) { return !c.hiddenCol; });
@@ -155,7 +160,7 @@ System.register(['aurelia-framework', './grid-column', "./pager", "eligrey/blob.
                     row.setAttribute("class", "${ $item === $parent.selectedItem ? 'info' : '' }");
                     // TODO: Do we allow the user to customise the row template or just
                     // provide a callback?
-                    // Copy any user specified row attributes to the row template
+                    // Copy any user specified row attributes to the row template	
                     for (var prop in this.rowAttrs) {
                         if (this.rowAttrs.hasOwnProperty(prop)) {
                             row.setAttribute(prop, this.rowAttrs[prop]);
@@ -175,10 +180,13 @@ System.register(['aurelia-framework', './grid-column', "./pager", "eligrey/blob.
                             if (c.hasOwnProperty(prop)) {
                                 if (prop == "template")
                                     td.innerHTML = c[prop];
-                                else
+                                else {
                                     td.setAttribute(prop, c[prop]);
+                                }
                             }
                         }
+                        if (_this.showColumns != "")
+                            td.setAttribute("style", "${isDisplayColumn(" + "'" + c['show-col-name-if'] + "'" + " ,showColumns)?'':'display:none'}");
                         row.appendChild(td);
                     });
                     // Now compile the row template
@@ -406,6 +414,13 @@ System.register(['aurelia-framework', './grid-column', "./pager", "eligrey/blob.
                         return include;
                     });
                 };
+                Grid.prototype.isDisplayColumn = function (prop) {
+                    if (this.showColumns == "")
+                        return true;
+                    if (prop == 'undefined' || prop == undefined)
+                        return true;
+                    return prop === this.showColumns;
+                };
                 Grid.prototype.getFilterColumns = function () {
                     var cols = {};
                     for (var i = this.columns.length - 1; i >= 0; i--) {
@@ -556,6 +571,10 @@ System.register(['aurelia-framework', './grid-column', "./pager", "eligrey/blob.
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
                 ], Grid.prototype, "filterDebounce", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', String)
+                ], Grid.prototype, "showColumns", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
