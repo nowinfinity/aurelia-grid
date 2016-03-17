@@ -71,6 +71,8 @@ export class Grid {
 
 	// Searching
 	@bindable search: string = "";
+	@bindable searchColumns = [];
+	
 	
 	// Burnination?
 	Trogdor = true;
@@ -426,17 +428,46 @@ export class Grid {
 	applySearch(data) {
 		return data.filter((row) => {
 			var include = false;
-
-			for (var i = this.columns.length - 1; i >= 0; i--) {
-				var col = this.columns[i];
-
-				if(row[col.field] && row[col.field].toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1) {
-					include = true;
+			
+			if(this.searchColumns.length>0)
+			{
+				var columns = this.getSearchingColumns();
+				
+				for(var i=0;i<columns.length;i++)
+				{	
+					var col = columns[i];
+				
+					if(row[col.field].toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1) {
+						include = true;
+					}
+				}
+			}
+			else
+			{					
+				for (var i = this.columns.length - 1; i >= 0; i--) {
+					var col = this.columns[i];
+						
+					if(row[col.field] && row[col.field].toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1) {
+						include = true;
+					}			
 				}
 			}
 
 			return include;
 		});
+	}
+	
+	getSearchingColumns(){
+		var cols = [];
+		
+		for (var i = this.columns.length - 1; i >= 0; i--) {
+			let col = this.columns[i];
+
+			if(this.searchColumns.includes(col.field) && col.field!=='')
+			   cols.push(col);		
+		}
+		
+		return cols;
 	}
 	
 	searchChanged() {
