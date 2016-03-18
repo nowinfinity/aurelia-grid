@@ -465,6 +465,10 @@ System.register(['aurelia-framework', './grid-column', "./pager", "eligrey/blob.
                     else
                         this.filterSortPage(this.cache);
                 };
+                Grid.prototype.reload = function () {
+                    this.initialLoad = false;
+                    this.refresh();
+                };
                 Grid.prototype.getData = function () {
                     var _this = this;
                     if (!this.read)

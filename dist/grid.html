@@ -30,7 +30,7 @@
                 </thead>
             </table>
             <!-- Content table -->
-            <div class="grid-content-container">
+            <div class="grid-content-container" show.bind="!loading">
                 <table class="table table-hover table-striped table-responsive selectable" show.bind="!showNoRowsMessage || (showNoRowsMessage && count > 0)">
                     <tbody>
                         <tr role="button" click.delegate="$parent.select($item)">     
