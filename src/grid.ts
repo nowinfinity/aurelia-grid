@@ -577,6 +577,11 @@ export class Grid {
 			this.filterSortPage(this.cache);
 			
 	}
+	
+	reload() {
+		this.initialLoad = false;
+		this.refresh();
+	}
 
 	getData() {
 		if(!this.read)
