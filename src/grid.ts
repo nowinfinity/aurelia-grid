@@ -2,8 +2,7 @@ import {child, bindable, autoinject, BindingEngine, customElement, processConten
 import {GridColumn} from './grid-column';
 import {ViewCompiler, ViewSlot, ViewResources, Container} from 'aurelia-framework';
 import {Pager} from "./pager";
-import "eligrey/blob.js"
-import "eligrey/FileSaver.js"
+import {ExportToExcel} from './export-to-excel'
 
 @customElement('grid')
 @processContent(function(viewCompiler, viewResources, element, instruction) {
@@ -18,7 +17,7 @@ import "eligrey/FileSaver.js"
 @autoinject()
 export class Grid {
 	subscription: any;
-	showNoRowsMessage:boolean = false;
+	showNoRowsMessage: boolean = false;
 	debouncedUpdateFilters: any;
 	@child('pager') pager: Pager;
 	/* == Styling == */
@@ -29,22 +28,22 @@ export class Grid {
 	// Initial load flag (for client side)
 	@bindable initialLoad = false;
 
-	
+
 
 	// Filtering
 	@bindable showColumnFilters = false;
 	@bindable serverFiltering = false;
 	@bindable filterDebounce = 500;
-	@bindable showColumns:string=""; 
-	
-	
-	
-	showColumnsChanged(){
+	@bindable showColumns: string = "";
+
+
+
+	showColumnsChanged() {
 		console.log("showColumnsChanged");
-	    console.log(this.showColumns);
+		console.log(this.showColumns);
 
 	}
-	
+
 	// custom filtering
 	@bindable filteringSettings = null;
 
@@ -62,8 +61,8 @@ export class Grid {
 	@bindable hideJumpButtonsIfNotPossible = true;
 
 	@bindable pageSizes = [10, 20, 30];
-	
-	@bindable indexColumn : boolean = false;
+
+	@bindable indexColumn: boolean = false;
 
 	firstVisibleItem = 0;
 	lastVisibleItem = 0;
@@ -81,8 +80,8 @@ export class Grid {
 	// Searching
 	@bindable search: string = "";
 	@bindable searchColumns = [];
-	
-	
+
+
 	// Burnination?
 	Trogdor = true;
 
@@ -91,7 +90,7 @@ export class Grid {
 	@bindable showColumnHeaders = true;
 	columnHeaders = [];
 	columns = [];
-	
+
 	get visibleColumns() {
 		return this.columns.filter(c => !c.hiddenCol);
 	}
@@ -128,11 +127,11 @@ export class Grid {
 	viewSlot;
 	rowTemplate;
 	rowAttrs;
-	
-	constructor(private element: Element, public viewCompiler: ViewCompiler, public viewResources: ViewResources, public container: Container, private targetInstruction: TargetInstruction, 
-				public bindingEngine: BindingEngine) {
+
+	constructor(private element: Element, public viewCompiler: ViewCompiler, public viewResources: ViewResources, public container: Container, private targetInstruction: TargetInstruction,
+		public bindingEngine: BindingEngine) {
 		var behavior = (<any>targetInstruction).behaviorInstructions[0];
-		
+
 		this.columns = behavior.gridColumns;
 		this.rowAttrs = behavior.rowAttrs;
 	}
@@ -141,8 +140,8 @@ export class Grid {
 	attached() {
 		this.gridHeightChanged();
 
-		if(this.autoLoad)
-		    this.refresh();
+		if (this.autoLoad)
+			this.refresh();
 	}
 
 	parent: any;
@@ -150,12 +149,12 @@ export class Grid {
 	bind(executionContext) {
 		this.parent = executionContext;
 		this["$parent"] = executionContext;
-		
+
 		this.indexColumnChanged(this.indexColumn, this.columns && this.columns[0].field == "#");
 
 		// Ensure the grid settings
 		// If we can page on the server and we can't server sort, we can't sort locally
-		if(this.serverPaging && !this.serverSorting)
+		if (this.serverPaging && !this.serverSorting)
 			this.sortable = false;
 
 		// The table body element will host the rows
@@ -180,10 +179,10 @@ export class Grid {
 		// provide a callback?
 		// Copy any user specified row attributes to the row template	
 		for (var prop in this.rowAttrs) {
-		
-     		if (this.rowAttrs.hasOwnProperty(prop)) {
-		 		row.setAttribute(prop, this.rowAttrs[prop]);	
-      		}
+
+			if (this.rowAttrs.hasOwnProperty(prop)) {
+				row.setAttribute(prop, this.rowAttrs[prop]);
+			}
 		}
 	}
 
@@ -194,25 +193,24 @@ export class Grid {
 		var row = rowTemplate.querySelector("tr");
 
 		// Create the columns
-		 this.columns.filter(c => !c.hiddenCol).forEach(c => {
+		this.columns.filter(c => !c.hiddenCol).forEach(c => {
 			var td = document.createElement("td");
 
 			// Set attributes
 			for (var prop in c) {
-	    		if (c.hasOwnProperty(prop)) {
+				if (c.hasOwnProperty(prop)) {
 
-	    			if(prop == "template")
-	    				td.innerHTML = c[prop];
-	    			else
-					{
-		    			td.setAttribute(prop, c[prop]);					
-					}											
-	        	}
+					if (prop == "template")
+						td.innerHTML = c[prop];
+					else {
+						td.setAttribute(prop, c[prop]);
+					}
+				}
 			}
-			
-			if(this.showColumns!="")
-				td.setAttribute("style","${isDisplayColumn("+ "'"+ c['show-col-name-if']+ "'"+" ,showColumns)?'':'display:none'}")
-	
+
+			if (this.showColumns != "")
+				td.setAttribute("style", "${isDisplayColumn(" + "'" + c['show-col-name-if'] + "'" + " ,showColumns)?'':'display:none'}")
+
 			row.appendChild(td);
 		});
 
@@ -226,13 +224,13 @@ export class Grid {
 		// based on viewSlot.swap() from templating 0.16.0
 		let removeResponse = this.viewSlot.removeAll();
 
-	  if (removeResponse instanceof Promise) {
-	    removeResponse.then(() => this.viewSlot.add(view));
-	  }
+		if (removeResponse instanceof Promise) {
+			removeResponse.then(() => this.viewSlot.add(view));
+		}
 
-	  this.viewSlot.add(view);
+		this.viewSlot.add(view);
 
-	  // code above replaces the following call
+		// code above replaces the following call
 		//this.viewSlot.swap(view);
 		this.viewSlot.attached();
 
@@ -249,31 +247,30 @@ export class Grid {
 	addColumn(col) {
 
 		// No-sort if grid is not sortable
-		if(!this.sortable)
+		if (!this.sortable)
 			col.nosort = true;
 
 		this.columns.push(col);
 	}
 
-	indexColumnChanged(newValue: boolean, oldValue:boolean) {
+	indexColumnChanged(newValue: boolean, oldValue: boolean) {
 		if (!oldValue && newValue) {
-			this.columns.unshift(new GridColumn( { field: "#" }, "${ $item.rowNum }"));
+			this.columns.unshift(new GridColumn({ field: "#" }, "${ $item.rowNum }"));
 		}
-		
+
 		if (oldValue && !newValue) {
 			this.columns.shift();
 		}
 	}
 
-	removeRows(func: Function){
+	removeRows(func: Function) {
 		if (!func)
 			return;
-			
+
 		this.cache = this.cache.filter(r => !func(r));
-		
+
 		this.refresh(true);
-		if (this.data.length == 0)
-		{
+		if (this.data.length == 0) {
 			this.pager.last();
 		}
 	}
@@ -281,7 +278,7 @@ export class Grid {
 	/* === Paging === */
 	pageChanged(page, oldValue) {
 
-		if(page === oldValue) return;
+		if (page === oldValue) return;
 
 		this.pageNumber = Number(page);
 		this.refresh(true);
@@ -289,8 +286,8 @@ export class Grid {
 
 	pageSizeChanged(newValue, oldValue) {
 		debugger;
-		if(newValue === oldValue) return;
-		
+		if (newValue === oldValue) return;
+
 		this.pageChanged(1, oldValue);
 		this.updatePager();
 	}
@@ -300,31 +297,31 @@ export class Grid {
 		// 1. First filter the data down to the set we want, if we are using local data
 		var tempData = data;
 
-		if(this.showColumnFilters && !this.serverFiltering)
+		if (this.showColumnFilters && !this.serverFiltering)
 			tempData = this.applyFilter(tempData);
-			
+
 		if (this.filteringSettings && this.filteringSettings.filterFunction)
 			tempData = tempData.filter(row => this.filteringSettings.filterFunction(row));
-		
+
 		//Searching
 		if (this.search)
-			tempData = this.applySearch(tempData);			
-			
+			tempData = this.applySearch(tempData);
+
 		// Count the data now before the sort/page
 		this.count = tempData.length;
 
 		// 2. Now sort the data
-		if((this.sortable || this.customSorting) && !this.serverSorting)
+		if ((this.sortable || this.customSorting) && !this.serverSorting)
 			tempData = this.applySort(tempData);
 
 		// 3. Now apply paging
-		if(this.pageable && !this.serverPaging)
+		if (this.pageable && !this.serverPaging)
 			tempData = this.applyPage(tempData);
-			
-		for(var i=0; i < tempData.length; i++) {
-			tempData[i].rowNum = (this.pageNumber - 1) * this.pageSize + i + 1; 
+
+		for (var i = 0; i < tempData.length; i++) {
+			tempData[i].rowNum = (this.pageNumber - 1) * this.pageSize + i + 1;
 		}
-		
+
 		this.data = tempData;
 
 		this.updatePager();
@@ -341,7 +338,7 @@ export class Grid {
 
 
 	updatePager() {
-		if(this.pager)
+		if (this.pager)
 			this.pager.update(this.pageNumber, Number(this.pageSize), Number(this.count));
 
 		this.firstVisibleItem = (this.pageNumber - 1) * Number(this.pageSize) + 1;
@@ -350,32 +347,32 @@ export class Grid {
 
 	/* === Sorting === */
 	fieldSorter(fields) {
-	    return function (a, b) {
-	        return fields
-	            .map(function (o) {
-	                var dir = 1;
-	                if (o[0] === '-') {
-	                   dir = -1;
-	                   o = o.substring(1);
-	                }
-	                if (a[o] > b[o]) return dir;
-	                if (a[o] < b[o]) return -(dir);
-	                return 0;
-	            })
-	            .reduce(function firstNonZeroValue (p,n) {
-	                return p ? p : n;
-	            }, 0);
-	    };
+		return function(a, b) {
+			return fields
+				.map(function(o) {
+					var dir = 1;
+					if (o[0] === '-') {
+						dir = -1;
+						o = o.substring(1);
+					}
+					if (a[o] > b[o]) return dir;
+					if (a[o] < b[o]) return -(dir);
+					return 0;
+				})
+				.reduce(function firstNonZeroValue(p, n) {
+					return p ? p : n;
+				}, 0);
+		};
 	}
 
 	pageSizesChanged() {
 		this.refresh();
 	}
-	
+
 	sortBySingleField(field, direction) {
 		this.customSorting = true;
 		this.sortProcessingOrder = [field];
-		for(var prop in this.sorting) {
+		for (var prop in this.sorting) {
 			prop = "";
 		}
 		this.sorting[field] = direction;
@@ -388,29 +385,29 @@ export class Grid {
 		var newSort = undefined;
 
 		// Figure out which way this field should be sorting
-	    switch(this.sorting[field]) {
-	    	case "asc":
-	    			newSort = "desc";
-	    		break;
-	    		case "desc":
-	    			newSort = "";
-	    		break;
-	    		default:
-	    			newSort = "asc";
-	    		break;
-	    }
+		switch (this.sorting[field]) {
+			case "asc":
+				newSort = "desc";
+				break;
+			case "desc":
+				newSort = "";
+				break;
+			default:
+				newSort = "asc";
+				break;
+		}
 
-	    this.sorting[field] = newSort;
+		this.sorting[field] = newSort;
 
-	    // If the sort is present in the sort stack, slice it to the back of the stack, otherwise just add it
-	    var pos = this.sortProcessingOrder.indexOf(field);
+		// If the sort is present in the sort stack, slice it to the back of the stack, otherwise just add it
+		var pos = this.sortProcessingOrder.indexOf(field);
 
-	    if(pos > -1)
-	    	this.sortProcessingOrder.splice(pos, 1);
+		if (pos > -1)
+			this.sortProcessingOrder.splice(pos, 1);
 
 		this.sortProcessingOrder.push(field);
 
-	    // Apply the new sort
+		// Apply the new sort
 		this.refresh();
 	}
 
@@ -423,12 +420,12 @@ export class Grid {
 		for (var i = 0; i < this.sortProcessingOrder.length; i++) {
 			var sort = this.sortProcessingOrder[i];
 
-			for(var prop in this.sorting) {
-				if(sort == prop && this.sorting[prop] !== "")
+			for (var prop in this.sorting) {
+				if (sort == prop && this.sorting[prop] !== "")
 					fields.push(this.sorting[prop] === "asc" ? (prop) : ("-" + prop));
 			}
 		};
-		
+
 		if (!fields.length) {
 			return data;
 		}
@@ -443,48 +440,45 @@ export class Grid {
 	applySearch(data) {
 		return data.filter((row) => {
 			var include = false;
-			
-			if(this.searchColumns.length>0)
-			{
+
+			if (this.searchColumns.length > 0) {
 				var columns = this.getSearchingColumns();
-				
-				for(var i=0;i<columns.length;i++)
-				{	
+
+				for (var i = 0; i < columns.length; i++) {
 					var col = columns[i];
-				
-					if(row[col.field].toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1) {
+
+					if (row[col.field].toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1) {
 						include = true;
 					}
 				}
 			}
-			else
-			{					
+			else {
 				for (var i = this.columns.length - 1; i >= 0; i--) {
 					var col = this.columns[i];
-						
-					if(row[col.field] && row[col.field].toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1) {
+
+					if (row[col.field] && row[col.field].toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1) {
 						include = true;
-					}			
+					}
 				}
 			}
 
 			return include;
 		});
 	}
-	
-	getSearchingColumns(){
+
+	getSearchingColumns() {
 		var cols = [];
-		
+
 		for (var i = this.columns.length - 1; i >= 0; i--) {
 			let col = this.columns[i];
 
-			if(this.searchColumns.includes(col.field) && col.field!=='')
-			   cols.push(col);		
+			if (this.searchColumns.includes(col.field) && col.field !== '')
+				cols.push(col);
 		}
-		
+
 		return cols;
 	}
-	
+
 	searchChanged() {
 		this.refresh();
 	}
@@ -497,7 +491,7 @@ export class Grid {
 			for (var i = this.columns.length - 1; i >= 0; i--) {
 				var col = this.columns[i];
 
-				if(col.filterValue !== "" && row[col.field] && row[col.field].toString().indexOf(col.filterValue) === -1) {
+				if (col.filterValue !== "" && row[col.field] && row[col.field].toString().indexOf(col.filterValue) === -1) {
 					include = false;
 				}
 			}
@@ -505,16 +499,16 @@ export class Grid {
 			return include;
 		});
 	}
-	
-	
-	
-	isDisplayColumn(prop:string):bool{
-	
-	if(this.showColumns=="") return true;
-	
-	if(prop=='undefined' || prop==undefined) return true;
-	
-	return prop===this.showColumns;
+
+
+
+	isDisplayColumn(prop: string): boolean {
+
+		if (this.showColumns == "") return true;
+
+		if (prop == 'undefined' || prop == undefined) return true;
+
+		return prop === this.showColumns;
 	}
 
 	getFilterColumns() {
@@ -523,7 +517,7 @@ export class Grid {
 		for (var i = this.columns.length - 1; i >= 0; i--) {
 			var col = this.columns[i];
 
-			if(col.filterValue !== "")
+			if (col.filterValue !== "")
 				cols[col.field] = col.filterValue;
 		}
 
@@ -531,30 +525,30 @@ export class Grid {
 	}
 
 	debounce(func, wait) {
-	    var timeout;
+		var timeout;
 
-	    // the debounced function
-	    return function() {
+		// the debounced function
+		return function() {
 
-	        var context = this,
-	            args = arguments;
+			var context = this,
+				args = arguments;
 
-	        // nulls out timer and calls original function
-	        var later = function() {
-	            timeout = null;
-	            func.apply(context, args);
-	        };
+			// nulls out timer and calls original function
+			var later = function() {
+				timeout = null;
+				func.apply(context, args);
+			};
 
-	        // restart the timer to call last function
-	        clearTimeout(timeout);
-	        timeout = setTimeout(later, wait);
-	    };
+			// restart the timer to call last function
+			clearTimeout(timeout);
+			timeout = setTimeout(later, wait);
+		};
 	}
 
 	updateFilters() {
 		// Debounce
 
-		if(!this.debouncedUpdateFilters) {
+		if (!this.debouncedUpdateFilters) {
 			this.debouncedUpdateFilters = this.debounce(this.refresh.bind(this), this.filterDebounce || 100);
 		}
 
@@ -562,29 +556,28 @@ export class Grid {
 	}
 
 	/* === Data === */
-	refresh(stayOnCurrentPage:boolean = false) {
+	refresh(stayOnCurrentPage: boolean = false) {
 		// If we have any server side stuff we need to get the data first
-		if (!stayOnCurrentPage)
-		{
+		if (!stayOnCurrentPage) {
 			this.pageNumber = 1;
 		}
-		
+
 		this.dontWatchForChanges();
 
 		if (this.serverPaging || this.serverSorting || this.serverFiltering || !this.initialLoad)
 			this.getData();
 		else
 			this.filterSortPage(this.cache);
-			
+
 	}
-	
+
 	reload() {
 		this.initialLoad = false;
 		this.refresh();
 	}
 
 	getData() {
-		if(!this.read)
+		if (!this.read)
 			throw new Error("No read method specified for grid");
 
 		this.initialLoad = true;
@@ -598,19 +591,19 @@ export class Grid {
 			paging: { page: this.pageNumber, size: Number(this.pageSize) },
 			filtering: this.getFilterColumns()
 		})
-		.then((result) => {
+			.then((result) => {
 
-			// Data should be in the result so grab it and assign it to the data property
-			this.handleResult(result);
+				// Data should be in the result so grab it and assign it to the data property
+				this.handleResult(result);
 
-			this.loading = false;
-		}, (result) => {
-			// Something went terribly wrong, notify the consumer
-			if(this.onReadError)
-				this.onReadError(result);
+				this.loading = false;
+			}, (result) => {
+				// Something went terribly wrong, notify the consumer
+				if (this.onReadError)
+					this.onReadError(result);
 
-			this.loading = false;
-		});
+				this.loading = false;
+			});
 	}
 
 	handleResult(result) {
@@ -620,7 +613,7 @@ export class Grid {
 
 		// Is the data being paginated on the client side?
 		// TODO: Work out when we should we use the cache... ever? If it's local data
-		if(this.pageable && !this.serverPaging && !this.serverSorting && !this.serverFiltering) {
+		if (this.pageable && !this.serverPaging && !this.serverSorting && !this.serverFiltering) {
 			// Cache the data
 			this.cache = result.data;
 			this.filterSortPage(this.cache);
@@ -629,10 +622,10 @@ export class Grid {
 			this.filterSortPage(this.data);
 		}
 
-	    // Update the pager - maybe the grid options should contain an update callback instead of reffing the
-	    // pager into the current VM?
+		// Update the pager - maybe the grid options should contain an update callback instead of reffing the
+		// pager into the current VM?
 		if (!this.filteringSettings)
-		    this.updatePager();
+			this.updatePager();
 	}
 
 	watchForChanges() {
@@ -641,24 +634,24 @@ export class Grid {
 
 		// Guard against data refresh events hitting after the user does anything that unloads the grid
 
-		if(!this.unbinding)
-		    // We can update the pager automagically
-		    this.subscription = this.bindingEngine
-		        .collectionObserver(this.cache)
-		        .subscribe((splices) => {
+		if (!this.unbinding)
+			// We can update the pager automagically
+			this.subscription = this.bindingEngine
+				.collectionObserver(this.cache)
+				.subscribe((splices) => {
 					this.refresh();
-		        });
+				});
 	}
 
 	dontWatchForChanges() {
-		if(this.subscription)
+		if (this.subscription)
 			this.subscription.dispose();
 	}
 
 	/* === Selection === */
 
 	select(item) {
-		if(this.selectable)
+		if (this.selectable)
 			this.selectedItem = item;
 
 		return true;
@@ -674,21 +667,16 @@ export class Grid {
 		// TODO: Make this a one off
 		var cont = this.element.querySelector(".grid-content-container");
 
-		if(this.gridHeight > 0) {
+		if (this.gridHeight > 0) {
 			cont.setAttribute("style", "height:" + this.gridHeight + "px");
 		} else {
 			cont.removeAttribute("style");
 		}
 	}
-	
+
 	exportToExcel() {
-		saveAs(
-			new Blob(
-				["ХЕЛЛОУ МАЙ ДІАР ФРЕНД!"]
-				, {type: "text/plain;charset=" + "UTF-8"}
-			)
-			, "hello.txt"
-		);
+		var exportTools = new ExportToExcel(this.viewCompiler, this.viewSlot, this.container, this.viewResources, this.columns);
+		exportTools.export(this.cache);
 	}
 }
 
@@ -716,4 +704,3 @@ function processUserTemplate(element) {
 
 	return { columns: cols, rowAttrs: rowAttrs };
 }
-

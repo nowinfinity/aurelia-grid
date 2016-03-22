@@ -32,6 +32,7 @@ System.config({
     "traceur": "github:jmcriffey/bower-traceur@0.0.93",
     "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.93",
     "twbs/bootstrap": "github:twbs/bootstrap@3.3.6",
+    "xlsx": "github:SheetJS/js-xlsx@0.8.0",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"
     },

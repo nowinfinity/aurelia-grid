@@ -1,4 +1,4 @@
-System.register(['aurelia-framework', './grid-column', "./pager", "eligrey/blob.js", "eligrey/FileSaver.js"], function(exports_1, context_1) {
+System.register(['aurelia-framework', './grid-column', "./pager", './export-to-excel'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['aurelia-framework', './grid-column', "./pager", "eligrey/blob.
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var aurelia_framework_1, grid_column_1, aurelia_framework_2, pager_1;
+    var aurelia_framework_1, grid_column_1, aurelia_framework_2, pager_1, export_to_excel_1;
     var Grid;
     function processUserTemplate(element) {
         var cols = [];
@@ -41,8 +41,9 @@ System.register(['aurelia-framework', './grid-column', "./pager", "eligrey/blob.
             function (pager_1_1) {
                 pager_1 = pager_1_1;
             },
-            function (_1) {},
-            function (_2) {}],
+            function (export_to_excel_1_1) {
+                export_to_excel_1 = export_to_excel_1_1;
+            }],
         execute: function() {
             Grid = (function () {
                 function Grid(element, viewCompiler, viewResources, container, targetInstruction, bindingEngine) {
@@ -549,7 +550,8 @@ System.register(['aurelia-framework', './grid-column', "./pager", "eligrey/blob.
                     }
                 };
                 Grid.prototype.exportToExcel = function () {
-                    saveAs(new Blob(["ХЕЛЛОУ МАЙ ДІАР ФРЕНД!"], { type: "text/plain;charset=" + "UTF-8" }), "hello.txt");
+                    var exportTools = new export_to_excel_1.ExportToExcel(this.viewCompiler, this.viewSlot, this.container, this.viewResources, this.columns);
+                    exportTools.export(this.cache);
                 };
                 __decorate([
                     aurelia_framework_1.child('pager'), 
