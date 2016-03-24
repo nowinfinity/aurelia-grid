@@ -298,6 +298,10 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
                                 dir = -1;
                                 o = o.substring(1);
                             }
+                            if (!a[o])
+                                return -(dir);
+                            if (!b[o])
+                                return dir;
                             if (a[o] > b[o])
                                 return dir;
                             if (a[o] < b[o])
