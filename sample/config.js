@@ -28,11 +28,12 @@ System.config({
     "eligrey/FileSaver.js": "github:eligrey/FileSaver.js@master",
     "eligrey/blob.js": "github:eligrey/blob.js@master",
     "font-awesome": "npm:font-awesome@4.5.0",
+    "fs": "github:jspm/nodelibs-fs@0.1.2",
     "systemjs/plugin-css": "github:systemjs/plugin-css@0.1.20",
     "traceur": "github:jmcriffey/bower-traceur@0.0.93",
     "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.93",
     "twbs/bootstrap": "github:twbs/bootstrap@3.3.6",
-    "xlsx": "github:SheetJS/js-xlsx@0.8.0",
+    "xlsx": "github:roman-kozubskyy/js-xlsx@0.8.8",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"
     },

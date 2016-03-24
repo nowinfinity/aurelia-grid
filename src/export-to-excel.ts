@@ -16,23 +16,27 @@ export class ExportToExcel {
 
 	export(data) {
 
-		var test = data.map(d => {
-			return this.columns.map(c => {
+		var columns = this.columns.filter(c => !c.hiddenCol && c.field != "#");
+
+		var headers = columns.map(c => c.heading);
+
+		var tableData = data.map(d => {
+			return columns.map(c => {
 				var view = this.viewCompiler.compile("<template>" + c.template.replace('${ $', '${').replace('${$', '${') + "</template>", this.resources).create(this.container);
-				view.bind({item: d});
+				view.bind({ item: d });
 				return view.fragment.childNodes[1].textContent;
 			});
-		})
+		});
 
-		 /* original data */
-		 var ws_name = "SheetJS";
-		 var wb = new Workbook(), ws = this.sheet_from_array_of_arrays(test);
+		/* original data */
+		var ws_name = "SheetJS";
+		var wb = new Workbook(), ws = this.createSheet(tableData, headers);
 
-		 /* add worksheet to workbook */
-		 wb.SheetNames.push(ws_name);
-		 wb.Sheets[ws_name] = ws;
-		 var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
-		 saveAs(new Blob([this.s2ab(wbout)], { type: "application/octet-stream" }), "test.xlsx");
+		/* add worksheet to workbook */
+		wb.SheetNames.push(ws_name);
+		wb.Sheets[ws_name] = ws;
+		var wbout = XLSX.write(wb, { cellStyles: true, bookType: 'xlsx', bookSST: true, type: 'binary' });
+		saveAs(new Blob([this.s2ab(wbout)], { type: "application/octet-stream" }), "test.xlsx");
 	}
 
 	datenum(v, date1904) {
@@ -41,26 +45,28 @@ export class ExportToExcel {
 		return (epoch - new Date(Date.UTC(1899, 11, 30)).valueOf()) / (24 * 60 * 60 * 1000);
 	}
 
-	sheet_from_array_of_arrays(data) {
+	createSheet(data, columns) {
 		var ws = {};
-		var C = 0;
+		ws['!cols'] = [];
+		for (var C = 0; C < columns.length; ++C) {
+			ws['!cols'][C] =  { wch : 20 };
+			
+			var cell = { v: columns[C], c: null, t: 's', z: null, s: null };
+			if (cell.v == null) continue;
+			cell.s = { fill: { fgColor: { rgb: '84B2E6' } } };
+			
+			var cell_ref = XLSX.utils.encode_cell({ c: C, r: 0 });
+			ws[cell_ref] = cell;
+			
+		}
 
-		for (var R = 0; R != data.length; ++R) {
-			C = 0;
+		for (var R = 1; R != data.length; ++R) {
+			var C = 0;
 			for (var property in data[R]) {
 				if (data[R].hasOwnProperty(property)) {
-					var cell = { v: data[R][property], c: null, t: null, z: null };
+					var cell = { v: data[R][property], c: null, t: 's', z: null, s: null };
 					if (cell.v == null) continue;
 					var cell_ref = XLSX.utils.encode_cell({ c: C, r: R });
-
-					if (typeof cell.v === 'number') cell.t = 'n';
-					else if (typeof cell.v === 'boolean') cell.t = 'b';
-					else if (cell.v instanceof Date) {
-						cell.t = 'n'; cell.z = XLSX.SSF._table[14];
-						cell.v = this.datenum(cell.v, false);
-					}
-					else cell.t = 's';
-
 					ws[cell_ref] = cell;
 					C = C + 1;
 				}

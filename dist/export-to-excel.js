@@ -31,8 +31,10 @@ System.register(["eligrey/blob.js", "eligrey/FileSaver.js", "xlsx", 'aurelia-fra
                 }
                 ExportToExcel.prototype.export = function (data) {
                     var _this = this;
-                    var test = data.map(function (d) {
-                        return _this.columns.map(function (c) {
+                    var columns = this.columns.filter(function (c) { return !c.hiddenCol && c.field != "#"; });
+                    var headers = columns.map(function (c) { return c.heading; });
+                    var tableData = data.map(function (d) {
+                        return columns.map(function (c) {
                             var view = _this.viewCompiler.compile("<template>" + c.template.replace('${ $', '${').replace('${$', '${') + "</template>", _this.resources).create(_this.container);
                             view.bind({ item: d });
                             return view.fragment.childNodes[1].textContent;
@@ -40,11 +42,11 @@ System.register(["eligrey/blob.js", "eligrey/FileSaver.js", "xlsx", 'aurelia-fra
                     });
                     /* original data */
                     var ws_name = "SheetJS";
-                    var wb = new Workbook(), ws = this.sheet_from_array_of_arrays(test);
+                    var wb = new Workbook(), ws = this.createSheet(tableData, headers);
                     /* add worksheet to workbook */
                     wb.SheetNames.push(ws_name);
                     wb.Sheets[ws_name] = ws;
-                    var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+                    var wbout = XLSX.write(wb, { cellStyles: true, bookType: 'xlsx', bookSST: true, type: 'binary' });
                     saveAs(new Blob([this.s2ab(wbout)], { type: "application/octet-stream" }), "test.xlsx");
                 };
                 ExportToExcel.prototype.datenum = function (v, date1904) {
@@ -53,28 +55,26 @@ System.register(["eligrey/blob.js", "eligrey/FileSaver.js", "xlsx", 'aurelia-fra
                     var epoch = Date.parse(v);
                     return (epoch - new Date(Date.UTC(1899, 11, 30)).valueOf()) / (24 * 60 * 60 * 1000);
                 };
-                ExportToExcel.prototype.sheet_from_array_of_arrays = function (data) {
+                ExportToExcel.prototype.createSheet = function (data, columns) {
                     var ws = {};
-                    var C = 0;
-                    for (var R = 0; R != data.length; ++R) {
-                        C = 0;
+                    ws['!cols'] = [];
+                    for (var C = 0; C < columns.length; ++C) {
+                        ws['!cols'][C] = { wch: 20 };
+                        var cell = { v: columns[C], c: null, t: 's', z: null, s: null };
+                        if (cell.v == null)
+                            continue;
+                        cell.s = { fill: { fgColor: { rgb: '84B2E6' } } };
+                        var cell_ref = XLSX.utils.encode_cell({ c: C, r: 0 });
+                        ws[cell_ref] = cell;
+                    }
+                    for (var R = 1; R != data.length; ++R) {
+                        var C = 0;
                         for (var property in data[R]) {
                             if (data[R].hasOwnProperty(property)) {
-                                var cell = { v: data[R][property], c: null, t: null, z: null };
+                                var cell = { v: data[R][property], c: null, t: 's', z: null, s: null };
                                 if (cell.v == null)
                                     continue;
                                 var cell_ref = XLSX.utils.encode_cell({ c: C, r: R });
-                                if (typeof cell.v === 'number')
-                                    cell.t = 'n';
-                                else if (typeof cell.v === 'boolean')
-                                    cell.t = 'b';
-                                else if (cell.v instanceof Date) {
-                                    cell.t = 'n';
-                                    cell.z = XLSX.SSF._table[14];
-                                    cell.v = this.datenum(cell.v, false);
-                                }
-                                else
-                                    cell.t = 's';
                                 ws[cell_ref] = cell;
                                 C = C + 1;
                             }

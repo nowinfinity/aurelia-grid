@@ -1,4 +1,6 @@
 <template>
+    <require from="./test-format"></require>
+	
 	<a click.delegate="setFilter('pete')">Filter PETES</a>
 	<a click.delegate="setFilter('')">All</a>
 	<br>
@@ -10,6 +12,7 @@
             <grid-row>
                 <grid-col can-sort="true" heading="Name" field="name" can-filter="false">${ $item.name }</grid-col>
                 <grid-col can-sort="true" heading="Name" field="name" can-filter="false">${ $item.name }</grid-col>
+                <grid-col can-sort="true" heading="Name with converter" field="name" can-filter="false">${ $item.name | testFormat }</grid-col>
 				<grid-col hidden-col="true" can-sort="true" heading="hiddenField" field="lastName" can-filter="false" >${ $item.lastName } hidden</grid-col>
             </grid-row>
         </grid>

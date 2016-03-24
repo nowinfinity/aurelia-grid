@@ -11,9 +11,10 @@
       "eligrey/FileSaver.js": "github:eligrey/FileSaver.js@master",
       "eligrey/blob.js": "github:eligrey/blob.js@master",
       "font-awesome": "npm:font-awesome@^4.5.0",
+      "fs": "github:jspm/nodelibs-fs@^0.1.2",
       "systemjs/plugin-css": "github:systemjs/plugin-css@^0.1.20",
       "twbs/bootstrap": "github:twbs/bootstrap@^3.3.6",
-      "xlsx": "github:SheetJS/js-xlsx@^0.8.0"
+      "xlsx": "github:roman-kozubskyy/js-xlsx@^0.8.8"
     },
     "devDependencies": {
       "core-js": "npm:core-js@^1.2.6",
