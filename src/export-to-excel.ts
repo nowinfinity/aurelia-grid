@@ -2,32 +2,13 @@ import "eligrey/blob.js"
 import "eligrey/FileSaver.js"
 import {GridColumn} from "./grid-column"
 import "xlsx"
-import {autoinject, noView, ViewCompiler, ViewSlot, Container, ViewResources} from 'aurelia-framework';
+import {autoinject, noView} from 'aurelia-framework';
 
 @noView
 @autoinject
 export class ExportToExcel {
 
-	columns: GridColumn[];
-
-	constructor(private viewCompiler: ViewCompiler, private viewSlot: ViewSlot, private container: Container, private resources: ViewResources, columns: Array<GridColumn>) {
-		this.columns = columns;
-	}
-
-	export(data) {
-
-		var columns = this.columns.filter(c => !c.hiddenCol && c.field != "#");
-
-		var headers = columns.map(c => c.heading);
-
-		var tableData = data.map(d => {
-			return columns.map(c => {
-				var view = this.viewCompiler.compile("<template>" + c.template.replace('${ $', '${').replace('${$', '${') + "</template>", this.resources).create(this.container);
-				view.bind({ item: d });
-				return view.fragment.childNodes[1].textContent;
-			});
-		});
-
+	static export(tableData, headers: Array<String>) {
 		/* original data */
 		var ws_name = "SheetJS";
 		var wb = new Workbook(), ws = this.createSheet(tableData, headers);
@@ -36,20 +17,14 @@ export class ExportToExcel {
 		wb.SheetNames.push(ws_name);
 		wb.Sheets[ws_name] = ws;
 		var wbout = XLSX.write(wb, { cellStyles: true, bookType: 'xlsx', bookSST: true, type: 'binary' });
-		saveAs(new Blob([this.s2ab(wbout)], { type: "application/octet-stream" }), "test.xlsx");
+		saveAs(new Blob([this.s2ab(wbout)], { type: "application/octet-stream" }), "grid.xlsx");
 	}
-
-	datenum(v, date1904) {
-		if (date1904) v += 1462;
-		var epoch = Date.parse(v);
-		return (epoch - new Date(Date.UTC(1899, 11, 30)).valueOf()) / (24 * 60 * 60 * 1000);
-	}
-
-	createSheet(data, columns) {
+	
+	static createSheet(data, columns) {
 		var ws = {};
 		ws['!cols'] = [];
 		for (var C = 0; C < columns.length; ++C) {
-			ws['!cols'][C] =  { wch : 20 };
+			ws['!cols'][C] =  { wch : 30 };
 			
 			var cell = { v: columns[C], c: null, t: 's', z: null, s: null };
 			if (cell.v == null) continue;
@@ -76,7 +51,7 @@ export class ExportToExcel {
 		return ws;
 	}
 
-	s2ab(s) {
+	static s2ab(s) {
 		var buf = new ArrayBuffer(s.length);
 		var view = new Uint8Array(buf);
 		for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;

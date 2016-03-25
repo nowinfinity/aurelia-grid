@@ -7,6 +7,7 @@
 	<a click.delegate="sort('name')">sort by name</a>
 	<a click.delegate="sort('lastName')">sort by last name</a>
 	<a click.delegate="grid.exportToExcel()">export excel</a>
+	<a click.delegate="grid.exportToCsv()">export csv</a>
     <section class="au-animate">
        <grid grid.ref="grid" pageable="true" filtering-settings.bind="filteringSettings" index-column.bind="true" read.call="getLocalData($event)" sortable.bind="false" server-paging.bind="false" server-sorting.bind="false" sortable.bind="false" >
             <grid-row>

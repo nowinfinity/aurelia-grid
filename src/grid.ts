@@ -3,6 +3,7 @@ import {GridColumn} from './grid-column';
 import {ViewCompiler, ViewSlot, ViewResources, Container} from 'aurelia-framework';
 import {Pager} from "./pager";
 import {ExportToExcel} from './export-to-excel'
+import {ExportToCsv} from './export-to-csv'
 
 @customElement('grid')
 @processContent(function(viewCompiler, viewResources, element, instruction) {
@@ -291,28 +292,32 @@ export class Grid {
 		this.pageChanged(1, oldValue);
 		this.updatePager();
 	}
+	
+	filterSort(data) {
+		if (this.showColumnFilters && !this.serverFiltering)
+			data = this.applyFilter(data);
+
+		if (this.filteringSettings && this.filteringSettings.filterFunction)
+			data = data.filter(row => this.filteringSettings.filterFunction(row));
+
+		//Searching
+		if (this.search)
+			data = this.applySearch(data);
+
+		// Count the data now before the sort/page
+		this.count = data.length;
+
+		// 2. Now sort the data
+		if ((this.sortable || this.customSorting) && !this.serverSorting)
+			data = this.applySort(data);
+			
+		return data;
+	}
 
 	filterSortPage(data) {
 		// Applies filter, sort then page
 		// 1. First filter the data down to the set we want, if we are using local data
-		var tempData = data;
-
-		if (this.showColumnFilters && !this.serverFiltering)
-			tempData = this.applyFilter(tempData);
-
-		if (this.filteringSettings && this.filteringSettings.filterFunction)
-			tempData = tempData.filter(row => this.filteringSettings.filterFunction(row));
-
-		//Searching
-		if (this.search)
-			tempData = this.applySearch(tempData);
-
-		// Count the data now before the sort/page
-		this.count = tempData.length;
-
-		// 2. Now sort the data
-		if ((this.sortable || this.customSorting) && !this.serverSorting)
-			tempData = this.applySort(tempData);
+		var tempData = this.filterSort(data)
 
 		// 3. Now apply paging
 		if (this.pageable && !this.serverPaging)
@@ -356,7 +361,7 @@ export class Grid {
 						o = o.substring(1);
 					}
 					if (!a[o]) return -(dir);
-					if (!b[o]) return dir;					
+					if (!b[o]) return dir;
 					if (a[o] > b[o]) return dir;
 					if (a[o] < b[o]) return -(dir);
 					return 0;
@@ -676,9 +681,28 @@ export class Grid {
 		}
 	}
 
+	getTableData(columns = null) {
+		var data = this.filterSort(this.cache);
+		
+		var tableData = this.data.map(d => {
+			return columns.map(c => {
+				var view = this.viewCompiler.compile("<template>" + c.template.replace('${ $', '${').replace('${$', '${') + "</template>", this.viewResources).create(this.container);
+				view.bind({ item: d });
+				return view.fragment.childNodes[1].textContent;
+			});
+		});
+		
+		return tableData;
+	}
+
 	exportToExcel() {
-		var exportTools = new ExportToExcel(this.viewCompiler, this.viewSlot, this.container, this.viewResources, this.columns);
-		exportTools.export(this.cache);
+		var columns = this.columns.filter(c => !c.hiddenCol && c.field != "#");
+		ExportToExcel.export(this.getTableData(columns), columns.map(c => c.heading));
+	}
+	
+	exportToCsv() {
+		var columns = this.columns.filter(c => !c.hiddenCol && c.field != "#");
+		ExportToCsv.export(this.getTableData(columns), columns.map(c => c.heading));
 	}
 }
 

@@ -1,4 +1,4 @@
-System.register(['aurelia-framework', './grid-column', "./pager", './export-to-excel'], function(exports_1, context_1) {
+System.register(['aurelia-framework', './grid-column', "./pager", './export-to-excel', './export-to-csv'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var aurelia_framework_1, grid_column_1, aurelia_framework_2, pager_1, export_to_excel_1;
+    var aurelia_framework_1, grid_column_1, aurelia_framework_2, pager_1, export_to_excel_1, export_to_csv_1;
     var Grid;
     function processUserTemplate(element) {
         var cols = [];
@@ -43,6 +43,9 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
             },
             function (export_to_excel_1_1) {
                 export_to_excel_1 = export_to_excel_1_1;
+            },
+            function (export_to_csv_1_1) {
+                export_to_csv_1 = export_to_csv_1_1;
             }],
         execute: function() {
             Grid = (function () {
@@ -250,23 +253,26 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
                     this.pageChanged(1, oldValue);
                     this.updatePager();
                 };
-                Grid.prototype.filterSortPage = function (data) {
+                Grid.prototype.filterSort = function (data) {
                     var _this = this;
-                    // Applies filter, sort then page
-                    // 1. First filter the data down to the set we want, if we are using local data
-                    var tempData = data;
                     if (this.showColumnFilters && !this.serverFiltering)
-                        tempData = this.applyFilter(tempData);
+                        data = this.applyFilter(data);
                     if (this.filteringSettings && this.filteringSettings.filterFunction)
-                        tempData = tempData.filter(function (row) { return _this.filteringSettings.filterFunction(row); });
+                        data = data.filter(function (row) { return _this.filteringSettings.filterFunction(row); });
                     //Searching
                     if (this.search)
-                        tempData = this.applySearch(tempData);
+                        data = this.applySearch(data);
                     // Count the data now before the sort/page
-                    this.count = tempData.length;
+                    this.count = data.length;
                     // 2. Now sort the data
                     if ((this.sortable || this.customSorting) && !this.serverSorting)
-                        tempData = this.applySort(tempData);
+                        data = this.applySort(data);
+                    return data;
+                };
+                Grid.prototype.filterSortPage = function (data) {
+                    // Applies filter, sort then page
+                    // 1. First filter the data down to the set we want, if we are using local data
+                    var tempData = this.filterSort(data);
                     // 3. Now apply paging
                     if (this.pageable && !this.serverPaging)
                         tempData = this.applyPage(tempData);
@@ -553,9 +559,26 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
                         cont.removeAttribute("style");
                     }
                 };
+                Grid.prototype.getTableData = function (columns) {
+                    var _this = this;
+                    if (columns === void 0) { columns = null; }
+                    var data = this.filterSort(this.cache);
+                    var tableData = this.data.map(function (d) {
+                        return columns.map(function (c) {
+                            var view = _this.viewCompiler.compile("<template>" + c.template.replace('${ $', '${').replace('${$', '${') + "</template>", _this.viewResources).create(_this.container);
+                            view.bind({ item: d });
+                            return view.fragment.childNodes[1].textContent;
+                        });
+                    });
+                    return tableData;
+                };
                 Grid.prototype.exportToExcel = function () {
-                    var exportTools = new export_to_excel_1.ExportToExcel(this.viewCompiler, this.viewSlot, this.container, this.viewResources, this.columns);
-                    exportTools.export(this.cache);
+                    var columns = this.columns.filter(function (c) { return !c.hiddenCol && c.field != "#"; });
+                    export_to_excel_1.ExportToExcel.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }));
+                };
+                Grid.prototype.exportToCsv = function () {
+                    var columns = this.columns.filter(function (c) { return !c.hiddenCol && c.field != "#"; });
+                    export_to_csv_1.ExportToCsv.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }));
                 };
                 __decorate([
                     aurelia_framework_1.child('pager'), 

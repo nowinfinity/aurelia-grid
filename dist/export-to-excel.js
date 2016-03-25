@@ -22,24 +22,9 @@ System.register(["eligrey/blob.js", "eligrey/FileSaver.js", "xlsx", 'aurelia-fra
             }],
         execute: function() {
             ExportToExcel = (function () {
-                function ExportToExcel(viewCompiler, viewSlot, container, resources, columns) {
-                    this.viewCompiler = viewCompiler;
-                    this.viewSlot = viewSlot;
-                    this.container = container;
-                    this.resources = resources;
-                    this.columns = columns;
+                function ExportToExcel() {
                 }
-                ExportToExcel.prototype.export = function (data) {
-                    var _this = this;
-                    var columns = this.columns.filter(function (c) { return !c.hiddenCol && c.field != "#"; });
-                    var headers = columns.map(function (c) { return c.heading; });
-                    var tableData = data.map(function (d) {
-                        return columns.map(function (c) {
-                            var view = _this.viewCompiler.compile("<template>" + c.template.replace('${ $', '${').replace('${$', '${') + "</template>", _this.resources).create(_this.container);
-                            view.bind({ item: d });
-                            return view.fragment.childNodes[1].textContent;
-                        });
-                    });
+                ExportToExcel.export = function (tableData, headers) {
                     /* original data */
                     var ws_name = "SheetJS";
                     var wb = new Workbook(), ws = this.createSheet(tableData, headers);
@@ -47,19 +32,13 @@ System.register(["eligrey/blob.js", "eligrey/FileSaver.js", "xlsx", 'aurelia-fra
                     wb.SheetNames.push(ws_name);
                     wb.Sheets[ws_name] = ws;
                     var wbout = XLSX.write(wb, { cellStyles: true, bookType: 'xlsx', bookSST: true, type: 'binary' });
-                    saveAs(new Blob([this.s2ab(wbout)], { type: "application/octet-stream" }), "test.xlsx");
+                    saveAs(new Blob([this.s2ab(wbout)], { type: "application/octet-stream" }), "grid.xlsx");
                 };
-                ExportToExcel.prototype.datenum = function (v, date1904) {
-                    if (date1904)
-                        v += 1462;
-                    var epoch = Date.parse(v);
-                    return (epoch - new Date(Date.UTC(1899, 11, 30)).valueOf()) / (24 * 60 * 60 * 1000);
-                };
-                ExportToExcel.prototype.createSheet = function (data, columns) {
+                ExportToExcel.createSheet = function (data, columns) {
                     var ws = {};
                     ws['!cols'] = [];
                     for (var C = 0; C < columns.length; ++C) {
-                        ws['!cols'][C] = { wch: 20 };
+                        ws['!cols'][C] = { wch: 30 };
                         var cell = { v: columns[C], c: null, t: 's', z: null, s: null };
                         if (cell.v == null)
                             continue;
@@ -83,7 +62,7 @@ System.register(["eligrey/blob.js", "eligrey/FileSaver.js", "xlsx", 'aurelia-fra
                     ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: data.length, c: C - 1 } });
                     return ws;
                 };
-                ExportToExcel.prototype.s2ab = function (s) {
+                ExportToExcel.s2ab = function (s) {
                     var buf = new ArrayBuffer(s.length);
                     var view = new Uint8Array(buf);
                     for (var i = 0; i != s.length; ++i)
@@ -93,7 +72,7 @@ System.register(["eligrey/blob.js", "eligrey/FileSaver.js", "xlsx", 'aurelia-fra
                 ExportToExcel = __decorate([
                     aurelia_framework_1.noView,
                     aurelia_framework_1.autoinject, 
-                    __metadata('design:paramtypes', [aurelia_framework_1.ViewCompiler, aurelia_framework_1.ViewSlot, aurelia_framework_1.Container, aurelia_framework_1.ViewResources, Array])
+                    __metadata('design:paramtypes', [])
                 ], ExportToExcel);
                 return ExportToExcel;
             }());
