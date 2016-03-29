@@ -8,9 +8,8 @@ export class GridColumn {
 	specialColumns = ["heading", "nosort"];
 	hiddenCol: boolean;
 	showColNameIf:string="";
+	class:string="";
 	
-	
-
 	constructor(config, template) {
 		this.template = template;
 		this.field = config.field;
@@ -24,7 +23,7 @@ export class GridColumn {
 		this.showFilter = config["show-filter"] === "false" ? false : true;
 		this.hiddenCol = config["hidden-col"] === "true" ? true : false;
 		this.showColNameIf = config["show-col-name-if"];
-		
+		this.class=config.class;
 		// Set attributes
 		for (var prop in config) {
     		if (config.hasOwnProperty(prop) && this.specialColumns.indexOf(prop) < 0) {

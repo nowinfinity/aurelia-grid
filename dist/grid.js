@@ -1,4 +1,4 @@
-System.register(['aurelia-framework', './grid-column', "./pager", './export-to-excel', './export-to-csv'], function(exports_1, context_1) {
+System.register(['aurelia-framework', './grid-column', './grid-columns-expander', "./pager", './export-to-excel', './export-to-csv'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,13 +10,19 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var aurelia_framework_1, grid_column_1, aurelia_framework_2, pager_1, export_to_excel_1, export_to_csv_1;
+    var aurelia_framework_1, grid_column_1, grid_columns_expander_1, aurelia_framework_2, pager_1, export_to_excel_1, export_to_csv_1;
     var Grid;
     function processUserTemplate(element) {
         var cols = [];
         // Get any col tags from the content
         var rowElement = element.querySelector("grid-row");
         var columnElements = Array.prototype.slice.call(rowElement.querySelectorAll("grid-col"));
+        var expanderElement = rowElement.querySelector("grid-cols-expander"), expHash = {}, expander = null;
+        if (expanderElement != null) {
+            var attrs_1 = Array.prototype.slice.call(expanderElement.attributes);
+            attrs_1.forEach(function (a) { return expHash[a.name] = a.value; });
+            var expander = new grid_columns_expander_1.GridColumnsExpander(expHash, expanderElement.innerHTML);
+        }
         columnElements.forEach(function (c) {
             var attrs = Array.prototype.slice.call(c.attributes), colHash = {};
             attrs.forEach(function (a) { return colHash[a.name] = a.value; });
@@ -27,7 +33,7 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
         var rowAttrs = {};
         var attrs = Array.prototype.slice.call(rowElement.attributes);
         attrs.forEach(function (a) { return rowAttrs[a.name] = a.value; });
-        return { columns: cols, rowAttrs: rowAttrs };
+        return { columns: cols, rowAttrs: rowAttrs, expander: expander };
     }
     return {
         setters:[
@@ -37,6 +43,9 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
             },
             function (grid_column_1_1) {
                 grid_column_1 = grid_column_1_1;
+            },
+            function (grid_columns_expander_1_1) {
+                grid_columns_expander_1 = grid_columns_expander_1_1;
             },
             function (pager_1_1) {
                 pager_1 = pager_1_1;
@@ -59,6 +68,7 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
                     this.showNoRowsMessage = false;
                     /* == Styling == */
                     this.gridHeight = 0;
+                    this.class = "";
                     /* == Options == */
                     // Initial load flag (for client side)
                     this.initialLoad = false;
@@ -123,9 +133,9 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
                     var behavior = targetInstruction.behaviorInstructions[0];
                     this.columns = behavior.gridColumns;
                     this.rowAttrs = behavior.rowAttrs;
+                    this.expanderAttrs = behavior.expanderAttrs;
                 }
                 Grid.prototype.showColumnsChanged = function () {
-                    console.log("showColumnsChanged");
                     console.log(this.showColumns);
                 };
                 Object.defineProperty(Grid.prototype, "visibleColumns", {
@@ -150,18 +160,38 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
                     if (this.serverPaging && !this.serverSorting)
                         this.sortable = false;
                     // The table body element will host the rows
-                    var tbody = this.element.querySelector("table>tbody");
-                    this.viewSlot = new aurelia_framework_2.ViewSlot(tbody, true);
+                    var body = this.element.querySelector("div.table");
+                    this.viewSlot = new aurelia_framework_2.ViewSlot(body, true);
                     // Get the row template too and add a repeater/class
-                    var row = tbody.querySelector("tr");
+                    var row = body.querySelector("div.table-row");
+                    if (this.expanderAttrs != null) {
+                        var tableContainer = document.createElement("div");
+                        tableContainer.setAttribute("class", "table-container");
+                        tableContainer.setAttribute("repeat.for", "$item of data");
+                        for (var prop in this.rowAttrs) {
+                            if (this.rowAttrs.hasOwnProperty(prop)) {
+                                row.setAttribute(prop, this.rowAttrs[prop]);
+                            }
+                        }
+                        tableContainer.appendChild(row);
+                        var innerDiv = document.createElement("div");
+                        innerDiv.setAttribute("class", "inner-block");
+                        innerDiv.setAttribute("style", "display:none");
+                        innerDiv.innerHTML = "<compose  model.bind=\"{model: " + this.expanderAttrs.model + "}\" view=\"" + this.expanderAttrs.viewModel + "\" ></compose>";
+                        tableContainer.appendChild(innerDiv);
+                        this.rowTemplate = document.createDocumentFragment();
+                        this.rowTemplate.appendChild(tableContainer);
+                        this.buildTemplates("div.table-row");
+                        return;
+                    }
                     this.addRowAttributes(row);
                     this.rowTemplate = document.createDocumentFragment();
                     this.rowTemplate.appendChild(row);
-                    this.buildTemplates();
+                    this.buildTemplates("div.table-row");
                 };
                 Grid.prototype.addRowAttributes = function (row) {
                     row.setAttribute("repeat.for", "$item of data");
-                    row.setAttribute("class", "${ $item === $parent.selectedItem ? 'info' : '' }");
+                    //row.setAttribute("class", "${ $item === $parent.selectedItem ? 'info' : '' }");
                     // TODO: Do we allow the user to customise the row template or just
                     // provide a callback?
                     // Copy any user specified row attributes to the row template	
@@ -171,14 +201,14 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
                         }
                     }
                 };
-                Grid.prototype.buildTemplates = function () {
+                Grid.prototype.buildTemplates = function (selector) {
                     var _this = this;
                     // Create a fragment we will manipulate the DOM in
                     var rowTemplate = this.rowTemplate.cloneNode(true);
-                    var row = rowTemplate.querySelector("tr");
+                    var row = rowTemplate.querySelector(selector);
                     // Create the columns
                     this.columns.filter(function (c) { return !c.hiddenCol; }).forEach(function (c) {
-                        var td = document.createElement("td");
+                        var td = document.createElement("div");
                         // Set attributes
                         for (var prop in c) {
                             if (c.hasOwnProperty(prop)) {
@@ -224,7 +254,7 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
                 };
                 Grid.prototype.indexColumnChanged = function (newValue, oldValue) {
                     if (!oldValue && newValue) {
-                        this.columns.unshift(new grid_column_1.GridColumn({ field: "#" }, "${ $item.rowNum }"));
+                        this.columns.unshift(new grid_column_1.GridColumn({ field: "#", class: "table-cell" }, "${ $item.rowNum }"));
                     }
                     if (oldValue && !newValue) {
                         this.columns.shift();
@@ -591,6 +621,10 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
+                ], Grid.prototype, "class", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
                 ], Grid.prototype, "initialLoad", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
@@ -723,6 +757,7 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
                         var result = processUserTemplate(element);
                         instruction.gridColumns = result.columns;
                         instruction.rowAttrs = result.rowAttrs;
+                        instruction.expanderAttrs = result.expander;
                         return true;
                     }),
                     aurelia_framework_1.autoinject(), 

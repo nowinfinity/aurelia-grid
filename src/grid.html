@@ -8,35 +8,32 @@
     <div>
         <div class="grid-container">
             <!-- Header table -->
-            <table class="table table-hover table-striped table-responsive grid-header-table">
-                <thead>
-                    <tr role="button" if.bind="showColumnHeaders">
-                        <th repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' }"  style.bind="isDisplayColumn($column.showColNameIf,showColumns)?'':'display:none' ">
-											
-                            <a if.bind="$column.nosort == false && $parent.sortable" click.trigger="$parent.sortChanged($column.field)">${ $column.heading }</a>
+
+			<div if.bind="showColumnHeaders" class="table">
+				<div class="table-row table-head">
+					<div repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' }"  style.bind="isDisplayColumn($column.showColNameIf,showColumns)?'':'display:none' ">		
+					 <a if.bind="$column.nosort == false && $parent.sortable" click.trigger="$parent.sortChanged($column.field)">${ $column.heading }</a>
                             <span if.bind="$column.nosort == true || !$parent.sortable">${ $column.heading }</span>
                             <span if.bind="$parent.sorting[$column.field] === 'desc'" class="glyphicon glyphicon-triangle-top text-primary"></span>
-                            <span if.bind="$parent.sorting[$column.field] === 'asc'" class="glyphicon glyphicon-triangle-bottom text-primary"></span>
-                        </th>
-                    </tr>
-                    <tr if.bind="showColumnFilters" class="grid-column-filters">
-                        <th repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' }" >
+                            <span if.bind="$parent.sorting[$column.field] === 'asc'" class="glyphicon glyphicon-triangle-bottom text-primary"></span>			
+					</div>
+				</div>	
+				<div if.bind="showColumnFilters"  class="grid-column-filters">
+				 <div repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' }" >
                             <div if.bind="$column.showFilter">
                                 <input class="form-control" value.bind="$column.filterValue" placeholder="filter..." input.delegate="$parent.updateFilters()"></input>
                                 <span class="glyphicon glyphicon-search text-muted"></span>
                             </div>
-                        </th>
-                    </tr>
-                </thead>
-            </table>
+                        </div>
+				</div>		
+			</div>
+
             <!-- Content table -->
-            <div class="grid-content-container" show.bind="!loading">
-                <table class="table table-hover table-striped table-responsive selectable" show.bind="!showNoRowsMessage || (showNoRowsMessage && count > 0)">
-                    <tbody>
-                        <tr role="button" click.delegate="$parent.select($item)">     
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="grid-content-container" show.bind="!loading">		
+				  <div class="table ${class !== '' ? class : ''}   table-hover table-striped table-responsive selectable" show.bind="!showNoRowsMessage || (showNoRowsMessage && count > 0)">
+                       <div class="table-row" click.delegate="$parent.select($item)"></div>       
+                </div>
+						
                 <div show.bind="showNoRowsMessage && count === 0" class="alert alert-warning">${ noRowsMessage }</div>
             </div>
             <div class="grid-overlay" if.bind="loading"></div>

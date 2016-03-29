@@ -1,5 +1,6 @@
 import {child, bindable, autoinject, BindingEngine, customElement, processContent, TargetInstruction } from 'aurelia-framework';
 import {GridColumn} from './grid-column';
+import {GridColumnsExpander} from './grid-columns-expander';
 import {ViewCompiler, ViewSlot, ViewResources, Container} from 'aurelia-framework';
 import {Pager} from "./pager";
 import {ExportToExcel} from './export-to-excel'
@@ -11,6 +12,8 @@ import {ExportToCsv} from './export-to-csv'
 	var result = processUserTemplate(element);
 	instruction.gridColumns = result.columns;
 	instruction.rowAttrs = result.rowAttrs;
+	instruction.expanderAttrs = result.expander;
+	
 
 	return true;
 })
@@ -23,6 +26,7 @@ export class Grid {
 	@child('pager') pager: Pager;
 	/* == Styling == */
 	@bindable gridHeight = 0;
+	@bindable class = "";
 
 	/* == Options == */
 
@@ -40,7 +44,6 @@ export class Grid {
 
 
 	showColumnsChanged() {
-		console.log("showColumnsChanged");
 		console.log(this.showColumns);
 
 	}
@@ -128,6 +131,10 @@ export class Grid {
 	viewSlot;
 	rowTemplate;
 	rowAttrs;
+	
+	expanderAttrs;
+	
+	
 
 	constructor(private element: Element, public viewCompiler: ViewCompiler, public viewResources: ViewResources, public container: Container, private targetInstruction: TargetInstruction,
 		public bindingEngine: BindingEngine) {
@@ -135,6 +142,8 @@ export class Grid {
 
 		this.columns = behavior.gridColumns;
 		this.rowAttrs = behavior.rowAttrs;
+		
+		this.expanderAttrs =  behavior.expanderAttrs;
 	}
 
 	/* === Lifecycle === */
@@ -146,6 +155,7 @@ export class Grid {
 	}
 
 	parent: any;
+
 
 	bind(executionContext) {
 		this.parent = executionContext;
@@ -159,23 +169,45 @@ export class Grid {
 			this.sortable = false;
 
 		// The table body element will host the rows
-		var tbody = this.element.querySelector("table>tbody");
-		this.viewSlot = new ViewSlot(tbody, true);
+		var body = this.element.querySelector("div.table");
+			
+		this.viewSlot = new ViewSlot(body, true);
 
 		// Get the row template too and add a repeater/class
-		var row = tbody.querySelector("tr");
+		var row = body.querySelector("div.table-row");
 
-		this.addRowAttributes(row);
+		if(this.expanderAttrs!=null)
+		{	
+			let tableContainer = document.createElement("div");	
+			tableContainer.setAttribute("class","table-container");
+			tableContainer.setAttribute("repeat.for", "$item of data");	
+			for (var prop in this.rowAttrs) {
 
+				if (this.rowAttrs.hasOwnProperty(prop)) {
+					row.setAttribute(prop, this.rowAttrs[prop]);
+				}
+			}			
+		tableContainer.appendChild(row);
+		var innerDiv = document.createElement("div");
+		innerDiv.setAttribute("class", "inner-block");
+		innerDiv.setAttribute("style", "display:none");
+		innerDiv.innerHTML = `<compose  model.bind="{model: ${this.expanderAttrs.model}}" view="${this.expanderAttrs.viewModel}" ></compose>`;
+		tableContainer.appendChild(innerDiv);
 		this.rowTemplate = document.createDocumentFragment();
-		this.rowTemplate.appendChild(row);
-
-		this.buildTemplates();
+		this.rowTemplate.appendChild(tableContainer);
+		this.buildTemplates("div.table-row");
+		return;
+		}
+		
+		 this.addRowAttributes(row);
+		 this.rowTemplate = document.createDocumentFragment();
+		 this.rowTemplate.appendChild(row);
+		 this.buildTemplates("div.table-row");
 	}
 
 	addRowAttributes(row) {
 		row.setAttribute("repeat.for", "$item of data");
-		row.setAttribute("class", "${ $item === $parent.selectedItem ? 'info' : '' }");
+		//row.setAttribute("class", "${ $item === $parent.selectedItem ? 'info' : '' }");
 		// TODO: Do we allow the user to customise the row template or just
 		// provide a callback?
 		// Copy any user specified row attributes to the row template	
@@ -187,16 +219,15 @@ export class Grid {
 		}
 	}
 
-	buildTemplates() {
-
+	buildTemplates(selector) {
 		// Create a fragment we will manipulate the DOM in
 		var rowTemplate = this.rowTemplate.cloneNode(true);
-		var row = rowTemplate.querySelector("tr");
-
+			
+		var row = rowTemplate.querySelector(selector);
+		
 		// Create the columns
 		this.columns.filter(c => !c.hiddenCol).forEach(c => {
-			var td = document.createElement("td");
-
+			var td = document.createElement("div");
 			// Set attributes
 			for (var prop in c) {
 				if (c.hasOwnProperty(prop)) {
@@ -214,7 +245,7 @@ export class Grid {
 
 			row.appendChild(td);
 		});
-
+		
 		// Now compile the row template
 		var view = this.viewCompiler.compile(rowTemplate, this.viewResources).create(this.container);
 		// Templating 17.x changes the API
@@ -230,6 +261,7 @@ export class Grid {
 		}
 
 		this.viewSlot.add(view);
+		
 
 		// code above replaces the following call
 		//this.viewSlot.swap(view);
@@ -256,7 +288,7 @@ export class Grid {
 
 	indexColumnChanged(newValue: boolean, oldValue: boolean) {
 		if (!oldValue && newValue) {
-			this.columns.unshift(new GridColumn({ field: "#" }, "${ $item.rowNum }"));
+			this.columns.unshift(new GridColumn({ field: "#",class:"table-cell" }, "${ $item.rowNum }"));
 		}
 
 		if (oldValue && !newValue) {
@@ -713,11 +745,20 @@ function processUserTemplate(element) {
 	// Get any col tags from the content
 	var rowElement = element.querySelector("grid-row");
 	var columnElements = Array.prototype.slice.call(rowElement.querySelectorAll("grid-col"));
-
+	
+	var expanderElement = rowElement.querySelector("grid-cols-expander") , expHash = {} ,expander=null ;
+	
+    if(expanderElement!=null)
+	{	
+		let attrs =  Array.prototype.slice.call(expanderElement.attributes);	
+		attrs.forEach(a => expHash[a.name] = a.value);
+		var expander = new GridColumnsExpander(expHash,expanderElement.innerHTML);
+	}
+	
 	columnElements.forEach(c => {
 		var attrs = Array.prototype.slice.call(c.attributes), colHash = {};
 		attrs.forEach(a => colHash[a.name] = a.value);
-
+		
 		var col = new GridColumn(colHash, c.innerHTML);
 
 		cols.push(col);
@@ -728,5 +769,5 @@ function processUserTemplate(element) {
 	var attrs = Array.prototype.slice.call(rowElement.attributes);
 	attrs.forEach(a => rowAttrs[a.name] = a.value);
 
-	return { columns: cols, rowAttrs: rowAttrs };
+	return { columns: cols, rowAttrs: rowAttrs, expander: expander};
 }
