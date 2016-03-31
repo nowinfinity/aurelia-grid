@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-System.register(['aurelia-framework', './grid-column', "./pager", './export-to-excel', './export-to-csv', './export-to-pdf'], function(exports_1, context_1) {
-=======
-System.register(['aurelia-framework', './grid-column', './grid-columns-expander', "./pager", './export-to-excel', './export-to-csv'], function(exports_1, context_1) {
->>>>>>> 41f0d39613432e0480ce47ad4409b522a29022d9
+System.register(['aurelia-framework', './grid-column', './grid-columns-expander', "./pager", './export-to-excel', './export-to-csv', './export-to-pdf'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -14,11 +10,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-<<<<<<< HEAD
-    var aurelia_framework_1, grid_column_1, aurelia_framework_2, pager_1, export_to_excel_1, export_to_csv_1, export_to_pdf_1;
-=======
-    var aurelia_framework_1, grid_column_1, grid_columns_expander_1, aurelia_framework_2, pager_1, export_to_excel_1, export_to_csv_1;
->>>>>>> 41f0d39613432e0480ce47ad4409b522a29022d9
+    var aurelia_framework_1, grid_column_1, grid_columns_expander_1, aurelia_framework_2, pager_1, export_to_excel_1, export_to_csv_1, export_to_pdf_1;
     var Grid;
     function processUserTemplate(element) {
         var cols = [];
