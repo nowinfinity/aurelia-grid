@@ -699,7 +699,7 @@ table .centered {
 
 /* line 117, ../../src/styles/base/_table.scss */
 .table .table-cell:first-child {
-  width: 26.5%;
+  width: 20px;
 }
 
 /* line 118, ../../src/styles/base/_table.scss */
