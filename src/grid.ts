@@ -32,6 +32,9 @@ export class Grid {
 
 	// Initial load flag (for client side)
 	@bindable initialLoad = false;
+	
+	
+	@bindable model:any;
 
 
 
@@ -144,6 +147,7 @@ export class Grid {
 		this.rowAttrs = behavior.rowAttrs;
 		
 		this.expanderAttrs =  behavior.expanderAttrs;
+			
 	}
 
 	/* === Lifecycle === */
@@ -191,18 +195,21 @@ export class Grid {
 		var innerDiv = document.createElement("div");
 		innerDiv.setAttribute("class", "inner-block");
 		innerDiv.setAttribute("style", "display:none");
-		innerDiv.innerHTML = `<compose  model.bind="{model: ${this.expanderAttrs.model}}" view="${this.expanderAttrs.viewModel}" ></compose>`;
+		
+		innerDiv.innerHTML = '<compose  view-model="'+ this.expanderAttrs.viewModel+'"      model.bind="'+this.expanderAttrs.model+'"  ></compose>';
+		//view="'+ this.expanderAttrs.viewModel+'"
+
 		tableContainer.appendChild(innerDiv);
 		this.rowTemplate = document.createDocumentFragment();
 		this.rowTemplate.appendChild(tableContainer);
-		this.buildTemplates("div.table-row");
+		this.buildTemplates();
 		return;
 		}
 		
 		 this.addRowAttributes(row);
 		 this.rowTemplate = document.createDocumentFragment();
 		 this.rowTemplate.appendChild(row);
-		 this.buildTemplates("div.table-row");
+		 this.buildTemplates();
 	}
 
 	addRowAttributes(row) {
@@ -219,11 +226,11 @@ export class Grid {
 		}
 	}
 
-	buildTemplates(selector) {
+	buildTemplates() {
 		// Create a fragment we will manipulate the DOM in
 		var rowTemplate = this.rowTemplate.cloneNode(true);
 			
-		var row = rowTemplate.querySelector(selector);
+		var row = rowTemplate.querySelector("div.table-row");
 		
 		// Create the columns
 		this.columns.filter(c => !c.hiddenCol).forEach(c => {
