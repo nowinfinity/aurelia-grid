@@ -35,6 +35,9 @@
                     <tbody>
                         <tr role="button" click.delegate="$parent.select($item)">     
                         </tr>
+						<tr>
+							${ $selectedItem }
+						</tr>
                     </tbody>
                 </table>
                 <div show.bind="showNoRowsMessage && count === 0" class="alert alert-warning">${ noRowsMessage }</div>

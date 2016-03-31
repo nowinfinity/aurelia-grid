@@ -4,6 +4,7 @@
   },
   "jspm": {
     "dependencies": {
+      "MrRio/jsPDF": "github:MrRio/jsPDF@^1.2.61",
       "aurelia-binding": "npm:aurelia-binding@^1.0.0-beta.1.0.5",
       "aurelia-bootstrapper": "npm:aurelia-bootstrapper@^1.0.0-beta.1.0.2",
       "aurelia-framework": "npm:aurelia-framework@^1.0.0-beta.1.0.8",
@@ -12,6 +13,8 @@
       "eligrey/blob.js": "github:eligrey/blob.js@master",
       "font-awesome": "npm:font-awesome@^4.5.0",
       "fs": "github:jspm/nodelibs-fs@^0.1.2",
+      "html2canvas": "npm:html2canvas@^0.5.0-beta4",
+      "rasterizehtml": "npm:rasterizehtml@^1.2.2",
       "systemjs/plugin-css": "github:systemjs/plugin-css@^0.1.20",
       "twbs/bootstrap": "github:twbs/bootstrap@^3.3.6",
       "xlsx": "github:roman-kozubskyy/js-xlsx@^0.8.8"

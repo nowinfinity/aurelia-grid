@@ -1,6 +1,6 @@
 <template>
-    <require from="./test-format"></require>
-	
+	<require from="./test-format"></require>
+
 	<a click.delegate="setFilter('pete')">Filter PETES</a>
 	<a click.delegate="setFilter('')">All</a>
 	<br>
@@ -8,14 +8,18 @@
 	<a click.delegate="sort('lastName')">sort by last name</a>
 	<a click.delegate="grid.exportToExcel()">export excel</a>
 	<a click.delegate="grid.exportToCsv()">export csv</a>
-    <section class="au-animate">
-       <grid grid.ref="grid" pageable="true" filtering-settings.bind="filteringSettings" index-column.bind="true" read.call="getLocalData($event)" sortable.bind="false" server-paging.bind="false" server-sorting.bind="false" sortable.bind="false" >
-            <grid-row>
-                <grid-col can-sort="true" heading="Name" field="name" can-filter="false">${ $item.name }</grid-col>
-                <grid-col can-sort="true" heading="Name" field="name" can-filter="false">${ $item.name }</grid-col>
-                <grid-col can-sort="true" heading="Name with converter" field="name" can-filter="false">${ $item.name | testFormat }</grid-col>
-				<grid-col hidden-col="true" can-sort="true" heading="hiddenField" field="lastName" can-filter="false" >${ $item.lastName } hidden</grid-col>
-            </grid-row>
-        </grid>
-    </section>
+	<a click.delegate="grid.exportToPdf()">export pdf</a>
+	<section class="au-animate">
+		<grid selectable.bind="true" grid.ref="grid" pageable="true" filtering-settings.bind="filteringSettings" index-column.bind="true"
+		read.call="getLocalData($event)" sortable.bind="false" server-paging.bind="false" server-sorting.bind="false" sortable.bind="false">
+			<grid-row>
+				<grid-col can-sort="true" heading="Name" field="name" can-filter="false">${ $item.name }</grid-col>
+				<grid-col can-sort="true" heading="Name" field="name" can-filter="false">${ $item.name }</grid-col>
+				<grid-col can-sort="true" heading="Name with converter" field="name" can-filter="false">${ $item.name | testFormat }</grid-col>
+				<grid-col hidden-col="true" can-sort="true" heading="hiddenField" field="lastName" can-filter="false">${ $item.lastName } hidden</grid-col>
+			</grid-row>
+		</grid>
+	</section>
+
+	
 </template>

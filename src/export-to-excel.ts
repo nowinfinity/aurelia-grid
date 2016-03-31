@@ -1,6 +1,5 @@
 import "eligrey/blob.js"
 import "eligrey/FileSaver.js"
-import {GridColumn} from "./grid-column"
 import "xlsx"
 import {autoinject, noView} from 'aurelia-framework';
 

@@ -4,6 +4,7 @@ import {ViewCompiler, ViewSlot, ViewResources, Container} from 'aurelia-framewor
 import {Pager} from "./pager";
 import {ExportToExcel} from './export-to-excel'
 import {ExportToCsv} from './export-to-csv'
+import {ExportToPdf} from './export-to-pdf'
 
 @customElement('grid')
 @processContent(function(viewCompiler, viewResources, element, instruction) {
@@ -128,6 +129,7 @@ export class Grid {
 	viewSlot;
 	rowTemplate;
 	rowAttrs;
+
 
 	constructor(private element: Element, public viewCompiler: ViewCompiler, public viewResources: ViewResources, public container: Container, private targetInstruction: TargetInstruction,
 		public bindingEngine: BindingEngine) {
@@ -684,7 +686,7 @@ export class Grid {
 	getTableData(columns = null) {
 		var data = this.filterSort(this.cache);
 		
-		var tableData = this.data.map(d => {
+		var tableData = data.map(d => {
 			return columns.map(c => {
 				var view = this.viewCompiler.compile("<template>" + c.template.replace('${ $', '${').replace('${$', '${') + "</template>", this.viewResources).create(this.container);
 				view.bind({ item: d });
@@ -703,6 +705,11 @@ export class Grid {
 	exportToCsv() {
 		var columns = this.columns.filter(c => !c.hiddenCol && c.field != "#");
 		ExportToCsv.export(this.getTableData(columns), columns.map(c => c.heading));
+	}
+	
+	exportToPdf() {
+		var columns = this.columns.filter(c => !c.hiddenCol && c.field != "#");
+		ExportToPdf.export(this.getTableData(columns), columns.map(c => c.heading));
 	}
 }
 

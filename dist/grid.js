@@ -1,4 +1,4 @@
-System.register(['aurelia-framework', './grid-column', "./pager", './export-to-excel', './export-to-csv'], function(exports_1, context_1) {
+System.register(['aurelia-framework', './grid-column', "./pager", './export-to-excel', './export-to-csv', './export-to-pdf'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var aurelia_framework_1, grid_column_1, aurelia_framework_2, pager_1, export_to_excel_1, export_to_csv_1;
+    var aurelia_framework_1, grid_column_1, aurelia_framework_2, pager_1, export_to_excel_1, export_to_csv_1, export_to_pdf_1;
     var Grid;
     function processUserTemplate(element) {
         var cols = [];
@@ -46,6 +46,9 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
             },
             function (export_to_csv_1_1) {
                 export_to_csv_1 = export_to_csv_1_1;
+            },
+            function (export_to_pdf_1_1) {
+                export_to_pdf_1 = export_to_pdf_1_1;
             }],
         execute: function() {
             Grid = (function () {
@@ -563,7 +566,7 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
                     var _this = this;
                     if (columns === void 0) { columns = null; }
                     var data = this.filterSort(this.cache);
-                    var tableData = this.data.map(function (d) {
+                    var tableData = data.map(function (d) {
                         return columns.map(function (c) {
                             var view = _this.viewCompiler.compile("<template>" + c.template.replace('${ $', '${').replace('${$', '${') + "</template>", _this.viewResources).create(_this.container);
                             view.bind({ item: d });
@@ -579,6 +582,10 @@ System.register(['aurelia-framework', './grid-column', "./pager", './export-to-e
                 Grid.prototype.exportToCsv = function () {
                     var columns = this.columns.filter(function (c) { return !c.hiddenCol && c.field != "#"; });
                     export_to_csv_1.ExportToCsv.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }));
+                };
+                Grid.prototype.exportToPdf = function () {
+                    var columns = this.columns.filter(function (c) { return !c.hiddenCol && c.field != "#"; });
+                    export_to_pdf_1.ExportToPdf.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }));
                 };
                 __decorate([
                     aurelia_framework_1.child('pager'), 
