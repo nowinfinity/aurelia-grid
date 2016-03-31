@@ -9,6 +9,7 @@ System.register([], function(exports_1, context_1) {
                 function GridColumn(config, template) {
                     this.specialColumns = ["heading", "nosort"];
                     this.showColNameIf = "";
+                    this.class = "";
                     this.template = template;
                     this.field = config.field;
                     if (!this.field)
@@ -19,6 +20,7 @@ System.register([], function(exports_1, context_1) {
                     this.showFilter = config["show-filter"] === "false" ? false : true;
                     this.hiddenCol = config["hidden-col"] === "true" ? true : false;
                     this.showColNameIf = config["show-col-name-if"];
+                    this.class = config.class;
                     // Set attributes
                     for (var prop in config) {
                         if (config.hasOwnProperty(prop) && this.specialColumns.indexOf(prop) < 0) {
