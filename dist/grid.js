@@ -163,7 +163,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     if (this.serverPaging && !this.serverSorting)
                         this.sortable = false;
                     // The table body element will host the rows
-                    var body = this.element.querySelector("div.table");
+                    var body = this.element.querySelector("div.table-content");
                     this.viewSlot = new aurelia_framework_2.ViewSlot(body, true);
                     // Get the row template too and add a repeater/class
                     var row = body.querySelector("div.table-row");

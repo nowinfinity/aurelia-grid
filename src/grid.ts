@@ -175,7 +175,7 @@ export class Grid {
 			this.sortable = false;
 
 		// The table body element will host the rows
-		var body = this.element.querySelector("div.table");
+		var body = this.element.querySelector("div.table-content");
 			
 		this.viewSlot = new ViewSlot(body, true);
 
