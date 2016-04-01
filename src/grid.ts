@@ -138,9 +138,6 @@ export class Grid {
 	
 	expanderAttrs;
 	
-	
-
-
 	constructor(private element: Element, public viewCompiler: ViewCompiler, public viewResources: ViewResources, public container: Container, private targetInstruction: TargetInstruction,
 		public bindingEngine: BindingEngine) {
 		var behavior = (<any>targetInstruction).behaviorInstructions[0];
@@ -195,7 +192,7 @@ export class Grid {
 			}			
 		tableContainer.appendChild(row);
 		var innerDiv = document.createElement("div");
-		innerDiv.setAttribute("class", "inner-block");
+		innerDiv.setAttribute("class", "inner-container");
 		innerDiv.setAttribute("style", "display:none");
 		
 		innerDiv.innerHTML = '<compose  view-model="'+ this.expanderAttrs.viewModel+'"      model.bind="'+this.expanderAttrs.model+'"  ></compose>';

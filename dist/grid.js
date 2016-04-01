@@ -178,7 +178,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         }
                         tableContainer.appendChild(row);
                         var innerDiv = document.createElement("div");
-                        innerDiv.setAttribute("class", "inner-block");
+                        innerDiv.setAttribute("class", "inner-container");
                         innerDiv.setAttribute("style", "display:none");
                         innerDiv.innerHTML = '<compose  view-model="' + this.expanderAttrs.viewModel + '"      model.bind="' + this.expanderAttrs.model + '"  ></compose>';
                         //view="'+ this.expanderAttrs.viewModel+'"
