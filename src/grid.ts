@@ -43,14 +43,9 @@ export class Grid {
 	@bindable showColumnFilters = false;
 	@bindable serverFiltering = false;
 	@bindable filterDebounce = 500;
-	@bindable showColumns: string = "";
+	@bindable showColName: string = "";
 
 
-
-	showColumnsChanged() {
-		console.log(this.showColumns);
-
-	}
 
 	// custom filtering
 	@bindable filteringSettings = null;
@@ -246,8 +241,8 @@ export class Grid {
 				}
 			}
 
-			if (this.showColumns != "")
-				td.setAttribute("style", "${isDisplayColumn(" + "'" + c['show-col-name-if'] + "'" + " ,showColumns)?'':'display:none'}")
+			if (this.showColName != "")
+                td.setAttribute("style", "${isDisplayColumn('" + c['show-col-name-if']  + "' ,'" + c['hide-col-name-if'] + "'," + this.showColName  +" )?'':'display:none'}")
 
 			row.appendChild(td);
 		});
@@ -547,13 +542,23 @@ export class Grid {
 
 
 
-	isDisplayColumn(prop: string): boolean {
+    isDisplayColumn(showCols: string, hideCols: string): boolean {
+		if (this.showColName == "") return true;
 
-		if (this.showColumns == "") return true;
+        if (showCols != "undefined" && showCols != undefined)
+        {
+            let columns = showCols.split("|");
 
-		if (prop == 'undefined' || prop == undefined) return true;
+            return   columns.indexOf(this.showColName) > -1;
+        }
 
-		return prop === this.showColumns;
+        if (hideCols != "undefined" && hideCols!=undefined) {
+            let columns = hideCols.split("|");
+
+            return !(columns.indexOf(this.showColName) > -1);
+        }
+             
+        return true;
 	}
 
 	getFilterColumns() {
