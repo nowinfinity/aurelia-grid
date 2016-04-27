@@ -79,7 +79,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     this.showColumnFilters = false;
                     this.serverFiltering = false;
                     this.filterDebounce = 500;
-                    this.showColumns = "";
+                    this.showColName = "";
                     // custom filtering
                     this.filteringSettings = null;
                     // Pagination
@@ -138,9 +138,6 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     this.rowAttrs = behavior.rowAttrs;
                     this.expanderAttrs = behavior.expanderAttrs;
                 }
-                Grid.prototype.showColumnsChanged = function () {
-                    console.log(this.showColumns);
-                };
                 Object.defineProperty(Grid.prototype, "visibleColumns", {
                     get: function () {
                         return this.columns.filter(function (c) { return !c.hiddenCol; });
@@ -228,8 +225,8 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                                 }
                             }
                         }
-                        if (_this.showColumns != "")
-                            td.setAttribute("style", "${isDisplayColumn(" + "'" + c['show-col-name-if'] + "'" + " ,showColumns)?'':'display:none'}");
+                        if (_this.showColName != "")
+                            td.setAttribute("style", "${isDisplayColumn('" + c['show-col-name-if'] + "' ,'" + c['hide-col-name-if'] + "'," + _this.showColName + " )?'':'display:none'}");
                         row.appendChild(td);
                     });
                     // Now compile the row template
@@ -464,12 +461,18 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         return include;
                     });
                 };
-                Grid.prototype.isDisplayColumn = function (prop) {
-                    if (this.showColumns == "")
+                Grid.prototype.isDisplayColumn = function (showCols, hideCols) {
+                    if (this.showColName == "")
                         return true;
-                    if (prop == 'undefined' || prop == undefined)
-                        return true;
-                    return prop === this.showColumns;
+                    if (showCols != "undefined" && showCols != undefined) {
+                        var columns = showCols.split("|");
+                        return columns.indexOf(this.showColName) > -1;
+                    }
+                    if (hideCols != "undefined" && hideCols != undefined) {
+                        var columns = hideCols.split("|");
+                        return !(columns.indexOf(this.showColName) > -1);
+                    }
+                    return true;
                 };
                 Grid.prototype.getFilterColumns = function () {
                     var cols = {};
@@ -658,7 +661,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', String)
-                ], Grid.prototype, "showColumns", void 0);
+                ], Grid.prototype, "showColName", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
