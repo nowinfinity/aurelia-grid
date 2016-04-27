@@ -201,7 +201,12 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     // Copy any user specified row attributes to the row template	
                     for (var prop in this.rowAttrs) {
                         if (this.rowAttrs.hasOwnProperty(prop)) {
-                            row.setAttribute(prop, this.rowAttrs[prop]);
+                            if (prop == "class") {
+                                row.setAttribute(prop, row.getAttribute(prop) + " " + this.rowAttrs[prop]);
+                            }
+                            else {
+                                row.setAttribute(prop, this.rowAttrs[prop]);
+                            }
                         }
                     }
                 };
