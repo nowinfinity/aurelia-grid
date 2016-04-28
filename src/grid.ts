@@ -247,7 +247,7 @@ export class Grid {
 			}
 
 			if (this.showColName != "")
-                td.setAttribute("style", "${isDisplayColumn('" + c['show-col-name-if']  + "' ,'" + c['hide-col-name-if'] + "'," + this.showColName  +" )?'':'display:none'}")
+                td.setAttribute("if.bind", "isDisplayColumn('" + c['show-col-name-if']  + "' ,'" + c['hide-col-name-if'] + "'," + this.showColName  +" )")
 
 			row.appendChild(td);
 		});
