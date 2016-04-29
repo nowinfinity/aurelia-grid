@@ -247,7 +247,7 @@ export class Grid {
 			}
 
 			if (this.showColName != "")
-                td.setAttribute("if.bind", "isDisplayColumn('" + c['show-col-name-if']  + "' ,'" + c['hide-col-name-if'] + "'," + this.showColName  +" )")
+                td.setAttribute("if.bind", "isDisplayColumn('" + c['show-col-name-if'] + "' ,'" + c['hide-col-name-if'] + "',showColName)");
 
 			row.appendChild(td);
 		});
@@ -547,7 +547,7 @@ export class Grid {
 
 
 
-    isDisplayColumn(showCols: string, hideCols: string): boolean {
+    isDisplayColumn(showCols: string, hideCols: string,column): boolean {
 		if (this.showColName == "") return true;
 
         if (showCols != "undefined" && showCols != undefined)
