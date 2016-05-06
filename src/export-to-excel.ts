@@ -1,5 +1,5 @@
-import "eligrey/blob.js"
-import "eligrey/FileSaver.js"
+import "./blob";
+import "./fileSaver";
 import "xlsx"
 import {autoinject, noView} from 'aurelia-framework';
 

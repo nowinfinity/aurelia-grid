@@ -1,5 +1,3 @@
-import "eligrey/blob.js"
-import "eligrey/FileSaver.js"
 import "./rasterizeHTML"
 import "./jsPDF"
 import {autoinject, noView} from 'aurelia-framework';
@@ -14,7 +12,7 @@ export class ExportToPdf {
 		
 		var htmlString = tableData.map(cols => cols.map(col => "<td>" + col + "</td>").join("")).map(row => "<tr>" + row + "</tr>").join("");
 
-		htmlString = "<html><body><table border='1' style='width:596px;'>" + htmlString + "</table></body></html>"
+		htmlString = "<html><body><div style='width:596px;'><table border='1'>" + htmlString + "</table></div></body></html>"
 
 		var iframe = document.createElement('iframe');
 		iframe.style.width = "596px";

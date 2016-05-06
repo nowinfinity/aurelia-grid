@@ -55,6 +55,9 @@
  * @returns {jsPDF}
  * @name jsPDF
  */
+
+"format global";
+
 var jsPDF = (function (global) {
     'use strict';
     var pdfVersion = '1.3',

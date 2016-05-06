@@ -1,4 +1,4 @@
-System.register(["eligrey/blob.js", "eligrey/FileSaver.js", "xlsx", 'aurelia-framework'], function(exports_1, context_1) {
+System.register(["./blob", "./fileSaver", "xlsx", 'aurelia-framework'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {

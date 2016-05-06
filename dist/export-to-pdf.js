@@ -1,4 +1,4 @@
-System.register(["eligrey/blob.js", "eligrey/FileSaver.js", "./rasterizeHTML", "./jsPDF", 'aurelia-framework'], function(exports_1, context_1) {
+System.register(["./rasterizeHTML", "./jsPDF", 'aurelia-framework'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -16,8 +16,6 @@ System.register(["eligrey/blob.js", "eligrey/FileSaver.js", "./rasterizeHTML", "
         setters:[
             function (_1) {},
             function (_2) {},
-            function (_3) {},
-            function (_4) {},
             function (aurelia_framework_1_1) {
                 aurelia_framework_1 = aurelia_framework_1_1;
             }],
@@ -27,7 +25,7 @@ System.register(["eligrey/blob.js", "eligrey/FileSaver.js", "./rasterizeHTML", "
                 }
                 ExportToPdf.export = function (tableData, headers) {
                     var htmlString = tableData.map(function (cols) { return cols.map(function (col) { return "<td>" + col + "</td>"; }).join(""); }).map(function (row) { return "<tr>" + row + "</tr>"; }).join("");
-                    htmlString = "<html><body><table border='1' style='width:596px;'>" + htmlString + "</table></body></html>";
+                    htmlString = "<html><body><div style='width:596px;'><table border='1'>" + htmlString + "</table></div></body></html>";
                     var iframe = document.createElement('iframe');
                     iframe.style.width = "596px";
                     iframe.style.display = "none";

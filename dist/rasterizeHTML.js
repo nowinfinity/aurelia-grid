@@ -1,4 +1,5 @@
 /* */
+"format global";
 "format cjs";
 !function (a) {
     var b;

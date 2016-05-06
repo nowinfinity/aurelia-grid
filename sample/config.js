@@ -26,8 +26,6 @@ System.config({
     "aurelia-framework": "npm:aurelia-framework@1.0.0-beta.1.0.8",
     "core-js": "npm:core-js@1.2.6",
     "css": "github:systemjs/plugin-css@0.1.20",
-    "eligrey/FileSaver.js": "github:eligrey/FileSaver.js@master",
-    "eligrey/blob.js": "github:eligrey/blob.js@master",
     "font-awesome": "npm:font-awesome@4.5.0",
     "fs": "github:jspm/nodelibs-fs@0.1.2",
     "html2canvas": "npm:html2canvas@0.5.0-beta4",
