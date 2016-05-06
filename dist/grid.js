@@ -226,7 +226,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                             }
                         }
                         if (_this.showColName != "")
-                            td.setAttribute("style", "${isDisplayColumn('" + c['show-col-name-if'] + "' ,'" + c['hide-col-name-if'] + "'," + _this.showColName + " )?'':'display:none'}");
+                            td.setAttribute("if.bind", "isDisplayColumn('" + c['show-col-name-if'] + "' ,'" + c['hide-col-name-if'] + "',showColName)");
                         row.appendChild(td);
                     });
                     // Now compile the row template
@@ -461,7 +461,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         return include;
                     });
                 };
-                Grid.prototype.isDisplayColumn = function (showCols, hideCols) {
+                Grid.prototype.isDisplayColumn = function (showCols, hideCols, column) {
                     if (this.showColName == "")
                         return true;
                     if (showCols != "undefined" && showCols != undefined) {
