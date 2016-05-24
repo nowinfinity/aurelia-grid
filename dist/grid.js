@@ -152,6 +152,10 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         this.refresh();
                 };
                 Grid.prototype.bind = function (executionContext) {
+                    if (this.sortField) {
+                        var sort = this.parseSortValue(this.sortField);
+                        this.sortBySingleFieldChangeValues(sort.field, sort.direction);
+                    }
                     this.parent = executionContext;
                     this["$parent"] = executionContext;
                     this.indexColumnChanged(this.indexColumn, this.columns && this.columns[0].field == "#");
@@ -358,14 +362,27 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                 Grid.prototype.pageSizesChanged = function () {
                     this.refresh();
                 };
+                Grid.prototype.sortFieldChanged = function (newValue) {
+                    var sort = this.parseSortValue(newValue);
+                    this.sortBySingleField(sort.field, sort.direction);
+                };
+                Grid.prototype.parseSortValue = function (value) {
+                    var parts = value.split(':');
+                    var field = parts[0];
+                    var direction = parts.length > 1 ? parts[1] : "asc";
+                    return { field: field, direction: direction };
+                };
                 Grid.prototype.sortBySingleField = function (field, direction) {
+                    this.sortBySingleFieldChangeValues(field, direction);
+                    this.refresh(true);
+                };
+                Grid.prototype.sortBySingleFieldChangeValues = function (field, direction) {
                     this.customSorting = true;
                     this.sortProcessingOrder = [field];
                     for (var prop in this.sorting) {
                         prop = "";
                     }
                     this.sorting[field] = direction;
-                    this.refresh(true);
                 };
                 Grid.prototype.sortChanged = function (field) {
                     // Determine new sort
@@ -714,6 +731,10 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Boolean)
                 ], Grid.prototype, "indexColumn", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', String)
+                ], Grid.prototype, "sortField", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)

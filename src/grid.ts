@@ -67,6 +67,8 @@ export class Grid {
 
 	@bindable indexColumn: boolean = false;
 
+	@bindable sortField: string;
+
 	firstVisibleItem = 0;
 	lastVisibleItem = 0;
 
@@ -142,6 +144,7 @@ export class Grid {
 		
 		this.expanderAttrs =  behavior.expanderAttrs;
 			
+		
 	}
 
 	/* === Lifecycle === */
@@ -156,6 +159,11 @@ export class Grid {
 
 
 	bind(executionContext) {
+		if (this.sortField) {
+			var sort = this.parseSortValue(this.sortField);
+        	this.sortBySingleFieldChangeValues(sort.field, sort.direction)
+		}
+		
 		this.parent = executionContext;
 		this["$parent"] = executionContext;
 
@@ -413,15 +421,31 @@ export class Grid {
 	pageSizesChanged() {
 		this.refresh();
 	}
+	
+	sortFieldChanged(newValue) {
+        var sort = this.parseSortValue(newValue);
+        this.sortBySingleField(sort.field, sort.direction)
+	}
+	
+	parseSortValue(value) {
+		var parts = value.split(':');
+        var field = parts[0];
+        var direction = parts.length > 1 ? parts[1] : "asc";
+		return { field: field, direction:direction };
+	}
 
 	sortBySingleField(field, direction) {
+		this.sortBySingleFieldChangeValues(field, direction);
+		this.refresh(true);
+	}
+	
+	sortBySingleFieldChangeValues(field, direction) {
 		this.customSorting = true;
 		this.sortProcessingOrder = [field];
 		for (var prop in this.sorting) {
 			prop = "";
 		}
 		this.sorting[field] = direction;
-		this.refresh(true);
 	}
 
 	sortChanged(field) {
