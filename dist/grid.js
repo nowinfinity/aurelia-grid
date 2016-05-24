@@ -607,7 +607,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     var data = this.filterSort(this.cache);
                     var tableData = data.map(function (d) {
                         return columns.map(function (c) {
-                            var view = _this.viewCompiler.compile("<template>" + c.template.replace('${ $', '${').replace('${$', '${') + "</template>", _this.viewResources).create(_this.container);
+                            var view = _this.viewCompiler.compile("<template>" + c.template.split('${ $').join('${').split('${$').join('${') + "</template>", _this.viewResources).create(_this.container);
                             view.bind({ item: d });
                             return view.fragment.childNodes[1].textContent;
                         });

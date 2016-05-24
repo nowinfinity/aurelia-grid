@@ -734,7 +734,7 @@ export class Grid {
 		
 		var tableData = data.map(d => {
 			return columns.map(c => {
-				var view = this.viewCompiler.compile("<template>" + c.template.replace('${ $', '${').replace('${$', '${') + "</template>", this.viewResources).create(this.container);
+				var view = this.viewCompiler.compile("<template>" + c.template.split('${ $').join('${').split('${$').join('${') + "</template>", this.viewResources).create(this.container);
 				view.bind({ item: d });
 				return view.fragment.childNodes[1].textContent;
 			});
