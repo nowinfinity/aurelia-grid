@@ -24,7 +24,7 @@ System.register(["./blob", "./fileSaver", 'aurelia-framework'], function(exports
                 function ExportToCsv() {
                 }
                 ExportToCsv.export = function (tableData, headers) {
-                    var file = headers.join(',') + "\n" +
+                    var file = "sep=,\n" + headers.join(',') + "\n" +
                         tableData.map(function (cols) { return cols.join(","); }).join("\n");
                     saveAs(new Blob([file], { type: "Content-type: text/csv" }), "grid.csv");
                 };
