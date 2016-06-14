@@ -193,19 +193,19 @@ export class Grid {
 					row.setAttribute(prop, this.rowAttrs[prop]);
 				}
 			}			
-		tableContainer.appendChild(row);
-		var innerDiv = document.createElement("div");
-		innerDiv.setAttribute("class", "inner-container");
-		innerDiv.setAttribute("style", "display:none");
-		
-		innerDiv.innerHTML = '<compose  view-model="'+ this.expanderAttrs.viewModel+'"      model.bind="'+this.expanderAttrs.model+'"  ></compose>';
-		//view="'+ this.expanderAttrs.viewModel+'"
+			tableContainer.appendChild(row);
+			var innerDiv = document.createElement("div");
+			innerDiv.setAttribute("class", "inner-container");
+			innerDiv.setAttribute("style", "display:none");
+			
+			innerDiv.innerHTML = '<compose  view-model="'+ this.expanderAttrs.viewModel+'"      model.bind="'+this.expanderAttrs.model+'"  ></compose>';
+			//view="'+ this.expanderAttrs.viewModel+'"
 
-		tableContainer.appendChild(innerDiv);
-		this.rowTemplate = document.createDocumentFragment();
-		this.rowTemplate.appendChild(tableContainer);
-		this.buildTemplates();
-		return;
+			tableContainer.appendChild(innerDiv);
+			this.rowTemplate = document.createDocumentFragment();
+			this.rowTemplate.appendChild(tableContainer);
+			this.buildTemplates();
+			return;
 		}
 		
 		 this.addRowAttributes(row);
@@ -760,7 +760,7 @@ export class Grid {
 			return columns.map(c => {
 				var view = this.viewCompiler.compile("<template>" + c.template.split('${ $').join('${').split('${$').join('${') + "</template>", this.viewResources).create(this.container);
 				view.bind({ item: d });
-				return view.fragment.textContent;
+				return view.fragment.textContent.replace(/(\r\n|\n|\r)/gm,"");
 			});
 		});
 		
