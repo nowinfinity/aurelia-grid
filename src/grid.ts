@@ -332,7 +332,6 @@ export class Grid {
 	}
 
 	pageSizeChanged(newValue, oldValue) {
-		debugger;
 		if (newValue === oldValue) return;
 
 		this.pageChanged(1, oldValue);
