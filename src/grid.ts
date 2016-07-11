@@ -63,7 +63,7 @@ export class Grid {
 	@bindable showJumpButtons = true;
 	@bindable hideJumpButtonsIfNotPossible = true;
 
-	@bindable pageSizes = [10, 20, 30];
+	@bindable pageSizes = [10, 25, 50, 100];
 
 	@bindable indexColumn: boolean = false;
 

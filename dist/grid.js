@@ -93,7 +93,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     this.showFirstLastButtons = true;
                     this.showJumpButtons = true;
                     this.hideJumpButtonsIfNotPossible = true;
-                    this.pageSizes = [10, 20, 30];
+                    this.pageSizes = [10, 25, 50, 100];
                     this.indexColumn = false;
                     this.firstVisibleItem = 0;
                     this.lastVisibleItem = 0;
