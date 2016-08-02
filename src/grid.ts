@@ -176,17 +176,11 @@ export class Grid {
 
 		// The table body element will host the rows
 		var body = this.element.querySelector(".table-content");
-		console.info(body)	
-		
-		var shadow = this.element.querySelector('.grid-container').createShadowRoot();
-		var template = this.element.querySelector('.table-content');
-		var clone = document.importNode(template.content, true);
-		shadow.appendChild(clone);
+				
 		this.viewSlot = new ViewSlot(body, true);
 
 		// Get the row template too and add a repeater/class
-		var row = document.querySelector(".table-row");
-		console.info(row)
+		var row = body.querySelector("div.table-row");
 		if(this.expanderAttrs!=null)
 		{	
 			let tableContainer = document.createElement("div");	
@@ -748,7 +742,7 @@ export class Grid {
 	gridHeightChanged() {
 
 		// TODO: Make this a one off
-		var cont = this.element.querySelector(".grid-content-container");
+		var cont = this.element.querySelector(".table-content");
 
 		if (this.gridHeight > 0) {
 			cont.setAttribute("style", "height:" + this.gridHeight + "px");
