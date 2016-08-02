@@ -20,12 +20,10 @@
             </div>
         </div>
         <!-- Content table -->
-        <div class="grid-content-container" show.bind="!loading">
-            <div class="table-content   table-hover table-striped table-responsive selectable" show.bind="!showNoRowsMessage || (showNoRowsMessage && count > 0)">
+            <template class="grid-content-container table-content  table-hover table-striped table-responsive selectable" show.bind="!showNoRowsMessage || (showNoRowsMessage && count > 0) || !loading"">
                 <div class="table-row" click.delegate="$parent.select($item)"></div>
-            </div>
-            <div show.bind="showNoRowsMessage && count === 0" class="alert alert-warning">${ noRowsMessage }</div>
-        </div>
+            </template>
+            <div show.bind="showNoRowsMessage && count === 0 || !loading"" class="alert alert-warning">${ noRowsMessage }</div>
         <div class="grid-overlay" if.bind="loading"></div>
         <div if.bind="loading" class="progress grid-progress-indicator">
             <div class="progress-bar progress-bar-striped active" role="progressbar">
