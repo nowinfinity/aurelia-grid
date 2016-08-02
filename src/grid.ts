@@ -175,7 +175,7 @@ export class Grid {
 			this.sortable = false;
 
 		// The table body element will host the rows
-		var body = this.element.querySelector(".table-content");
+		var body = this.element.querySelector(".grid-container");
 				
 		this.viewSlot = new ViewSlot(body, true);
 
@@ -742,7 +742,7 @@ export class Grid {
 	gridHeightChanged() {
 
 		// TODO: Make this a one off
-		var cont = this.element.querySelector(".table-content");
+		var cont = this.element.querySelector(".grid-container");
 
 		if (this.gridHeight > 0) {
 			cont.setAttribute("style", "height:" + this.gridHeight + "px");

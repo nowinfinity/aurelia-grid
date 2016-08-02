@@ -164,7 +164,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     if (this.serverPaging && !this.serverSorting)
                         this.sortable = false;
                     // The table body element will host the rows
-                    var body = this.element.querySelector(".table-content");
+                    var body = this.element.querySelector(".grid-container");
                     this.viewSlot = new aurelia_framework_2.ViewSlot(body, true);
                     // Get the row template too and add a repeater/class
                     var row = body.querySelector("div.table-row");
@@ -609,7 +609,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                 };
                 Grid.prototype.gridHeightChanged = function () {
                     // TODO: Make this a one off
-                    var cont = this.element.querySelector(".table-content");
+                    var cont = this.element.querySelector(".grid-container");
                     if (this.gridHeight > 0) {
                         cont.setAttribute("style", "height:" + this.gridHeight + "px");
                     }
