@@ -384,6 +384,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     this.sorting[field] = direction;
                 };
                 Grid.prototype.sortChanged = function (field) {
+                    console.info(field);
                     // Determine new sort
                     var newSort = undefined;
                     // Figure out which way this field should be sorting
@@ -392,6 +393,9 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                             newSort = "desc";
                             break;
                         case "desc":
+                            newSort = "asc";
+                            break;
+                        case "":
                             newSort = "";
                             break;
                         default:
@@ -401,6 +405,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     this.sorting[field] = newSort;
                     // If the sort is present in the sort stack, slice it to the back of the stack, otherwise just add it
                     var pos = this.sortProcessingOrder.indexOf(field);
+                    console.info(this.sortProcessingOrder);
                     if (pos > -1)
                         this.sortProcessingOrder.splice(pos, 1);
                     this.sortProcessingOrder.push(field);

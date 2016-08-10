@@ -150,7 +150,7 @@ export class Grid {
 	/* === Lifecycle === */
 	attached() {
 		this.gridHeightChanged();
-
+		
 		if (this.autoLoad)
 			this.refresh();
 	}
@@ -447,7 +447,7 @@ export class Grid {
 	}
 
 	sortChanged(field) {
-
+		console.info(field)
 		// Determine new sort
 		var newSort = undefined;
 
@@ -457,6 +457,9 @@ export class Grid {
 				newSort = "desc";
 				break;
 			case "desc":
+				newSort = "asc";
+				break;
+			case "":
 				newSort = "";
 				break;
 			default:
@@ -465,10 +468,9 @@ export class Grid {
 		}
 
 		this.sorting[field] = newSort;
-
 		// If the sort is present in the sort stack, slice it to the back of the stack, otherwise just add it
 		var pos = this.sortProcessingOrder.indexOf(field);
-
+		console.info(this.sortProcessingOrder);
 		if (pos > -1)
 			this.sortProcessingOrder.splice(pos, 1);
 
