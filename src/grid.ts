@@ -150,7 +150,7 @@ export class Grid {
 	/* === Lifecycle === */
 	attached() {
 		this.gridHeightChanged();
-
+		
 		if (this.autoLoad)
 			this.refresh();
 	}
@@ -175,13 +175,12 @@ export class Grid {
 			this.sortable = false;
 
 		// The table body element will host the rows
-		var body = this.element.querySelector("div.table-content");
-			
+		var body = this.element.querySelector(".table-content");
+				
 		this.viewSlot = new ViewSlot(body, true);
 
 		// Get the row template too and add a repeater/class
 		var row = body.querySelector("div.table-row");
-
 		if(this.expanderAttrs!=null)
 		{	
 			let tableContainer = document.createElement("div");	
@@ -444,11 +443,14 @@ export class Grid {
 		for (var prop in this.sorting) {
 			prop = "";
 		}
+		
+		this.sorting = {};
+		
 		this.sorting[field] = direction;
 	}
 
 	sortChanged(field) {
-
+		console.info(field)
 		// Determine new sort
 		var newSort = undefined;
 
@@ -458,6 +460,9 @@ export class Grid {
 				newSort = "desc";
 				break;
 			case "desc":
+				newSort = "asc";
+				break;
+			case "":
 				newSort = "";
 				break;
 			default:
@@ -466,10 +471,9 @@ export class Grid {
 		}
 
 		this.sorting[field] = newSort;
-
 		// If the sort is present in the sort stack, slice it to the back of the stack, otherwise just add it
 		var pos = this.sortProcessingOrder.indexOf(field);
-
+		console.info(this.sortProcessingOrder);
 		if (pos > -1)
 			this.sortProcessingOrder.splice(pos, 1);
 
@@ -743,7 +747,7 @@ export class Grid {
 	gridHeightChanged() {
 
 		// TODO: Make this a one off
-		var cont = this.element.querySelector(".grid-content-container");
+		var cont = this.element.querySelector(".table-content");
 
 		if (this.gridHeight > 0) {
 			cont.setAttribute("style", "height:" + this.gridHeight + "px");

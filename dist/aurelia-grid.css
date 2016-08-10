@@ -1354,6 +1354,21 @@ table .centered {
   height: 14px;
   background: url(../images/sprite.png) no-repeat 0 -192px; }
 
+.sorting-arrow {
+  float: right;
+  margin-right: 10px;
+  width: 10px;
+  height: 10px; }
+  .sorting-arrow.sorting-arrow-top {
+    background: url(a_up.svg);
+    background-size: 10px 10px; }
+  .sorting-arrow.sorting-arrow-down {
+    background: url(a_down.svg);
+    background-size: 10px 10px; }
+  .sorting-arrow.sorting-arrow-normal {
+    background: url(a_default.svg);
+    background-size: 10px 10px; }
+
 .menu-opener {
   cursor: pointer;
   font-weight: 600;

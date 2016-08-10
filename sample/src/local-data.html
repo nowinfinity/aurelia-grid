@@ -11,9 +11,9 @@
 	<a click.delegate="grid.exportToPdf()">export pdf</a>
 	<section class="au-animate">
 		<grid selectable.bind="true" grid.ref="grid" pageable="true" filtering-settings.bind="filteringSettings" index-column.bind="true"
-		read.call="getLocalData($event)" sortable.bind="false" server-paging.bind="false" server-sorting.bind="false" sortable.bind="false">
+		read.call="getLocalData($event)" sortable.bind="true" server-paging.bind="false" server-sorting.bind="false">
 			<grid-row class="tewst">
-				<grid-col can-sort="true" heading="Name" field="name" class="table-cell" can-filter="false">${ $item.name }</grid-col>
+				<grid-col can-sort="true" heading="Name" field="name" filtering=true class="table-cell" can-filter="false">${ $item.name }</grid-col>
 				<grid-col can-sort="true" heading="Name" field="name"  class="table-cell" can-filter="false">${ $item.name }</grid-col>
 				<grid-col can-sort="true" heading="Name with converter"  class="table-cell" field="name" can-filter="false">${ $item.name | testFormat }</grid-col>
 				<grid-col can-sort="true" heading="Name with converter"  class="table-cell" field="name" can-filter="false">${ $item.name | testFormat }</grid-col>
