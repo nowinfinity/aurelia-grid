@@ -1,4 +1,27 @@
 <template>
+	<style>
+		.sorting-arrow {
+			float: right;
+			margin-right: 10px;
+			width: 15px;
+			height: 15px;
+		}
+		
+		.sorting-arrow.sorting-arrow-top {
+			background: url(../images/a_up.png);
+			background-size: 15px 15px;
+		}
+		
+		.sorting-arrow.sorting-arrow-down {
+			background: url(../images/a_down.png);
+			background-size: 15px 15px;
+		}
+		
+		.sorting-arrow.sorting-arrow-normal {
+			background: url(../images/a_default.png);
+			background-size: 15px 15px;
+		}
+	</style>
 	<require from="./pager"></require>
 	<div class="grid-container table  ${class}">
 		<!-- Header table -->
@@ -6,15 +29,17 @@
 			<div repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' }" if.bind="isDisplayColumn($column.showColNameIf, $column.hideColNameIf, showColName)">
 				<a if.bind="$column.nosort == false && $parent.sortable" click.trigger="$parent.sortChanged($column.field)">${ $column.heading }</a>
 				<span if.bind="$column.nosort == true || !$parent.sortable">${ $column.heading }</span>
-				<span if.bind="$parent.sorting[$column.field] === 'desc'" click.trigger="$parent.sortBySingleField($column.field, '')" class="glyphicon glyphicon-triangle-top text-primary">d</span>
-				<span if.bind="$parent.sorting[$column.field] === 'asc'" click.trigger="$parent.sortBySingleField($column.field, 'desc')" class="glyphicon glyphicon-triangle-bottom text-primary">a</span>
-				<span if.bind="$parent.sorting[$column.field] === '' || $parent.sorting[$column.field] === undefined" click.trigger="$parent.sortBySingleField($column.field, 'asc')" class="glyphicon glyphicon-triangle-bottom text-primary">n</span>
+				<span if.bind="$parent.sorting[$column.field] === 'desc'" click.trigger="$parent.sortBySingleField($column.field, '')" class="sorting-arrow sorting-arrow-down text-primary"></span>
+				<span if.bind="$parent.sorting[$column.field] === 'asc'" click.trigger="$parent.sortBySingleField($column.field, 'desc')"
+				class="sorting-arrow sorting-arrow-top text-primary"></span>
+				<span if.bind="$parent.sorting[$column.field] === '' || $parent.sorting[$column.field] === undefined" click.trigger="$parent.sortBySingleField($column.field, 'asc')"
+				class="sorting-arrow sorting-arrow-normal text-primary"></span>
 			</div>
 			<div if.bind="showColumnFilters" class="grid-column-filters">
 				<div repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' }">
 					<div if.bind="$column.showFilter">
 						<input class="form-control" value.bind="$column.filterValue" placeholder="filter..." input.delegate="$parent.updateFilters()">
-						<span class="glyphicon glyphicon-search text-muted"></span>
+ 						<span class="glyphicon glyphicon-search text-muted"></span>
 					</div>
 				</div>
 			</div>

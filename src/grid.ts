@@ -443,6 +443,9 @@ export class Grid {
 		for (var prop in this.sorting) {
 			prop = "";
 		}
+		
+		this.sorting = {};
+		
 		this.sorting[field] = direction;
 	}
 

@@ -381,6 +381,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     for (var prop in this.sorting) {
                         prop = "";
                     }
+                    this.sorting = {};
                     this.sorting[field] = direction;
                 };
                 Grid.prototype.sortChanged = function (field) {
