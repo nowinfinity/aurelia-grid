@@ -384,6 +384,19 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     this.sorting = {};
                     this.sorting[field] = direction;
                 };
+                Grid.prototype.customSort = function (column) {
+                    console.info(column);
+                    if (column['filtering-by-property'] != 'true') {
+                        this.sortChanged(column['field']);
+                        return;
+                    }
+                    var templ = document.createElement('div');
+                    var content = document.querySelector('#filtering-template').innerHTML;
+                    templ.innerHTML = content;
+                    console.info(content);
+                    var element = document.querySelector(".header-" + column.field);
+                    element.appendChild(templ);
+                };
                 Grid.prototype.sortChanged = function (field) {
                     console.info(field);
                     // Determine new sort
@@ -558,6 +571,8 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         filtering: this.getFilterColumns()
                     })
                         .then(function (result) {
+                        console.info(result);
+                        console.info(_this.visibleColumns);
                         // Data should be in the result so grab it and assign it to the data property
                         _this.handleResult(result);
                         _this.loading = false;

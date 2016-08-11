@@ -1,5 +1,38 @@
 <template>
 	<style>
+		.button {
+			border: none;
+			color: white;
+			padding: 5px 22px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+			margin: 4px 2px;
+			cursor: pointer;
+		}
+		
+		.button-blue {
+			background-color: #008CBA;
+		}
+		
+		.button-red {
+			background-color: #f44336;
+		}
+		
+		.button-gray {
+			background-color: #e7e7e7;
+			color: black;
+		}
+		
+		.button-black {
+			background-color: #555555;
+		}
+		
+		.button-green {
+			background-color: #4CAF50;
+		}
+		
 		.sorting-arrow {
 			float: right;
 			margin-right: 10px;
@@ -22,8 +55,15 @@
 			background-size: 20px 20px;
 		}
 		
-		.grid-progress-indicator{
+		.grid-progress-indicator {
 			padding: 10px;
+		}
+		
+		.sorting-container {
+			position: absolute;
+			background: white;
+			width: 200px;
+			z-index: 100;
 		}
 		
 		.loader {
@@ -98,12 +138,25 @@
 			}
 		}
 	</style>
+
+	<script id="filtering-template" type="text/html">
+		<div class="sorting-container">
+			text
+			
+			<div>
+				<button class="button button-green">Apply</button>
+				<button class="button button-red">Remove</button>
+			</div>
+		</div>
+	</script>
+
 	<require from="./pager"></require>
 	<div class="grid-container table  ${class}">
 		<!-- Header table -->
 		<div if.bind="showColumnHeaders" class="table-row table-head">
-			<div repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' }" if.bind="isDisplayColumn($column.showColNameIf, $column.hideColNameIf, showColName)">
-				<a if.bind="$column.nosort == false && $parent.sortable" click.trigger="$parent.sortChanged($column.field)">${ $column.heading }</a>
+			<div repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' } ${ 'header-' + $column.field }"
+			if.bind="isDisplayColumn($column.showColNameIf, $column.hideColNameIf, showColName)">
+				<a if.bind="$column.nosort == false && $parent.sortable" click.trigger="$parent.customSort($column)">${ $column.heading }</a>
 				<span if.bind="$column.nosort == true || !$parent.sortable">${ $column.heading } </span>
 				<span if.bind="$column.filtering == 'true'">
 					<span if.bind="$parent.sorting[$column.field] === 'desc'" click.trigger="$parent.sortBySingleField($column.field, '')" class="sorting-arrow sorting-arrow-down text-primary"></span>
@@ -127,12 +180,12 @@
 			<div class="table-row" click.delegate="$parent.select($item)"></div>
 		</div>
 		<div show.bind="showNoRowsMessage && count === 0 || !loading" " class="alert alert-warning ">${ noRowsMessage }</div>
-        <div class="grid-overlay " if.bind="loading"></div>
+        <div class="grid-overlay " if.bind="loading "></div>
         <div if.bind="loading " class="progress grid-progress-indicator ">
-            <div class="loader">${ loadingMessage}</div>
+            <div class="loader ">${ loadingMessage}</div>
         </div>
         <!-- Footer div -->
-        <div class="grid-footer-container " if.bind="pageable && !loading">
+        <div class="grid-footer-container " if.bind="pageable && !loading ">
             <pager page-size.bind="pageSize " num-to-show.bind="pagerSize " pager.ref="pager " on-page-changed.call="pageChanged($event)
 		" show-first-last-buttons.bind="showFirstLastButtons " show-jump-buttons.bind="showJumpButtons "
                    show-paging-summary.bind="showPagingSummary " show-page-size-box.bind="showPageSizeBox
