@@ -448,29 +448,99 @@ export class Grid {
 		this.sorting[field] = direction;
 	}
 
-	customSort(column) {
-
-		console.info(column)
+	customSort(column) {	
+		// check if our column need sorting
 		if (column['filtering-by-property'] != 'true') {
 			this.sortChanged(column['field']);
 			return;
 		}
-		
-		var templ = document.createElement('div');
-		
-		var content = document.querySelector('#filtering-template').innerHTML;
-		
-		templ.innerHTML = content;
-		
-		console.info(templ);
 
 		var element = document.querySelector(".header-" + column.field);
 		
+		//close sorting modal
+		if (element.querySelector('.sorting-container') != null) {
+			element.querySelector('.sorting-container').parentNode.removeChild(element.querySelector('.sorting-container'));
+			return;
+		}
+
+
+		[].forEach.call(document.querySelectorAll('.sorting-container'), function(e) {
+			e.parentNode.removeChild(e);
+		});
+		
+		//append sorting modal
+		var templ = document.createElement('div');
+
+		var content = document.querySelector('#filtering-template');
+
+		templ.innerHTML = content.innerHTML;
+
 		element.appendChild(templ);
 		
+		//apply event listeners
+		var _this = this
+		templ.querySelector('.button-green').addEventListener('click', function() {
+			_this.applySorting(_this, column);
+		}, false);
+		templ.querySelector('.button-red').addEventListener('click', function() {
+			_this.removeSorting(_this, column);
+		}, false);
 		
+		//sorting logics
+		this.initSorting(column)
+	}
 
+	removeSorting(_this, column) {
+
+		[].forEach.call(
+			document.
+				querySelectorAll('.sorting-container'), function(e) {
+					e.parentNode.removeChild(e);
+				});
+
+		_this.filterSortPage(_this.cache);
+	}
+
+	initSorting(column) {
+
+		var columnName = column['field'];
+
+		let uniqueValues = Array.from(new Set(this.cache.map(item => item[columnName])));
+
+		var content = document.querySelector('#custom-filter-select');
+
+		var parser = new DOMParser()
+
+		uniqueValues.forEach(function(value) {
+			var option = document.createElement("option");
+			var t = document.createTextNode(value);
+			option.appendChild(t);
+			option.value = value;
+
+			content.appendChild(option);
+		});
+
+	}
+
+	applySorting(_this, column) {
+
+		let columnName = column['field'];
+
+		let selectionContainer = document.querySelector('#custom-filter-select');
+
+		let searchValuesRaw = selectionContainer.selectedOptions;
 		
+		let searchValues = [];
+
+		for (let k of searchValuesRaw){
+			searchValues.push(k.value);
+		}
+		
+		let data = _this.cache.filter(function (el) {  return searchValues.indexOf(el[columnName]) > -1	});
+		
+		console.info(data);
+
+		_this.filterSortPage(data);
 	}
 
 	sortChanged(field) {
@@ -598,22 +668,22 @@ export class Grid {
 
 
 
-    isDisplayColumn(showCols: string, hideCols: string, column): boolean {
+	isDisplayColumn(showCols: string, hideCols: string, column): boolean {
 		if (this.showColName == "") return true;
 
-        if (showCols != "undefined" && showCols != undefined) {
-            let columns = showCols.split("|");
+		if (showCols != "undefined" && showCols != undefined) {
+			let columns = showCols.split("|");
 
-            return columns.indexOf(this.showColName) > -1;
-        }
+			return columns.indexOf(this.showColName) > -1;
+		}
 
-        if (hideCols != "undefined" && hideCols != undefined) {
-            let columns = hideCols.split("|");
+		if (hideCols != "undefined" && hideCols != undefined) {
+			let columns = hideCols.split("|");
 
-            return !(columns.indexOf(this.showColName) > -1);
-        }
+			return !(columns.indexOf(this.showColName) > -1);
+		}
 
-        return true;
+		return true;
 	}
 
 	getFilterColumns() {

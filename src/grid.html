@@ -137,15 +137,24 @@
 				box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em;
 			}
 		}
+		
+		.sorting-container > .content > select {
+			height: 200px;
+			overflow: auto;
+			width: 200px;
+		}
+		
 	</style>
 
 	<script id="filtering-template" type="text/html">
 		<div class="sorting-container">
-			text
-			
-			<div>
+			<div class="content">
+				<select id="custom-filter-select" multiple="multiple">					
+				</select>
+			</div>
+			<div> 
 				<button class="button button-green">Apply</button>
-				<button class="button button-red">Remove</button>
+				<button class="button button-red">Clear</button>
 			</div>
 		</div>
 	</script>
