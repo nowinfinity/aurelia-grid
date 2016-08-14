@@ -328,8 +328,13 @@ export class Grid {
 	/* === Paging === */
 	pageChanged(page, oldValue) {
 		if (page === oldValue) return;
-
+		
 		this.pageNumber = Number(page);
+		
+		alert(this.pageNumber)
+		
+		if(this.pageNumber < 1) this.pageNumber = 1;
+		
 		this.refresh(true);
 	}
 

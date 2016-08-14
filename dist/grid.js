@@ -286,6 +286,9 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     if (page === oldValue)
                         return;
                     this.pageNumber = Number(page);
+                    alert(this.pageNubmer);
+                    if (this.pageNumber < 1)
+                        this.pageNumber = 1;
                     this.refresh(true);
                 };
                 Grid.prototype.pageSizeChanged = function (newValue, oldValue) {
