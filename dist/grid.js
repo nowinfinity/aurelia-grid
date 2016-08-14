@@ -395,7 +395,10 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     var element = document.querySelector(".header-" + column.field);
                     //close sorting modal
                     if (element.querySelector('.sorting-container') != null) {
-                        element.querySelector('.sorting-container').parentNode.removeChild(element.querySelector('.sorting-container'));
+                        if (element.querySelector('.sorting-container').style.display != "none")
+                            element.querySelector('.sorting-container').style.display = "none";
+                        else
+                            element.querySelector('.sorting-container').style.display = "inherit";
                         return;
                     }
                     [].forEach.call(document.querySelectorAll('.sorting-container'), function (e) {
@@ -446,9 +449,6 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         var k = searchValuesRaw_1[_i];
                         searchValues.push(k.value);
                     }
-                    console.info(_this.cache);
-                    console.info(searchValues);
-                    console.info(columnName);
                     var data = _this.cache.filter(function (el) { return searchValues.indexOf(el[columnName]) > -1; });
                     //update grid config
                     _this.filteringByProperty = true;

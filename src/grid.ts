@@ -463,10 +463,12 @@ export class Grid {
 		
 		//close sorting modal
 		if (element.querySelector('.sorting-container') != null) {
-			element.querySelector('.sorting-container').parentNode.removeChild(element.querySelector('.sorting-container'));
+			if (element.querySelector('.sorting-container').style.display != "none")
+				element.querySelector('.sorting-container').style.display = "none";
+			else
+				element.querySelector('.sorting-container').style.display = "inherit";			
 			return;
 		}
-
 
 		[].forEach.call(document.querySelectorAll('.sorting-container'), function(e) {
 			e.parentNode.removeChild(e);
@@ -535,10 +537,6 @@ export class Grid {
 		for (let k of searchValuesRaw){
 			searchValues.push(k.value);
 		}
-		
-		console.info(_this.cache);
-		console.info(searchValues)
-		console.info(columnName)
 		
 		let data = _this.cache.filter(function (el) {  return searchValues.indexOf(el[columnName]) > -1	});
 		
