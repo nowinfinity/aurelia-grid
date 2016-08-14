@@ -286,7 +286,6 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     if (page === oldValue)
                         return;
                     this.pageNumber = Number(page);
-                    alert(this.pageNubmer);
                     if (this.pageNumber < 1)
                         this.pageNumber = 1;
                     this.refresh(true);
@@ -452,7 +451,20 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         var k = searchValuesRaw_1[_i];
                         searchValues.push(k.value);
                     }
-                    var data = _this.cache.filter(function (el) { return searchValues.indexOf(el[columnName]) > -1; });
+                    var data = _this.cache.filter(function (el) {
+                        if (Array.isArray(el[columnName])) {
+                            var res = false;
+                            el[columnName].forEach(function (entry) {
+                                if (searchValues.indexOf(entry) > -1) {
+                                    res = true;
+                                    return;
+                                }
+                            });
+                            return res;
+                        }
+                        else
+                            return searchValues.indexOf(el[columnName]) > -1;
+                    });
                     //update grid config
                     _this.filteringByProperty = true;
                     _this.sortedData = data;
