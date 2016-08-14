@@ -330,6 +330,9 @@ export class Grid {
 		if (page === oldValue) return;
 
 		this.pageNumber = Number(page);
+
+		if (this.pageNumber < 1) this.pageNumber = 1;
+
 		this.refresh(true);
 	}
 
@@ -466,7 +469,7 @@ export class Grid {
 			if (element.querySelector('.sorting-container').style.display != "none")
 				element.querySelector('.sorting-container').style.display = "none";
 			else
-				element.querySelector('.sorting-container').style.display = "inherit";			
+				element.querySelector('.sorting-container').style.display = "inherit";
 			return;
 		}
 
@@ -499,7 +502,7 @@ export class Grid {
 	removeSorting(_this, column) {
 		[].forEach.call(document.querySelectorAll('.sorting-container'), function(e) {
 			e.parentNode.removeChild(e);
-		});				
+		});
 		_this.filteringByProperty = false;
 		_this.sortedData = [];
 		_this.filterSortPage(_this.cache);
@@ -531,14 +534,26 @@ export class Grid {
 		let selectionContainer = document.querySelector('#custom-filter-select');
 
 		let searchValuesRaw = selectionContainer.selectedOptions;
-		
+
 		let searchValues = [];
 
-		for (let k of searchValuesRaw){
+		for (let k of searchValuesRaw) {
 			searchValues.push(k.value);
 		}
-		
-		let data = _this.cache.filter(function (el) {  return searchValues.indexOf(el[columnName]) > -1	});
+
+		let data = _this.cache.filter(function(el) {
+			if (Array.isArray(el[columnName])) {
+				var res = false;
+				el[columnName].forEach(function(entry) {
+					if (searchValues.indexOf(entry) > -1) {
+						res = true;
+						return;
+					}
+				});
+				return res;
+			}else
+				return searchValues.indexOf(el[columnName]) > -1
+		});
 		
 		//update grid config
 		_this.filteringByProperty = true;
