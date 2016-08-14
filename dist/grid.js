@@ -82,6 +82,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     this.showColName = "";
                     // custom filtering
                     this.filteringSettings = null;
+                    this.filteringByProperty = false;
                     // Pagination
                     this.serverPaging = false;
                     this.pageable = true;
@@ -104,6 +105,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     this.customSorting = true;
                     this.sortProcessingOrder = []; // Represents which order to apply sorts to each column
                     this.sorting = {};
+                    this.sortedData = [];
                     // Searching
                     this.search = "";
                     this.searchColumns = [];
@@ -384,6 +386,76 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     this.sorting = {};
                     this.sorting[field] = direction;
                 };
+                Grid.prototype.customSort = function (column) {
+                    // check if our column need sorting
+                    if (column['filtering-by-property'] != 'true') {
+                        this.sortChanged(column['field']);
+                        return;
+                    }
+                    var element = document.querySelector(".header-" + column.field);
+                    //close sorting modal
+                    if (element.querySelector('.sorting-container') != null) {
+                        if (element.querySelector('.sorting-container').style.display != "none")
+                            element.querySelector('.sorting-container').style.display = "none";
+                        else
+                            element.querySelector('.sorting-container').style.display = "inherit";
+                        return;
+                    }
+                    [].forEach.call(document.querySelectorAll('.sorting-container'), function (e) {
+                        e.parentNode.removeChild(e);
+                    });
+                    //append sorting modal
+                    var templ = document.createElement('div');
+                    var content = document.querySelector('#filtering-template');
+                    templ.innerHTML = content.innerHTML;
+                    element.appendChild(templ);
+                    //apply event listeners
+                    var _this = this;
+                    templ.querySelector('.button-green').addEventListener('click', function () {
+                        _this.applySorting(_this, column);
+                    }, false);
+                    templ.querySelector('.button-red').addEventListener('click', function () {
+                        _this.removeSorting(_this, column);
+                    }, false);
+                    //sorting logics
+                    this.initSorting(column);
+                };
+                Grid.prototype.removeSorting = function (_this, column) {
+                    [].forEach.call(document.querySelectorAll('.sorting-container'), function (e) {
+                        e.parentNode.removeChild(e);
+                    });
+                    _this.filteringByProperty = false;
+                    _this.sortedData = [];
+                    _this.filterSortPage(_this.cache);
+                };
+                Grid.prototype.initSorting = function (column) {
+                    var columnName = column['field'];
+                    var uniqueValues = Array.from(new Set(this.cache.map(function (item) { return item[columnName]; })));
+                    var content = document.querySelector('#custom-filter-select');
+                    uniqueValues.forEach(function (value) {
+                        var option = document.createElement("option");
+                        var t = document.createTextNode(value);
+                        option.appendChild(t);
+                        option.value = value;
+                        content.appendChild(option);
+                    });
+                };
+                Grid.prototype.applySorting = function (_this, column) {
+                    var columnName = column['field'];
+                    var selectionContainer = document.querySelector('#custom-filter-select');
+                    var searchValuesRaw = selectionContainer.selectedOptions;
+                    var searchValues = [];
+                    for (var _i = 0, searchValuesRaw_1 = searchValuesRaw; _i < searchValuesRaw_1.length; _i++) {
+                        var k = searchValuesRaw_1[_i];
+                        searchValues.push(k.value);
+                    }
+                    var data = _this.cache.filter(function (el) { return searchValues.indexOf(el[columnName]) > -1; });
+                    //update grid config
+                    _this.filteringByProperty = true;
+                    _this.sortedData = data;
+                    _this.pageNumber = 1;
+                    _this.filterSortPage(data);
+                };
                 Grid.prototype.sortChanged = function (field) {
                     console.info(field);
                     // Determine new sort
@@ -537,6 +609,8 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     this.dontWatchForChanges();
                     if (this.serverPaging || this.serverSorting || this.serverFiltering || !this.initialLoad)
                         this.getData();
+                    else if (this.filteringByProperty)
+                        this.filterSortPage(this.sortedData);
                     else
                         this.filterSortPage(this.cache);
                 };
@@ -688,6 +762,10 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
                 ], Grid.prototype, "filteringSettings", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "filteringByProperty", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)

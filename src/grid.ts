@@ -14,7 +14,7 @@ import {ExportToPdf} from './export-to-pdf'
 	instruction.gridColumns = result.columns;
 	instruction.rowAttrs = result.rowAttrs;
 	instruction.expanderAttrs = result.expander;
-	
+
 
 	return true;
 })
@@ -33,9 +33,9 @@ export class Grid {
 
 	// Initial load flag (for client side)
 	@bindable initialLoad = false;
-	
-	
-	@bindable model:any;
+
+
+	@bindable model: any;
 
 
 
@@ -44,12 +44,16 @@ export class Grid {
 	@bindable serverFiltering = false;
 	@bindable filterDebounce = 500;
 	@bindable showColName: string = "";
+	
+	
 
 
 
 	// custom filtering
 	@bindable filteringSettings = null;
-
+	@bindable filteringByProperty = false;	
+	
+	
 	// Pagination
 	@bindable serverPaging = false;
 	@bindable pageable = true;
@@ -72,15 +76,16 @@ export class Grid {
 	firstVisibleItem = 0;
 	lastVisibleItem = 0;
 
-	pageNumber = 1;
-
-
+	pageNumber = 1;	
+	
+	
 	// Sortination
 	@bindable serverSorting = false;
 	@bindable sortable: boolean = true;
 	@bindable customSorting: boolean = true;
 	sortProcessingOrder = []; // Represents which order to apply sorts to each column
 	sorting = {};
+	sortedData = [];
 
 	// Searching
 	@bindable search: string = "";
@@ -132,25 +137,25 @@ export class Grid {
 	viewSlot;
 	rowTemplate;
 	rowAttrs;
-	
+
 	expanderAttrs;
-	
+
 	constructor(private element: Element, public viewCompiler: ViewCompiler, public viewResources: ViewResources, public container: Container, private targetInstruction: TargetInstruction,
 		public bindingEngine: BindingEngine) {
 		var behavior = (<any>targetInstruction).behaviorInstructions[0];
 
 		this.columns = behavior.gridColumns;
 		this.rowAttrs = behavior.rowAttrs;
-		
-		this.expanderAttrs =  behavior.expanderAttrs;
-			
-		
+
+		this.expanderAttrs = behavior.expanderAttrs;
+
+
 	}
 
 	/* === Lifecycle === */
 	attached() {
 		this.gridHeightChanged();
-		
+
 		if (this.autoLoad)
 			this.refresh();
 	}
@@ -161,9 +166,9 @@ export class Grid {
 	bind(executionContext) {
 		if (this.sortField) {
 			var sort = this.parseSortValue(this.sortField);
-        	this.sortBySingleFieldChangeValues(sort.field, sort.direction)
+			this.sortBySingleFieldChangeValues(sort.field, sort.direction)
 		}
-		
+
 		this.parent = executionContext;
 		this["$parent"] = executionContext;
 
@@ -176,28 +181,27 @@ export class Grid {
 
 		// The table body element will host the rows
 		var body = this.element.querySelector(".table-content");
-				
+
 		this.viewSlot = new ViewSlot(body, true);
 
 		// Get the row template too and add a repeater/class
 		var row = body.querySelector("div.table-row");
-		if(this.expanderAttrs!=null)
-		{	
-			let tableContainer = document.createElement("div");	
-			tableContainer.setAttribute("class","table-container");
-			tableContainer.setAttribute("repeat.for", "$item of data");	
+		if (this.expanderAttrs != null) {
+			let tableContainer = document.createElement("div");
+			tableContainer.setAttribute("class", "table-container");
+			tableContainer.setAttribute("repeat.for", "$item of data");
 			for (var prop in this.rowAttrs) {
 
 				if (this.rowAttrs.hasOwnProperty(prop)) {
 					row.setAttribute(prop, this.rowAttrs[prop]);
 				}
-			}			
+			}
 			tableContainer.appendChild(row);
 			var innerDiv = document.createElement("div");
 			innerDiv.setAttribute("class", "inner-container");
 			innerDiv.setAttribute("style", "display:none");
-			
-			innerDiv.innerHTML = '<compose  view-model="'+ this.expanderAttrs.viewModel+'"      model.bind="'+this.expanderAttrs.model+'"  ></compose>';
+
+			innerDiv.innerHTML = '<compose  view-model="' + this.expanderAttrs.viewModel + '"      model.bind="' + this.expanderAttrs.model + '"  ></compose>';
 			//view="'+ this.expanderAttrs.viewModel+'"
 
 			tableContainer.appendChild(innerDiv);
@@ -206,11 +210,11 @@ export class Grid {
 			this.buildTemplates();
 			return;
 		}
-		
-		 this.addRowAttributes(row);
-		 this.rowTemplate = document.createDocumentFragment();
-		 this.rowTemplate.appendChild(row);
-		 this.buildTemplates();
+
+		this.addRowAttributes(row);
+		this.rowTemplate = document.createDocumentFragment();
+		this.rowTemplate.appendChild(row);
+		this.buildTemplates();
 	}
 
 	addRowAttributes(row) {
@@ -235,7 +239,7 @@ export class Grid {
 	buildTemplates() {
 		// Create a fragment we will manipulate the DOM in
 		var rowTemplate = this.rowTemplate.cloneNode(true);
-			
+
 		var row = rowTemplate.querySelector("div.table-row");
 		
 		// Create the columns
@@ -301,7 +305,7 @@ export class Grid {
 
 	indexColumnChanged(newValue: boolean, oldValue: boolean) {
 		if (!oldValue && newValue) {
-			this.columns.unshift(new GridColumn({ field: "#",class:"table-cell" }, "${ $item.rowNum }"));
+			this.columns.unshift(new GridColumn({ field: "#", class: "table-cell" }, "${ $item.rowNum }"));
 		}
 
 		if (oldValue && !newValue) {
@@ -323,7 +327,6 @@ export class Grid {
 
 	/* === Paging === */
 	pageChanged(page, oldValue) {
-
 		if (page === oldValue) return;
 
 		this.pageNumber = Number(page);
@@ -336,7 +339,7 @@ export class Grid {
 		this.pageChanged(1, oldValue);
 		this.updatePager();
 	}
-	
+
 	filterSort(data) {
 		if (this.showColumnFilters && !this.serverFiltering)
 			data = this.applyFilter(data);
@@ -354,7 +357,7 @@ export class Grid {
 		// 2. Now sort the data
 		if ((this.sortable || this.customSorting) && !this.serverSorting)
 			data = this.applySort(data);
-			
+
 		return data;
 	}
 
@@ -419,34 +422,129 @@ export class Grid {
 	pageSizesChanged() {
 		this.refresh();
 	}
-	
+
 	sortFieldChanged(newValue) {
         var sort = this.parseSortValue(newValue);
         this.sortBySingleField(sort.field, sort.direction)
 	}
-	
+
 	parseSortValue(value) {
 		var parts = value.split(':');
         var field = parts[0];
         var direction = parts.length > 1 ? parts[1] : "asc";
-		return { field: field, direction:direction };
+		return { field: field, direction: direction };
 	}
 
 	sortBySingleField(field, direction) {
 		this.sortBySingleFieldChangeValues(field, direction);
 		this.refresh(true);
 	}
-	
+
 	sortBySingleFieldChangeValues(field, direction) {
 		this.customSorting = true;
 		this.sortProcessingOrder = [field];
 		for (var prop in this.sorting) {
 			prop = "";
 		}
-		
+
 		this.sorting = {};
-		
+
 		this.sorting[field] = direction;
+	}
+
+	customSort(column) {	
+		// check if our column need sorting
+		if (column['filtering-by-property'] != 'true') {
+			this.sortChanged(column['field']);
+			return;
+		}
+
+		var element = document.querySelector(".header-" + column.field);
+		
+		//close sorting modal
+		if (element.querySelector('.sorting-container') != null) {
+			if (element.querySelector('.sorting-container').style.display != "none")
+				element.querySelector('.sorting-container').style.display = "none";
+			else
+				element.querySelector('.sorting-container').style.display = "inherit";			
+			return;
+		}
+
+		[].forEach.call(document.querySelectorAll('.sorting-container'), function(e) {
+			e.parentNode.removeChild(e);
+		});
+		
+		//append sorting modal
+		var templ = document.createElement('div');
+
+		var content = document.querySelector('#filtering-template');
+
+		templ.innerHTML = content.innerHTML;
+
+		element.appendChild(templ);
+		
+		//apply event listeners
+		var _this = this
+		templ.querySelector('.button-green').addEventListener('click', function() {
+			_this.applySorting(_this, column);
+		}, false);
+		templ.querySelector('.button-red').addEventListener('click', function() {
+			_this.removeSorting(_this, column);
+		}, false);
+		
+		//sorting logics
+		this.initSorting(column)
+	}
+
+	removeSorting(_this, column) {
+		[].forEach.call(document.querySelectorAll('.sorting-container'), function(e) {
+			e.parentNode.removeChild(e);
+		});				
+		_this.filteringByProperty = false;
+		_this.sortedData = [];
+		_this.filterSortPage(_this.cache);
+	}
+
+	initSorting(column) {
+
+		var columnName = column['field'];
+
+		let uniqueValues = Array.from(new Set(this.cache.map(item => item[columnName])));
+
+		var content = document.querySelector('#custom-filter-select');
+
+		uniqueValues.forEach(function(value) {
+			var option = document.createElement("option");
+			var t = document.createTextNode(value);
+			option.appendChild(t);
+			option.value = value;
+
+			content.appendChild(option);
+		});
+
+	}
+
+	applySorting(_this, column) {
+
+		let columnName = column['field'];
+
+		let selectionContainer = document.querySelector('#custom-filter-select');
+
+		let searchValuesRaw = selectionContainer.selectedOptions;
+		
+		let searchValues = [];
+
+		for (let k of searchValuesRaw){
+			searchValues.push(k.value);
+		}
+		
+		let data = _this.cache.filter(function (el) {  return searchValues.indexOf(el[columnName]) > -1	});
+		
+		//update grid config
+		_this.filteringByProperty = true;
+		_this.sortedData = data;
+		_this.pageNumber = 1;
+		_this.filterSortPage(data);
 	}
 
 	sortChanged(field) {
@@ -574,23 +672,22 @@ export class Grid {
 
 
 
-    isDisplayColumn(showCols: string, hideCols: string,column): boolean {
+	isDisplayColumn(showCols: string, hideCols: string, column): boolean {
 		if (this.showColName == "") return true;
 
-        if (showCols != "undefined" && showCols != undefined)
-        {
-            let columns = showCols.split("|");
+		if (showCols != "undefined" && showCols != undefined) {
+			let columns = showCols.split("|");
 
-            return   columns.indexOf(this.showColName) > -1;
-        }
+			return columns.indexOf(this.showColName) > -1;
+		}
 
-        if (hideCols != "undefined" && hideCols!=undefined) {
-            let columns = hideCols.split("|");
+		if (hideCols != "undefined" && hideCols != undefined) {
+			let columns = hideCols.split("|");
 
-            return !(columns.indexOf(this.showColName) > -1);
-        }
-             
-        return true;
+			return !(columns.indexOf(this.showColName) > -1);
+		}
+
+		return true;
 	}
 
 	getFilterColumns() {
@@ -648,6 +745,8 @@ export class Grid {
 
 		if (this.serverPaging || this.serverSorting || this.serverFiltering || !this.initialLoad)
 			this.getData();
+		else if (this.filteringByProperty)
+			this.filterSortPage(this.sortedData);
 		else
 			this.filterSortPage(this.cache);
 
@@ -758,15 +857,15 @@ export class Grid {
 
 	getTableData(columns = null) {
 		var data = this.filterSort(this.cache);
-		
+
 		var tableData = data.map(d => {
 			return columns.map(c => {
 				var view = this.viewCompiler.compile("<template>" + c.template.split('${ $').join('${').split('${$').join('${') + "</template>", this.viewResources).create(this.container);
 				view.bind({ item: d });
-				return view.fragment.textContent.replace(/(\r\n|\n|\r)/gm,"").trim();
+				return view.fragment.textContent.replace(/(\r\n|\n|\r)/gm, "").trim();
 			});
 		});
-		
+
 		return tableData;
 	}
 
@@ -774,12 +873,12 @@ export class Grid {
 		var columns = this.columns.filter(c => !c.hiddenCol && c.field != "#");
 		ExportToExcel.export(this.getTableData(columns), columns.map(c => c.heading));
 	}
-	
+
 	exportToCsv() {
 		var columns = this.columns.filter(c => !c.hiddenCol && c.field != "#");
 		ExportToCsv.export(this.getTableData(columns), columns.map(c => c.heading));
 	}
-	
+
 	exportToPdf() {
 		var columns = this.columns.filter(c => !c.hiddenCol && c.field != "#");
 		ExportToPdf.export(this.getTableData(columns), columns.map(c => c.heading));
@@ -793,20 +892,19 @@ function processUserTemplate(element) {
 	// Get any col tags from the content
 	var rowElement = element.querySelector("grid-row");
 	var columnElements = Array.prototype.slice.call(rowElement.querySelectorAll("grid-col"));
-	
-	var expanderElement = rowElement.querySelector("grid-cols-expander") , expHash = {} ,expander=null ;
-	
-    if(expanderElement!=null)
-	{	
-		let attrs =  Array.prototype.slice.call(expanderElement.attributes);	
+
+	var expanderElement = rowElement.querySelector("grid-cols-expander"), expHash = {}, expander = null;
+
+    if (expanderElement != null) {
+		let attrs = Array.prototype.slice.call(expanderElement.attributes);
 		attrs.forEach(a => expHash[a.name] = a.value);
-		var expander = new GridColumnsExpander(expHash,expanderElement.innerHTML);
+		var expander = new GridColumnsExpander(expHash, expanderElement.innerHTML);
 	}
-	
+
 	columnElements.forEach(c => {
 		var attrs = Array.prototype.slice.call(c.attributes), colHash = {};
 		attrs.forEach(a => colHash[a.name] = a.value);
-		
+
 		var col = new GridColumn(colHash, c.innerHTML);
 
 		cols.push(col);
@@ -817,5 +915,5 @@ function processUserTemplate(element) {
 	var attrs = Array.prototype.slice.call(rowElement.attributes);
 	attrs.forEach(a => rowAttrs[a.name] = a.value);
 
-	return { columns: cols, rowAttrs: rowAttrs, expander: expander};
+	return { columns: cols, rowAttrs: rowAttrs, expander: expander };
 }
