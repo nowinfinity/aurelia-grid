@@ -44,12 +44,16 @@ export class Grid {
 	@bindable serverFiltering = false;
 	@bindable filterDebounce = 500;
 	@bindable showColName: string = "";
+	
+	
 
 
 
 	// custom filtering
 	@bindable filteringSettings = null;
-
+	@bindable filteringByProperty = false;	
+	
+	
 	// Pagination
 	@bindable serverPaging = false;
 	@bindable pageable = true;
@@ -72,15 +76,16 @@ export class Grid {
 	firstVisibleItem = 0;
 	lastVisibleItem = 0;
 
-	pageNumber = 1;
-
-
+	pageNumber = 1;	
+	
+	
 	// Sortination
 	@bindable serverSorting = false;
 	@bindable sortable: boolean = true;
 	@bindable customSorting: boolean = true;
 	sortProcessingOrder = []; // Represents which order to apply sorts to each column
 	sorting = {};
+	sortedData = [];
 
 	// Searching
 	@bindable search: string = "";
@@ -322,7 +327,6 @@ export class Grid {
 
 	/* === Paging === */
 	pageChanged(page, oldValue) {
-
 		if (page === oldValue) return;
 
 		this.pageNumber = Number(page);
@@ -491,13 +495,11 @@ export class Grid {
 	}
 
 	removeSorting(_this, column) {
-
-		[].forEach.call(
-			document.
-				querySelectorAll('.sorting-container'), function(e) {
-					e.parentNode.removeChild(e);
-				});
-
+		[].forEach.call(document.querySelectorAll('.sorting-container'), function(e) {
+			e.parentNode.removeChild(e);
+		});				
+		_this.filteringByProperty = false;
+		_this.sortedData = [];
 		_this.filterSortPage(_this.cache);
 	}
 
@@ -508,8 +510,6 @@ export class Grid {
 		let uniqueValues = Array.from(new Set(this.cache.map(item => item[columnName])));
 
 		var content = document.querySelector('#custom-filter-select');
-
-		var parser = new DOMParser()
 
 		uniqueValues.forEach(function(value) {
 			var option = document.createElement("option");
@@ -536,10 +536,16 @@ export class Grid {
 			searchValues.push(k.value);
 		}
 		
+		console.info(_this.cache);
+		console.info(searchValues)
+		console.info(columnName)
+		
 		let data = _this.cache.filter(function (el) {  return searchValues.indexOf(el[columnName]) > -1	});
 		
-		console.info(data);
-
+		//update grid config
+		_this.filteringByProperty = true;
+		_this.sortedData = data;
+		_this.pageNumber = 1;
 		_this.filterSortPage(data);
 	}
 
@@ -741,6 +747,8 @@ export class Grid {
 
 		if (this.serverPaging || this.serverSorting || this.serverFiltering || !this.initialLoad)
 			this.getData();
+		else if (this.filteringByProperty)
+			this.filterSortPage(this.sortedData);
 		else
 			this.filterSortPage(this.cache);
 
@@ -767,10 +775,6 @@ export class Grid {
 			filtering: this.getFilterColumns()
 		})
 			.then((result) => {
-
-				console.info(result);
-
-				console.info(this.visibleColumns);
 
 				// Data should be in the result so grab it and assign it to the data property
 				this.handleResult(result);

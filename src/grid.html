@@ -45,6 +45,11 @@
 			background-size: 20px 20px;
 		}
 		
+		.sorting-arrow.sorting-arrow-search {
+			background: url(../images/a_search.png);
+			background-size: 20px 20px;
+		}
+		
 		.sorting-arrow.sorting-arrow-down {
 			background: url(../images/a_down.png);
 			background-size: 20px 20px;
@@ -143,16 +148,15 @@
 			overflow: auto;
 			width: 200px;
 		}
-		
 	</style>
 
 	<script id="filtering-template" type="text/html">
 		<div class="sorting-container">
 			<div class="content">
-				<select id="custom-filter-select" multiple="multiple">					
+				<select id="custom-filter-select" multiple="multiple">
 				</select>
 			</div>
-			<div> 
+			<div>
 				<button class="button button-green">Apply</button>
 				<button class="button button-red">Clear</button>
 			</div>
@@ -169,11 +173,13 @@
 				<span if.bind="$column.nosort == true || !$parent.sortable">${ $column.heading } </span>
 				<span if.bind="$column.filtering == 'true'">
 					<span if.bind="$parent.sorting[$column.field] === 'desc'" click.trigger="$parent.sortBySingleField($column.field, '')" class="sorting-arrow sorting-arrow-down text-primary"></span>
-				<span if.bind="$parent.sorting[$column.field] === 'asc'" click.trigger="$parent.sortBySingleField($column.field, 'desc')"
-				class="sorting-arrow sorting-arrow-top text-primary"></span>
-				<span if.bind="$parent.sorting[$column.field] === '' || $parent.sorting[$column.field] === undefined" click.trigger="$parent.sortBySingleField($column.field, 'asc')"
-				class="sorting-arrow sorting-arrow-normal text-primary"></span>
+					<span if.bind="$parent.sorting[$column.field] === 'asc'" click.trigger="$parent.sortBySingleField($column.field, 'desc')"
+					class="sorting-arrow sorting-arrow-top text-primary"></span>
+					<span if.bind="$parent.sorting[$column.field] === '' || $parent.sorting[$column.field] === undefined" click.trigger="$parent.sortBySingleField($column.field, 'asc')"
+					class="sorting-arrow sorting-arrow-normal text-primary"></span>
 				</span>
+				<span if.bind="$column['filtering-by-property'] == 'true'" click.trigger="$parent.customSort($column)"
+				class="sorting-arrow sorting-arrow-search text-primary"></span>
 			</div>
 			<div if.bind="showColumnFilters" class="grid-column-filters">
 				<div repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' }">
