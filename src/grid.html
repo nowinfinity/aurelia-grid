@@ -213,7 +213,7 @@
             <div class="loader ">${ loadingMessage}</div>
         </div>
         <!-- Footer div -->
-        <div class="grid-footer-container " if.bind="pageable && !loading ">
+        <div class="grid-footer-container " if.bind="pageable && !loading && count > 0">
             <pager page-size.bind="pageSize " num-to-show.bind="pagerSize " pager.ref="pager " on-page-changed.call="pageChanged($event)
 		" show-first-last-buttons.bind="showFirstLastButtons " show-jump-buttons.bind="showJumpButtons "
                    show-paging-summary.bind="showPagingSummary " show-page-size-box.bind="showPageSizeBox

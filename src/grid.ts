@@ -397,6 +397,8 @@ export class Grid {
 			this.pager.update(this.pageNumber, Number(this.pageSize), Number(this.count));
 
 		this.firstVisibleItem = (this.pageNumber - 1) * Number(this.pageSize) + 1;
+		if (this.firstVisibleItem < 0)
+			this.firstVisibleItem = 0;
 		this.lastVisibleItem = Math.min((this.pageNumber) * Number(this.pageSize), this.count);
 	}
 

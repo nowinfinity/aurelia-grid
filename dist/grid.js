@@ -335,6 +335,8 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     if (this.pager)
                         this.pager.update(this.pageNumber, Number(this.pageSize), Number(this.count));
                     this.firstVisibleItem = (this.pageNumber - 1) * Number(this.pageSize) + 1;
+                    if (this.firstVisibleItem < 0)
+                        this.firstVisibleItem = 0;
                     this.lastVisibleItem = Math.min((this.pageNumber) * Number(this.pageSize), this.count);
                 };
                 /* === Sorting === */
