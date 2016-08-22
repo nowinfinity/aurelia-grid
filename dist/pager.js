@@ -41,6 +41,10 @@ System.register(['aurelia-framework', 'aurelia-templating-resources'], function(
                     this.pages = [];
                     this.signaler = signaler;
                 }
+                Pager.prototype.attached = function () {
+                    if (this.page != 0 && this.pageSize != 0 && this.count != 0)
+                        this.update(this.page, this.pageSize, this.count);
+                };
                 Object.defineProperty(Pager.prototype, "showJumpPrev", {
                     get: function () {
                         if (this.pages.length == 0)

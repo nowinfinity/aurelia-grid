@@ -397,6 +397,8 @@ export class Grid {
 			this.pager.update(this.pageNumber, Number(this.pageSize), Number(this.count));
 
 		this.firstVisibleItem = (this.pageNumber - 1) * Number(this.pageSize) + 1;
+		if (this.firstVisibleItem < 0)
+			this.firstVisibleItem = 0;
 		this.lastVisibleItem = Math.min((this.pageNumber) * Number(this.pageSize), this.count);
 	}
 
@@ -563,7 +565,6 @@ export class Grid {
 	}
 
 	sortChanged(field) {
-		console.info(field)
 		// Determine new sort
 		var newSort = undefined;
 
@@ -586,7 +587,6 @@ export class Grid {
 		this.sorting[field] = newSort;
 		// If the sort is present in the sort stack, slice it to the back of the stack, otherwise just add it
 		var pos = this.sortProcessingOrder.indexOf(field);
-		console.info(this.sortProcessingOrder);
 		if (pos > -1)
 			this.sortProcessingOrder.splice(pos, 1);
 
@@ -817,7 +817,6 @@ export class Grid {
 			this.data = result.data;
 			this.filterSortPage(this.data);
 		}
-
 		// Update the pager - maybe the grid options should contain an update callback instead of reffing the
 		// pager into the current VM?
 		if (!this.filteringSettings)

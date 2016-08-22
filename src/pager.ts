@@ -8,6 +8,12 @@ export class Pager {
 	
 	constructor(signaler) {
 		this.signaler = signaler;
+		
+	}
+	
+	attached(){
+		if (this.page != 0 && this.pageSize != 0 && this.count != 0)
+			this.update(this.page, this.pageSize, this.count);
 	}
 	
 	signaler: any;

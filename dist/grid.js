@@ -335,6 +335,8 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     if (this.pager)
                         this.pager.update(this.pageNumber, Number(this.pageSize), Number(this.count));
                     this.firstVisibleItem = (this.pageNumber - 1) * Number(this.pageSize) + 1;
+                    if (this.firstVisibleItem < 0)
+                        this.firstVisibleItem = 0;
                     this.lastVisibleItem = Math.min((this.pageNumber) * Number(this.pageSize), this.count);
                 };
                 /* === Sorting === */
@@ -472,7 +474,6 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     _this.filterSortPage(data);
                 };
                 Grid.prototype.sortChanged = function (field) {
-                    console.info(field);
                     // Determine new sort
                     var newSort = undefined;
                     // Figure out which way this field should be sorting
@@ -493,7 +494,6 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     this.sorting[field] = newSort;
                     // If the sort is present in the sort stack, slice it to the back of the stack, otherwise just add it
                     var pos = this.sortProcessingOrder.indexOf(field);
-                    console.info(this.sortProcessingOrder);
                     if (pos > -1)
                         this.sortProcessingOrder.splice(pos, 1);
                     this.sortProcessingOrder.push(field);
