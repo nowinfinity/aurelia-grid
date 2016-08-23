@@ -806,7 +806,6 @@ export class Grid {
 
 		// TODO: Check valid stuff was returned
 		var data = result.data;
-
 		// Is the data being paginated on the client side?
 		// TODO: Work out when we should we use the cache... ever? If it's local data
 		if (this.pageable && !this.serverPaging && !this.serverSorting && !this.serverFiltering) {

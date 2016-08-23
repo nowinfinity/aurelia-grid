@@ -181,7 +181,8 @@
 	<div class="grid-container table  ${class}">
 		<!-- Header table -->
 		<div if.bind="showColumnHeaders" class="table-row table-head">
-			<div repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' } ${ 'header-' + $column.field }"
+			<template repeat.for="$column of visibleColumns" >
+			<div class="${ $column.class !== '' ? $column.class : '' } ${ 'header-' + $column.field }"
 			if.bind="isDisplayColumn($column.showColNameIf, $column.hideColNameIf, showColName)">
 				<a if.bind="$column.nosort == false && $parent.sortable" click.trigger="$parent.customSort($column)">${ $column.heading }</a>
 				<span if.bind="$column.nosort == true || !$parent.sortable">${ $column.heading } </span>
@@ -194,6 +195,7 @@
 				</span>
 				<span if.bind="$column['filtering-by-property'] == 'true'" click.trigger="$parent.customSort($column)" class="sorting-arrow sorting-arrow-search text-primary"></span>
 			</div>
+			</template>
 			<div if.bind="showColumnFilters" class="grid-column-filters">
 				<div repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' }">
 					<div if.bind="$column.showFilter">
