@@ -192,8 +192,9 @@
     <div class="grid-container table  ${class}">
         <!-- Header table -->
         <div if.bind="showColumnHeaders" class="table-row table-head">
-            <div  repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' } ${ 'header-' + $column.field }" show.bind="isDisplayColumn($column.showColNameIf, $column.hideColNameIf, showColName)">
-                    <a if.bind="$column.nosort == false && $parent.sortable" click.trigger="$parent.customSort($column)">${ $column.heading }</a>
+            <div  repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' } ${ 'header-' + $column.field }" if.bind="isDisplayColumn($column.showColNameIf, $column.hideColNameIf, showColName)">
+                              
+                   <a if.bind="$column.nosort == false && $parent.sortable" click.trigger="$parent.customSort($column)">${ $column.heading }</a>
                     <span if.bind="$column.nosort == true || !$parent.sortable">${ $column.heading } </span>
                     <span if.bind="$column.filtering == 'true'">
                         <span if.bind="$parent.sorting[$column.field] === 'desc'" click.trigger="$parent.sortBySingleField($column.field, '')" class="sorting-arrow sorting-arrow-down text-primary"></span>
@@ -203,8 +204,8 @@
                               class="sorting-arrow sorting-arrow-normal text-primary"></span>
                     </span>
                     <span if.bind="$column['filtering-by-property'] == 'true'" click.trigger="$parent.customSort($column)" class="sorting-arrow sorting-arrow-search text-primary"></span>
-
             </div>
+    
             <div if.bind="showColumnFilters" class="grid-column-filters">
                 <div repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' }">
                     <div if.bind="$column.showFilter">
