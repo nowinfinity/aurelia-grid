@@ -168,9 +168,9 @@ export class Grid {
 			var sort = this.parseSortValue(this.sortField);
 			this.sortBySingleFieldChangeValues(sort.field, sort.direction)
 		}
-			
-		this.visibleColumns.forEach( item => {
-			if (item.filtering === 'true'){
+
+		this.visibleColumns.forEach(item => {
+			if (item.filtering === 'true') {
 				this.sortBySingleField(item.field, 'desc');
 			}
 		});
@@ -519,16 +519,16 @@ export class Grid {
 	initSorting(column) {
 
 		var columnName = column['field'];
-
+		
 		let uniqueValues = Array.from(new Set(this.cache.map(item => {
-			if (typeof item[columnName] == 'object') {
+			if (Array.isArray(item[columnName])) {
 				return item[columnName][0];
 			}
 			return item[columnName];
 		})));
 
 		uniqueValues.sort();
-		
+
 		var content = document.querySelector('#custom-filter-select');
 
 		uniqueValues.forEach(function(value) {

@@ -441,7 +441,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                 Grid.prototype.initSorting = function (column) {
                     var columnName = column['field'];
                     var uniqueValues = Array.from(new Set(this.cache.map(function (item) {
-                        if (typeof item[columnName] == 'object') {
+                        if (Array.isArray(item[columnName])) {
                             return item[columnName][0];
                         }
                         return item[columnName];
