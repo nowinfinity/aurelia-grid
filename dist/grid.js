@@ -154,10 +154,16 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         this.refresh();
                 };
                 Grid.prototype.bind = function (executionContext) {
+                    var _this = this;
                     if (this.sortField) {
                         var sort = this.parseSortValue(this.sortField);
                         this.sortBySingleFieldChangeValues(sort.field, sort.direction);
                     }
+                    this.visibleColumns.forEach(function (item) {
+                        if (item.filtering === 'true') {
+                            _this.sortBySingleField(item.field, 'desc');
+                        }
+                    });
                     this.parent = executionContext;
                     this["$parent"] = executionContext;
                     this.indexColumnChanged(this.indexColumn, this.columns && this.columns[0].field == "#");
@@ -434,7 +440,13 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                 };
                 Grid.prototype.initSorting = function (column) {
                     var columnName = column['field'];
-                    var uniqueValues = Array.from(new Set(this.cache.map(function (item) { return item[columnName]; })));
+                    var uniqueValues = Array.from(new Set(this.cache.map(function (item) {
+                        if (typeof item[columnName] == 'object') {
+                            return item[columnName][0];
+                        }
+                        return item[columnName];
+                    })));
+                    uniqueValues.sort();
                     var content = document.querySelector('#custom-filter-select');
                     uniqueValues.forEach(function (value) {
                         var option = document.createElement("option");
@@ -467,6 +479,8 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         else
                             return searchValues.indexOf(el[columnName]) > -1;
                     });
+                    //close sorting modal
+                    document.querySelector(".header-" + column.field).querySelector('.sorting-container').style.display = "none";
                     //update grid config
                     _this.filteringByProperty = true;
                     _this.sortedData = data;

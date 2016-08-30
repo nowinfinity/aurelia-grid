@@ -168,6 +168,12 @@ export class Grid {
 			var sort = this.parseSortValue(this.sortField);
 			this.sortBySingleFieldChangeValues(sort.field, sort.direction)
 		}
+			
+		this.visibleColumns.forEach( item => {
+			if (item.filtering === 'true'){
+				this.sortBySingleField(item.field, 'desc');
+			}
+		});
 
 		this.parent = executionContext;
 		this["$parent"] = executionContext;
@@ -514,8 +520,15 @@ export class Grid {
 
 		var columnName = column['field'];
 
-		let uniqueValues = Array.from(new Set(this.cache.map(item => item[columnName])));
+		let uniqueValues = Array.from(new Set(this.cache.map(item => {
+			if (typeof item[columnName] == 'object') {
+				return item[columnName][0];
+			}
+			return item[columnName];
+		})));
 
+		uniqueValues.sort();
+		
 		var content = document.querySelector('#custom-filter-select');
 
 		uniqueValues.forEach(function(value) {
@@ -553,9 +566,12 @@ export class Grid {
 					}
 				});
 				return res;
-			}else
+			} else
 				return searchValues.indexOf(el[columnName]) > -1
 		});
+		
+		//close sorting modal
+		document.querySelector(".header-" + column.field).querySelector('.sorting-container').style.display = "none";
 		
 		//update grid config
 		_this.filteringByProperty = true;
