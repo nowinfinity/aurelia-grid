@@ -215,12 +215,14 @@
             <div class="loader ">${ loadingMessage}</div>
         </div>
         <!-- Footer div -->
-        <div class="grid-footer-container " if.bind="pageable && !loading && count > 0">
+    </div>
+	<div class="grid-container table  ${class} grid-container-outer">
+		<div class="grid-footer-container " if.bind="pageable && !loading && count > 0">
             <pager page-size.bind="pageSize " num-to-show.bind="pagerSize " pager.ref="pager " on-page-changed.call="pageChanged($event)
 		" show-first-last-buttons.bind="showFirstLastButtons " show-jump-buttons.bind="showJumpButtons "
                    show-paging-summary.bind="showPagingSummary " show-page-size-box.bind="showPageSizeBox
 		" first-visible-item.bind="firstVisibleItem " last-visible-item.bind="lastVisibleItem " page-sizes.bind="pageSizes "
                    hide-jump-buttons-if-not-possible.bind="hideJumpButtonsIfNotPossible " count.bind="count "></pager>
         </div>
-    </div>
+	</div>
 </template>
