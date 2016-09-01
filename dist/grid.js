@@ -173,6 +173,8 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         this.sortable = false;
                     // The table body element will host the rows
                     var body = this.element.querySelector(".table-content");
+                    if (this.expanderAttrs != null)
+                        body = this.element.querySelector(".grid-container");
                     this.viewSlot = new aurelia_framework_2.ViewSlot(body, true);
                     // Get the row template too and add a repeater/class
                     var row = body.querySelector("div.table-row");
@@ -446,7 +448,9 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         }
                         return item[columnName];
                     })));
-                    uniqueValues.sort();
+                    uniqueValues.sort(function (a, b) {
+                        return a.toLowerCase().localeCompare(b.toLowerCase());
+                    });
                     var content = document.querySelector('#custom-filter-select');
                     uniqueValues.forEach(function (value) {
                         var option = document.createElement("option");

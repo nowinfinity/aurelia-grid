@@ -157,7 +157,7 @@ export class Grid {
 		this.gridHeightChanged();
 
 		if (this.autoLoad)
-			this.refresh();
+			this.refresh();	
 	}
 
 	parent: any;
@@ -187,6 +187,9 @@ export class Grid {
 
 		// The table body element will host the rows
 		var body = this.element.querySelector(".table-content");
+		
+		if (this.expanderAttrs != null)
+			body = this.element.querySelector(".grid-container");
 
 		this.viewSlot = new ViewSlot(body, true);
 
@@ -527,7 +530,9 @@ export class Grid {
 			return item[columnName];
 		})));
 
-		uniqueValues.sort();
+		uniqueValues.sort(function (a, b) {
+			return a.toLowerCase().localeCompare(b.toLowerCase());
+		});
 
 		var content = document.querySelector('#custom-filter-select');
 
