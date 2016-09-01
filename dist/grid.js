@@ -448,7 +448,9 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         }
                         return item[columnName];
                     })));
-                    uniqueValues.sort();
+                    uniqueValues.sort(function (a, b) {
+                        return a.toLowerCase().localeCompare(b.toLowerCase());
+                    });
                     var content = document.querySelector('#custom-filter-select');
                     uniqueValues.forEach(function (value) {
                         var option = document.createElement("option");

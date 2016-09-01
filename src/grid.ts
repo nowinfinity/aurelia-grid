@@ -530,7 +530,9 @@ export class Grid {
 			return item[columnName];
 		})));
 
-		uniqueValues.sort();
+		uniqueValues.sort(function (a, b) {
+			return a.toLowerCase().localeCompare(b.toLowerCase());
+		});
 
 		var content = document.querySelector('#custom-filter-select');
 
