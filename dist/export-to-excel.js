@@ -46,11 +46,11 @@ System.register(["./blob", "./fileSaver", "xlsx", 'aurelia-framework'], function
                         var cell_ref = XLSX.utils.encode_cell({ c: C, r: 0 });
                         ws[cell_ref] = cell;
                     }
-                    for (var R = 1; R != data.length; ++R) {
+                    for (var R = 1; R <= data.length; R++) {
                         var C = 0;
-                        for (var property in data[R]) {
-                            if (data[R].hasOwnProperty(property)) {
-                                var cell = { v: data[R][property], c: null, t: 's', z: null, s: null };
+                        for (var property in data[R - 1]) {
+                            if (data[R - 1].hasOwnProperty(property)) {
+                                var cell = { v: data[R - 1][property], c: null, t: 's', z: null, s: null };
                                 if (cell.v == null)
                                     continue;
                                 var cell_ref = XLSX.utils.encode_cell({ c: C, r: R });
