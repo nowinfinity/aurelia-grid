@@ -207,7 +207,7 @@
 		</div>
 		<!-- Content table -->
 		<div class="table-content" show.bind="!showNoRowsMessage || (showNoRowsMessage && count > 0) || !loading">
-			<div class="table-row" click.delegate="$parent.select($item)"></div>
+			<div class="table-row"></div>
 		</div>
 		<div show.bind="showNoRowsMessage && count === 0 || !loading" " class="alert alert-warning ">${ noRowsMessage }</div>
         <div class="grid-overlay " if.bind="loading "></div>
