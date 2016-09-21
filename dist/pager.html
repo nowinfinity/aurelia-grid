@@ -20,7 +20,7 @@
 		
 		<div class="selected-area selected-area-nosearch select2" if.bind="showPageSizeBox">
 			<div class="form-control-group">
-				<span>Show </span>
+				<label>Show </label>
 				<select chosen-select class="form-control" value.bind="pageSize">
 					<option value.bind="size" repeat.for="size of pageSizes">${ size === '*' ? 'All' : size + " entries" }</option>
 				</select>
