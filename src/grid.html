@@ -180,23 +180,58 @@
 	</script>
 
 	<require from="./pager"></require>
+
 	<div class="grid-container table  ${class}">
 		<!-- Header table -->
-		<div if.bind="showColumnHeaders" class="table-row table-head">
+		<div
+			if.bind="showColumnHeaders"
+			class="table-row table-head"
+		>
 			<template repeat.for="$column of visibleColumns" >
-			<div class="${ $column.class !== '' ? $column.class : '' } ${ 'header-' + $column.field }"
-			if.bind="isDisplayColumn($column.showColNameIf, $column.hideColNameIf, showColName)">
-				<a if.bind="$column.nosort == false && $parent.sortable" click.trigger="$parent.customSort($column)">${ $column.heading }</a>
-				<span if.bind="$column.nosort == true || !$parent.sortable">${ $column.heading } </span>
-				<span if.bind="$column.filtering == 'true'">
-					<span if.bind="$parent.sorting[$column.field] === 'desc'" click.trigger="$parent.sortBySingleField($column.field, '')" class="sorting-arrow sorting-arrow-down text-primary"></span>
-				<span if.bind="$parent.sorting[$column.field] === 'asc'" click.trigger="$parent.sortBySingleField($column.field, 'desc')"
-				class="sorting-arrow sorting-arrow-top text-primary"></span>
-				<span if.bind="$parent.sorting[$column.field] === '' || $parent.sorting[$column.field] === undefined" click.trigger="$parent.sortBySingleField($column.field, 'asc')"
-				class="sorting-arrow sorting-arrow-normal text-primary"></span>
+
+			<div
+				class="${ $column.class !== '' ? $column.class : '' } ${ 'header-' + $column.field }"
+				if.bind="isDisplayColumn($column.showColNameIf, $column.hideColNameIf, showColName)"
+			>
+
+				<a if.bind="$column.nosort == false && $parent.sortable" click.trigger="$parent.customSort($column)">
+					${ $column.heading }
+				</a>
+
+				<span if.bind="$column.nosort == true || !$parent.sortable">
+					${ $column.heading }
 				</span>
-				<span if.bind="$column['filtering-by-property'] == 'true'" click.trigger="$parent.customSort($column)" class="sorting-arrow sorting-arrow-search text-primary"></span>
+
+				<span if.bind="$column.filtering == 'true'">
+
+					<span
+						if.bind="$parent.sorting[$column.field] === 'desc'"
+						click.trigger="$parent.sortBySingleField($column.field, '')"
+						class="sorting-arrow sorting-arrow-down text-primary"
+					></span>
+
+					<span
+						if.bind="$parent.sorting[$column.field] === 'asc'"
+						click.trigger="$parent.sortBySingleField($column.field, 'desc')"
+						class="sorting-arrow sorting-arrow-top text-primary"
+					></span>
+
+					<span
+						if.bind="$parent.sorting[$column.field] === '' || $parent.sorting[$column.field] === undefined"
+						click.trigger="$parent.sortBySingleField($column.field, 'asc')"
+						class="sorting-arrow sorting-arrow-normal text-primary"
+					></span>
+
+				</span>
+
+				<span
+					if.bind="$column['filtering-by-property'] == 'true'"
+					click.trigger="$parent.customSort($column)"
+					class="sorting-arrow sorting-arrow-search text-primary">
+				</span>
+
 			</div>
+
 			</template>
 			<div if.bind="showColumnFilters" class="grid-column-filters">
 				<div repeat.for="$column of visibleColumns" class="${ $column.class !== '' ? $column.class : '' }">
@@ -209,9 +244,9 @@
 		</div>
 		<!-- Content table -->
 		<div class="table-content" show.bind="!showNoRowsMessage || (showNoRowsMessage && count > 0) || !loading">
-			<div class="table-row"></div>
+			<div class="table-row" click.delegate="$parent.select($item)"></div>
 		</div>
-		<div show.bind="showNoRowsMessage && count === 0 || !loading" " class="alert alert-warning ">${ noRowsMessage }</div>
+		<div show.bind="showNoRowsMessage && count === 0 || !loading" class="alert alert-warning ">${ noRowsMessage }</div>
         <div class="grid-overlay " if.bind="loading "></div>
         <div if.bind="loading " class="progress grid-progress-indicator ">
             <div class="loader ">${ loadingMessage}</div>

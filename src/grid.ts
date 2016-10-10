@@ -6,6 +6,8 @@ import {Pager} from "./pager";
 import {ExportToExcel} from './export-to-excel'
 import {ExportToCsv} from './export-to-csv'
 import {ExportToPdf} from './export-to-pdf'
+import $ from 'jquery';
+import 'nicescroll';
 
 @customElement('grid')
 @processContent(function(viewCompiler, viewResources, element, instruction) {
@@ -28,7 +30,6 @@ export class Grid {
 	/* == Styling == */
 	@bindable gridHeight = 0;
 	@bindable class = "";
-
 	/* == Options == */
 
 	// Initial load flag (for client side)
@@ -105,10 +106,6 @@ export class Grid {
 		return this.columns.filter(c => !c.hiddenCol);
 	}
 
-	get displayedColumns() {
- 		return this.visibleColumns.filter(c => this.isDisplayColumn(c.showColNameIf, c.hideColNameIf, this.showColName) && c.field != "#");
- 	}
-
 	// Selection
 	@bindable selectable = false;
 	@bindable selectedItem = null;
@@ -144,24 +141,28 @@ export class Grid {
 
 	expanderAttrs;
 
-	constructor(private element: Element, public viewCompiler: ViewCompiler, public viewResources: ViewResources, public container: Container, private targetInstruction: TargetInstruction,
-		public bindingEngine: BindingEngine) {
+	constructor(
+		private element: Element,
+		public viewCompiler: ViewCompiler,
+		public viewResources: ViewResources,
+		public container: Container,
+		private targetInstruction: TargetInstruction,
+		public bindingEngine: BindingEngine
+	) {
 		var behavior = (<any>targetInstruction).behaviorInstructions[0];
 
 		this.columns = behavior.gridColumns;
 		this.rowAttrs = behavior.rowAttrs;
 
 		this.expanderAttrs = behavior.expanderAttrs;
-
-
 	}
 
 	/* === Lifecycle === */
 	attached() {
 		this.gridHeightChanged();
-
-		if (this.autoLoad)
-			this.refresh();	
+		if (this.autoLoad){
+			this.refresh();
+		}
 	}
 
 	parent: any;
@@ -473,6 +474,7 @@ export class Grid {
 	customSort(column) {	
 		// check if our column need sorting
 		if (column['filtering-by-property'] != 'true') {
+
 			this.sortChanged(column['field']);
 			return;
 		}
@@ -481,10 +483,15 @@ export class Grid {
 		
 		//close sorting modal
 		if (element.querySelector('.sorting-container') != null) {
-			if (element.querySelector('.sorting-container').style.display != "none")
+			if (element.querySelector('.sorting-container').style.display != "none"){
 				element.querySelector('.sorting-container').style.display = "none";
-			else
+				//@TODO refactor all this shit with nicescroll
+				this.removeNiceScroll();
+			}
+			else{
 				element.querySelector('.sorting-container').style.display = "inherit";
+				this.initNiceScroll();
+			}
 			return;
 		}
 
@@ -502,7 +509,7 @@ export class Grid {
 		element.appendChild(templ);
 		
 		//apply event listeners
-		var _this = this
+		var _this = this;
 		templ.querySelector('.button-green').addEventListener('click', function() {
 			_this.applySorting(_this, column);
 		}, false);
@@ -521,6 +528,7 @@ export class Grid {
 		_this.filteringByProperty = false;
 		_this.sortedData = [];
 		_this.filterSortPage(_this.cache);
+		_this.removeNiceScroll();
 	}
 
 	initSorting(column) {
@@ -545,10 +553,10 @@ export class Grid {
 			var t = document.createTextNode(value);
 			option.appendChild(t);
 			option.value = value;
-
 			content.appendChild(option);
 		});
 
+		this.initNiceScroll();
 	}
 
 	applySorting(_this, column) {
@@ -587,7 +595,34 @@ export class Grid {
 		_this.sortedData = data;
 		_this.pageNumber = 1;
 		_this.filterSortPage(data);
+		_this.removeNiceScroll();
 	}
+
+	dropDownScroll: any;
+
+	initNiceScroll(){
+		this.dropDownScroll = $('#custom-filter-select').niceScroll({
+			cursorcolor: '#fff',
+			background: '#387ac0',
+			cursorwidth: 4,
+			cursorborder: 0,
+			autohidemode: false,
+			smoothscroll: false,
+			railoffset: {
+				left: -10
+			},
+			railpadding: {
+				bottom: 5
+			}
+		});
+	}
+
+	removeNiceScroll(){
+		try{
+			this.dropDownScroll.remove();
+		}catch(e){}
+	}
+
 
 	sortChanged(field) {
 		// Determine new sort
@@ -848,18 +883,16 @@ export class Grid {
 	}
 
 	watchForChanges() {
-
 		this.dontWatchForChanges();
-
 		// Guard against data refresh events hitting after the user does anything that unloads the grid
-
-		if (!this.unbinding)
+		if (!this.unbinding){
 			// We can update the pager automagically
 			this.subscription = this.bindingEngine
 				.collectionObserver(this.cache)
 				.subscribe((splices) => {
 					this.refresh();
 				});
+		}
 	}
 
 	dontWatchForChanges() {
@@ -898,7 +931,7 @@ export class Grid {
 
 		var tableData = data.map(d => {
 			return columns.map(c => {
-				var view = this.viewCompiler.compile("<template>" + this.removeOneLevelD(c.template) + "</template>", this.viewResources).create(this.container);
+				var view = this.viewCompiler.compile("<template>" + c.template.split('${ $').join('${').split('${$').join('${') + "</template>", this.viewResources).create(this.container);
 				view.bind({ item: d });
 				return view.fragment.textContent.replace(/(\r\n|\n|\r)/gm, "").trim();
 			});
@@ -907,41 +940,18 @@ export class Grid {
 		return tableData;
 	}
 
-	private removeOneLevelD(template: string) : string {
- 		var i = 0;
- 		var inBlock = false;
- 		while (template.length > i+1) {
- 			if (template[i] == '$' && template[i+1] == "{") {
- 				inBlock = true;
- 				i++;
- 			}
- 
- 	 		if (inBlock && template[i] == "$") {
- 				template = template.slice(0, i) + template.slice(i+1);
- 			}
- 
- 			if (inBlock && template[i] == '}') {
- 				inBlock = false;
- 			}
- 
- 			i++;
- 		}
- 
- 		return template;
- 	}
-
 	exportToExcel() {
-		var columns = this.displayedColumns;
+		var columns = this.columns.filter(c => !c.hiddenCol && c.field != "#");
 		ExportToExcel.export(this.getTableData(columns), columns.map(c => c.heading));
 	}
 
 	exportToCsv() {
-		var columns = this.displayedColumns;
+		var columns = this.columns.filter(c => !c.hiddenCol && c.field != "#");
 		ExportToCsv.export(this.getTableData(columns), columns.map(c => c.heading));
 	}
 
 	exportToPdf() {
-		var columns = this.displayedColumns;
+		var columns = this.columns.filter(c => !c.hiddenCol && c.field != "#");
 		ExportToPdf.export(this.getTableData(columns), columns.map(c => c.heading));
 	}
 }

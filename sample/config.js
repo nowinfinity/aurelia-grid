@@ -29,6 +29,8 @@ System.config({
     "font-awesome": "npm:font-awesome@4.5.0",
     "fs": "github:jspm/nodelibs-fs@0.1.2",
     "html2canvas": "npm:html2canvas@0.5.0-beta4",
+    "jquery": "npm:jquery@3.1.1",
+    "nicescroll": "github:inuyaksa/jquery.nicescroll@3.6.8/jquery.nicescroll.min",
     "rasterizehtml": "npm:rasterizehtml@1.2.2",
     "systemjs/plugin-css": "github:systemjs/plugin-css@0.1.20",
     "traceur": "github:jmcriffey/bower-traceur@0.0.93",

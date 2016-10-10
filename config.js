@@ -10,6 +10,8 @@ System.config({
   map: {
     "aurelia-framework": "npm:aurelia-framework@1.0.0-beta.1.0.8",
     "core-js": "npm:core-js@2.0.3",
+    "jquery": "npm:jquery@3.1.1",
+    "nicescroll": "github:inuyaksa/jquery.nicescroll@3.6.8/jquery.nicescroll.min",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"
     },
