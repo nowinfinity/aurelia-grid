@@ -543,6 +543,9 @@ export class Grid {
 		})));
 
 		uniqueValues.sort(function (a, b) {
+			if(a === null || b === null){
+				return;
+			}
 			return a.toLowerCase().localeCompare(b.toLowerCase());
 		});
 
