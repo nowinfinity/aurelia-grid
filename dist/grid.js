@@ -457,6 +457,9 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         return item[columnName];
                     })));
                     uniqueValues.sort(function (a, b) {
+                        if(a === null || b === null){
+                            return;
+                        }
                         return a.toLowerCase().localeCompare(b.toLowerCase());
                     });
                     var content = document.querySelector('#custom-filter-select');
