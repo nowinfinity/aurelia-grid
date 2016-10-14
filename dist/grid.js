@@ -147,19 +147,12 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(Grid.prototype, "displayedColumns", {
-                    get: function () {
-                        var _this = this;
-                        return this.visibleColumns.filter(function (c) { return _this.isDisplayColumn(c.showColNameIf, c.hideColNameIf, _this.showColName) && c.field != "#"; });
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
                 /* === Lifecycle === */
                 Grid.prototype.attached = function () {
                     this.gridHeightChanged();
-                    if (this.autoLoad)
+                    if (this.autoLoad) {
                         this.refresh();
+                    }
                 };
                 Grid.prototype.bind = function (executionContext) {
                     var _this = this;
@@ -415,10 +408,12 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     var element = document.querySelector(".header-" + column.field);
                     //close sorting modal
                     if (element.querySelector('.sorting-container') != null) {
-                        if (element.querySelector('.sorting-container').style.display != "none")
+                        if (element.querySelector('.sorting-container').style.display != "none") {
                             element.querySelector('.sorting-container').style.display = "none";
-                        else
+                        }
+                        else {
                             element.querySelector('.sorting-container').style.display = "inherit";
+                        }
                         return;
                     }
                     [].forEach.call(document.querySelectorAll('.sorting-container'), function (e) {
@@ -447,6 +442,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     _this.filteringByProperty = false;
                     _this.sortedData = [];
                     _this.filterSortPage(_this.cache);
+                    //_this.removeNiceScroll();
                 };
                 Grid.prototype.initSorting = function (column) {
                     var columnName = column['field'];
@@ -459,7 +455,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     uniqueValues.sort(function (a, b) {
                         return a.toLowerCase().localeCompare(b.toLowerCase());
                     });
-                    var content = document.querySelector('#custom-filter-select');
+                    var content = document.querySelector('.custom-select');
                     uniqueValues.forEach(function (value) {
                         var option = document.createElement("option");
                         var t = document.createTextNode(value);
@@ -467,10 +463,11 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         option.value = value;
                         content.appendChild(option);
                     });
+                    //this.initNiceScroll();
                 };
                 Grid.prototype.applySorting = function (_this, column) {
                     var columnName = column['field'];
-                    var selectionContainer = document.querySelector('#custom-filter-select');
+                    var selectionContainer = document.querySelector('.custom-select');
                     var searchValuesRaw = selectionContainer.selectedOptions;
                     var searchValues = [];
                     for (var _i = 0, searchValuesRaw_1 = searchValuesRaw; _i < searchValuesRaw_1.length; _i++) {
@@ -498,7 +495,32 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     _this.sortedData = data;
                     _this.pageNumber = 1;
                     _this.filterSortPage(data);
+                    //_this.removeNiceScroll();
                 };
+                /*dropDownScroll: any;
+            
+                initNiceScroll(){
+                    this.dropDownScroll = $('.custom-select').niceScroll({
+                        cursorcolor: '#fff',
+                        background: '#387ac0',
+                        cursorwidth: 4,
+                        cursorborder: 0,
+                        autohidemode: false,
+                        smoothscroll: false,
+                        railoffset: {
+                            left: -10
+                        },
+                        railpadding: {
+                            bottom: 5
+                        }
+                    });
+                }
+            
+                removeNiceScroll(){
+                    try{
+                        this.dropDownScroll.remove();
+                    }catch(e){}
+                }*/
                 Grid.prototype.sortChanged = function (field) {
                     // Determine new sort
                     var newSort = undefined;
@@ -706,13 +728,14 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     var _this = this;
                     this.dontWatchForChanges();
                     // Guard against data refresh events hitting after the user does anything that unloads the grid
-                    if (!this.unbinding)
+                    if (!this.unbinding) {
                         // We can update the pager automagically
                         this.subscription = this.bindingEngine
                             .collectionObserver(this.cache)
                             .subscribe(function (splices) {
                             _this.refresh();
                         });
+                    }
                 };
                 Grid.prototype.dontWatchForChanges = function () {
                     if (this.subscription)
@@ -744,41 +767,23 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     var data = this.filterSort(this.cache);
                     var tableData = data.map(function (d) {
                         return columns.map(function (c) {
-                            var view = _this.viewCompiler.compile("<template>" + _this.removeOneLevelD(c.template) + "</template>", _this.viewResources).create(_this.container);
+                            var view = _this.viewCompiler.compile("<template>" + c.template.split('${ $').join('${').split('${$').join('${') + "</template>", _this.viewResources).create(_this.container);
                             view.bind({ item: d });
                             return view.fragment.textContent.replace(/(\r\n|\n|\r)/gm, "").trim();
                         });
                     });
                     return tableData;
                 };
-                Grid.prototype.removeOneLevelD = function (template) {
-                    var i = 0;
-                    var inBlock = false;
-                    while (template.length > i + 1) {
-                        if (template[i] == '$' && template[i + 1] == "{") {
-                            inBlock = true;
-                            i++;
-                        }
-                        if (inBlock && template[i] == "$") {
-                            template = template.slice(0, i) + template.slice(i + 1);
-                        }
-                        if (inBlock && template[i] == '}') {
-                            inBlock = false;
-                        }
-                        i++;
-                    }
-                    return template;
-                };
                 Grid.prototype.exportToExcel = function () {
-                    var columns = this.displayedColumns;
+                    var columns = this.columns.filter(function (c) { return !c.hiddenCol && c.field != "#"; });
                     export_to_excel_1.ExportToExcel.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }));
                 };
                 Grid.prototype.exportToCsv = function () {
-                    var columns = this.displayedColumns;
+                    var columns = this.columns.filter(function (c) { return !c.hiddenCol && c.field != "#"; });
                     export_to_csv_1.ExportToCsv.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }));
                 };
                 Grid.prototype.exportToPdf = function () {
-                    var columns = this.displayedColumns;
+                    var columns = this.columns.filter(function (c) { return !c.hiddenCol && c.field != "#"; });
                     export_to_pdf_1.ExportToPdf.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }));
                 };
                 __decorate([

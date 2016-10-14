@@ -6,8 +6,6 @@ import {Pager} from "./pager";
 import {ExportToExcel} from './export-to-excel'
 import {ExportToCsv} from './export-to-csv'
 import {ExportToPdf} from './export-to-pdf'
-import $ from 'jquery';
-import 'nicescroll';
 
 @customElement('grid')
 @processContent(function(viewCompiler, viewResources, element, instruction) {
@@ -486,11 +484,11 @@ export class Grid {
 			if (element.querySelector('.sorting-container').style.display != "none"){
 				element.querySelector('.sorting-container').style.display = "none";
 				//@TODO refactor all this shit with nicescroll
-				this.removeNiceScroll();
+				//this.removeNiceScroll();
 			}
 			else{
 				element.querySelector('.sorting-container').style.display = "inherit";
-				this.initNiceScroll();
+				//this.initNiceScroll();
 			}
 			return;
 		}
@@ -528,7 +526,7 @@ export class Grid {
 		_this.filteringByProperty = false;
 		_this.sortedData = [];
 		_this.filterSortPage(_this.cache);
-		_this.removeNiceScroll();
+		//_this.removeNiceScroll();
 	}
 
 	initSorting(column) {
@@ -546,7 +544,7 @@ export class Grid {
 			return a.toLowerCase().localeCompare(b.toLowerCase());
 		});
 
-		var content = document.querySelector('#custom-filter-select');
+		var content = document.querySelector('.custom-select');
 
 		uniqueValues.forEach(function(value) {
 			var option = document.createElement("option");
@@ -556,14 +554,14 @@ export class Grid {
 			content.appendChild(option);
 		});
 
-		this.initNiceScroll();
+		//this.initNiceScroll();
 	}
 
 	applySorting(_this, column) {
 
 		let columnName = column['field'];
 
-		let selectionContainer = document.querySelector('#custom-filter-select');
+		let selectionContainer = document.querySelector('.custom-select');
 
 		let searchValuesRaw = selectionContainer.selectedOptions;
 
@@ -595,13 +593,13 @@ export class Grid {
 		_this.sortedData = data;
 		_this.pageNumber = 1;
 		_this.filterSortPage(data);
-		_this.removeNiceScroll();
+		//_this.removeNiceScroll();
 	}
 
-	dropDownScroll: any;
+	/*dropDownScroll: any;
 
 	initNiceScroll(){
-		this.dropDownScroll = $('#custom-filter-select').niceScroll({
+		this.dropDownScroll = $('.custom-select').niceScroll({
 			cursorcolor: '#fff',
 			background: '#387ac0',
 			cursorwidth: 4,
@@ -621,7 +619,7 @@ export class Grid {
 		try{
 			this.dropDownScroll.remove();
 		}catch(e){}
-	}
+	}*/
 
 
 	sortChanged(field) {
