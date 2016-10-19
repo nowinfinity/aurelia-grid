@@ -815,8 +815,9 @@ export class Grid {
 		// If we have any server side stuff we need to get the data first
 		if (!stayOnCurrentPage) {
 			this.pageNumber = 1;
+			this.updatePager();
 		}
-
+		
 		this.dontWatchForChanges();
 
 		if (this.serverPaging || this.serverSorting || this.serverFiltering || !this.initialLoad)
