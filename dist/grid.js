@@ -453,7 +453,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         return item[columnName];
                     })));
                     uniqueValues.sort(function (a, b) {
-                        if(a === null || b === null){
+                        if (a === null || b === null) {
                             return;
                         }
                         return a.toLowerCase().localeCompare(b.toLowerCase());
