@@ -246,13 +246,14 @@
 		<div class="table-content" show.bind="!showNoRowsMessage || (showNoRowsMessage && count > 0) || !loading">
 			<div class="table-row" click.delegate="$parent.select($item)"></div>
 		</div>
-		<div show.bind="showNoRowsMessage && count === 0 || !loading" class="alert alert-warning ">${ noRowsMessage }</div>
+		<div show.bind="showNoRowsMessage && count == 0 || !loading" class="alert alert-warning ">${ noRowsMessage }</div>
         <div class="grid-overlay " if.bind="loading "></div>
-        <div if.bind="loading " class="progress grid-progress-indicator ">
-            <div class="loader ">${ loadingMessage}</div>
-        </div>
+        
         <!-- Footer div -->
     </div>
+	<div if.bind="loading " class="progress grid-progress-indicator ">
+            <div class="loader ">${ loadingMessage}</div>
+        </div>
 	<div class="grid-container table  ${class} grid-container-outer">
 		<div class="grid-footer-container " if.bind="pageable && !loading && count > pageSize">
             <pager page-size.bind="pageSize " num-to-show.bind="pagerSize " pager.ref="pager " on-page-changed.call="pageChanged($event)
