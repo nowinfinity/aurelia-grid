@@ -198,8 +198,7 @@
 					${ $column.heading }
 				</a>
 
-				<span if.bind="$column.nosort == true || !$parent.sortable">
-					${ $column.heading }
+				<span if.bind="$column.nosort == true || !$parent.sortable" innerhtml.bind="$column.heading">
 				</span>
 
 				<span if.bind="$column.filtering == 'true'">
