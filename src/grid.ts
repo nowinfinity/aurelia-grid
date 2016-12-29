@@ -15,7 +15,6 @@ import {ExportToPdf} from './export-to-pdf'
 	instruction.rowAttrs = result.rowAttrs;
 	instruction.expanderAttrs = result.expander;
 
-
 	return true;
 })
 
@@ -33,25 +32,17 @@ export class Grid {
 	// Initial load flag (for client side)
 	@bindable initialLoad = false;
 
-
 	@bindable model: any;
-
-
 
 	// Filtering
 	@bindable showColumnFilters = false;
 	@bindable serverFiltering = false;
 	@bindable filterDebounce = 500;
 	@bindable showColName: string = "";
-	
-	
-
-
 
 	// custom filtering
 	@bindable filteringSettings = null;
-	@bindable filteringByProperty = false;	
-	
+	@bindable filteringByProperty = false;		
 	
 	// Pagination
 	@bindable serverPaging = false;
@@ -77,7 +68,6 @@ export class Grid {
 
 	pageNumber = 1;	
 	
-	
 	// Sortination
 	@bindable serverSorting = false;
 	@bindable sortable: boolean = true;
@@ -89,7 +79,6 @@ export class Grid {
 	// Searching
 	@bindable search: string = "";
 	@bindable searchColumns = [];
-
 
 	// Burnination?
 	Trogdor = true;
@@ -367,7 +356,8 @@ export class Grid {
 			data = this.applySearch(data);
 
 		// Count the data now before the sort/page
-		this.count = data.length;
+		if (!this.serverPaging)
+			this.count = data.length;
 
 		// 2. Now sort the data
 		if ((this.sortable || this.customSorting) && !this.serverSorting)
@@ -876,6 +866,7 @@ export class Grid {
 			this.filterSortPage(this.cache);
 		} else {
 			this.data = result.data;
+			this.count = result.count;
 			this.filterSortPage(this.data);
 		}
 		// Update the pager - maybe the grid options should contain an update callback instead of reffing the
