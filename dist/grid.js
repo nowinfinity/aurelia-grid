@@ -315,7 +315,8 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     if (this.search)
                         data = this.applySearch(data);
                     // Count the data now before the sort/page
-                    this.count = data.length;
+                    if (!this.serverPaging)
+                        this.count = data.length;
                     // 2. Now sort the data
                     if ((this.sortable || this.customSorting) && !this.serverSorting)
                         data = this.applySort(data);
@@ -721,6 +722,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     }
                     else {
                         this.data = result.data;
+                        this.count = result.count;
                         this.filterSortPage(this.data);
                     }
                     // Update the pager - maybe the grid options should contain an update callback instead of reffing the
@@ -962,9 +964,10 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         return true;
                     }),
                     aurelia_framework_1.autoinject(), 
-                    __metadata('design:paramtypes', [Element, aurelia_framework_2.ViewCompiler, aurelia_framework_2.ViewResources, aurelia_framework_2.Container, aurelia_framework_1.TargetInstruction, aurelia_framework_1.BindingEngine])
+                    __metadata('design:paramtypes', [Element, (typeof (_a = typeof aurelia_framework_2.ViewCompiler !== 'undefined' && aurelia_framework_2.ViewCompiler) === 'function' && _a) || Object, (typeof (_b = typeof aurelia_framework_2.ViewResources !== 'undefined' && aurelia_framework_2.ViewResources) === 'function' && _b) || Object, (typeof (_c = typeof aurelia_framework_2.Container !== 'undefined' && aurelia_framework_2.Container) === 'function' && _c) || Object, (typeof (_d = typeof aurelia_framework_1.TargetInstruction !== 'undefined' && aurelia_framework_1.TargetInstruction) === 'function' && _d) || Object, (typeof (_e = typeof aurelia_framework_1.BindingEngine !== 'undefined' && aurelia_framework_1.BindingEngine) === 'function' && _e) || Object])
                 ], Grid);
                 return Grid;
+                var _a, _b, _c, _d, _e;
             }());
             exports_1("Grid", Grid);
         }
