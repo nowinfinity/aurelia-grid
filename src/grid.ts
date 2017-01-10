@@ -950,6 +950,7 @@ export class Grid {
 	exportToExcelWithHeaders(data, headers, name){
 		ExportToExcel.export(data, headers, name);
 	}
+	
 	exportToCsvWithHeaders(data, headers, name){
 		ExportToCsv.export(data, headers, name);
 	}
