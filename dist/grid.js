@@ -780,15 +780,24 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                 };
                 Grid.prototype.exportToExcel = function () {
                     var columns = this.columns.filter(function (c) { return !c.hiddenCol && c.field != "#"; });
-                    export_to_excel_1.ExportToExcel.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }));
+                    export_to_excel_1.ExportToExcel.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }), 'grid');
                 };
                 Grid.prototype.exportToCsv = function () {
                     var columns = this.columns.filter(function (c) { return !c.hiddenCol && c.field != "#"; });
-                    export_to_csv_1.ExportToCsv.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }));
+                    export_to_csv_1.ExportToCsv.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }), 'grid');
                 };
                 Grid.prototype.exportToPdf = function () {
                     var columns = this.columns.filter(function (c) { return !c.hiddenCol && c.field != "#"; });
-                    export_to_pdf_1.ExportToPdf.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }));
+                    export_to_pdf_1.ExportToPdf.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }), 'grid');
+                };
+                Grid.prototype.exportToExcelWithHeaders = function (data, headers, name) {
+                    export_to_excel_1.ExportToExcel.export(data, headers, name);
+                };
+                Grid.prototype.exportToCsvWithHeaders = function (data, headers, name) {
+                    export_to_csv_1.ExportToCsv.export(data, headers, name);
+                };
+                Grid.prototype.exportToPdfWithHeaders = function (data, headers, name) {
+                    export_to_pdf_1.ExportToPdf.export(data, headers, name);
                 };
                 __decorate([
                     aurelia_framework_1.child('pager'), 

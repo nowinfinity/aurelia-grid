@@ -7,7 +7,7 @@ import {autoinject, noView} from 'aurelia-framework';
 export class ExportToPdf {
 
 
-	static export(tableData, headers: Array<String>) {
+	static export(tableData, headers: Array<String>, name) {
 					
 		
 		var htmlString = tableData.map(cols => cols.map(col => "<td>" + col + "</td>").join("")).map(row => "<tr>" + row + "</tr>").join("");
@@ -34,7 +34,7 @@ export class ExportToPdf {
 		var pdf = new jsPDF('p', 'pt', 'a4');
 
 		pdf.addHTML(iframe.document, {pagesplit: true, quality: 2}, function() {
-			pdf.save('grid.pdf');
+			pdf.save(name+'.pdf');
 			document.body.removeChild(iframe);
 		});
 

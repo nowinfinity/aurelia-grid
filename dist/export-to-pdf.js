@@ -23,7 +23,7 @@ System.register(["./rasterizeHTML", "./jsPDF", 'aurelia-framework'], function(ex
             ExportToPdf = (function () {
                 function ExportToPdf() {
                 }
-                ExportToPdf.export = function (tableData, headers) {
+                ExportToPdf.export = function (tableData, headers, name) {
                     var htmlString = tableData.map(function (cols) { return cols.map(function (col) { return "<td>" + col + "</td>"; }).join(""); }).map(function (row) { return "<tr>" + row + "</tr>"; }).join("");
                     htmlString = "<html><body><div style='width:596px;'><table border='1'>" + htmlString + "</table></div></body></html>";
                     var iframe = document.createElement('iframe');
@@ -40,7 +40,7 @@ System.register(["./rasterizeHTML", "./jsPDF", 'aurelia-framework'], function(ex
                     iframe.document.close();
                     var pdf = new jsPDF('p', 'pt', 'a4');
                     pdf.addHTML(iframe.document, { pagesplit: true, quality: 2 }, function () {
-                        pdf.save('grid.pdf');
+                        pdf.save(name + '.pdf');
                         document.body.removeChild(iframe);
                     });
                     //	saveAs(new Blob([file], { type: "Content-type: text/csv" }), "grid.pdf");
