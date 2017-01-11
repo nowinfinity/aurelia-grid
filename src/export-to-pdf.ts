@@ -1,5 +1,5 @@
 import "./rasterizeHTML"
-import "./jsPDF"
+import "./jsPdf"
 import {autoinject, noView} from 'aurelia-framework';
 
 @noView
