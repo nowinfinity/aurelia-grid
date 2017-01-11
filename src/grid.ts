@@ -962,18 +962,28 @@ export class Grid {
 
 	exportToExcel() {
 		var columns = this.displayedColumns;
-		ExportToExcel.export(this.getTableData(columns), columns.map(c => c.heading));
+		ExportToExcel.export(this.getTableData(columns), columns.map(c => c.heading), 'grid');
 	}
 
 	exportToCsv() {
 		var columns = this.displayedColumns;
-		ExportToCsv.export(this.getTableData(columns), columns.map(c => c.heading));
+		ExportToCsv.export(this.getTableData(columns), columns.map(c => c.heading), 'grid');
 	}
 
 	exportToPdf() {
 		var columns = this.displayedColumns;
-		ExportToPdf.export(this.getTableData(columns), columns.map(c => c.heading));
+		ExportToPdf.export(this.getTableData(columns), columns.map(c => c.heading), 'grid');
 	}
+    exportToExcelWithHeaders(data, headers, name){
+        ExportToExcel.export(data, headers, name);
+    }
+
+    exportToCsvWithHeaders(data, headers, name){
+        ExportToCsv.export(data, headers, name);
+    }
+    exportToPdfWithHeaders(data, headers, name){
+        ExportToPdf.export(data, headers, name);
+    }
 }
 
 function processUserTemplate(element) {

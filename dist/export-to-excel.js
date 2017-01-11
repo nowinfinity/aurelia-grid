@@ -24,7 +24,7 @@ System.register(["./blob", "./fileSaver", "xlsx", 'aurelia-framework'], function
             ExportToExcel = (function () {
                 function ExportToExcel() {
                 }
-                ExportToExcel.export = function (tableData, headers) {
+                ExportToExcel.export = function (tableData, headers, name) {
                     /* original data */
                     var ws_name = "SheetJS";
                     var wb = new Workbook(), ws = this.createSheet(tableData, headers);
@@ -32,7 +32,7 @@ System.register(["./blob", "./fileSaver", "xlsx", 'aurelia-framework'], function
                     wb.SheetNames.push(ws_name);
                     wb.Sheets[ws_name] = ws;
                     var wbout = XLSX.write(wb, { cellStyles: true, bookType: 'xlsx', bookSST: true, type: 'binary' });
-                    saveAs(new Blob([this.s2ab(wbout)], { type: "application/octet-stream" }), "grid.xlsx");
+                    saveAs(new Blob([this.s2ab(wbout)], { type: "application/octet-stream" }), name + ".xlsx");
                 };
                 ExportToExcel.createSheet = function (data, columns) {
                     var ws = {};

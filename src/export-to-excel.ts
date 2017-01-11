@@ -7,7 +7,7 @@ import {autoinject, noView} from 'aurelia-framework';
 @autoinject
 export class ExportToExcel {
 
-	static export(tableData, headers: Array<String>) {
+	static export(tableData, headers: Array<String>, name) {
 		/* original data */
 		var ws_name = "SheetJS";
 		var wb = new Workbook(), ws = this.createSheet(tableData, headers);
@@ -16,7 +16,7 @@ export class ExportToExcel {
 		wb.SheetNames.push(ws_name);
 		wb.Sheets[ws_name] = ws;
 		var wbout = XLSX.write(wb, { cellStyles: true, bookType: 'xlsx', bookSST: true, type: 'binary' });
-		saveAs(new Blob([this.s2ab(wbout)], { type: "application/octet-stream" }), "grid.xlsx");
+		saveAs(new Blob([this.s2ab(wbout)], { type: "application/octet-stream" }), name+".xlsx");
 	}
 	
 	static createSheet(data, columns) {
