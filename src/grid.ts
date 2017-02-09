@@ -93,6 +93,10 @@ export class Grid {
 		return this.columns.filter(c => !c.hiddenCol);
 	}
 
+	get displayedColumns() {
+		return this.visibleColumns.filter(c => this.isDisplayColumn(c.showColNameIf, c.hideColNameIf, this.showColName) && c.field != "#");
+	}
+
 	// Selection
 	@bindable selectable = false;
 	@bindable selectedItem = null;
@@ -926,7 +930,7 @@ export class Grid {
 
 		var tableData = data.map(d => {
 			return columns.map(c => {
-				var view = this.viewCompiler.compile("<template>" + c.template.split('${ $').join('${').split('${$').join('${') + "</template>", this.viewResources).create(this.container);
+				var view = this.viewCompiler.compile("<template>" + this.removeOneLevelD(c.template) + "</template>", this.viewResources).create(this.container);
 				view.bind({ item: d });
 				return view.fragment.textContent.replace(/(\r\n|\n|\r)/gm, "").trim();
 			});
@@ -935,30 +939,53 @@ export class Grid {
 		return tableData;
 	}
 
+	private removeOneLevelD(template: string) : string {
+		var i = 0;
+		var inBlock = false;
+		while (template.length > i+1) {
+			if (template[i] == '$' && template[i+1] == "{") {
+				inBlock = true;
+				i++;
+			}
+
+			if (inBlock && template[i] == "$") {
+				template = template.slice(0, i) + template.slice(i+1);
+			}
+
+			if (inBlock && template[i] == '}') {
+				inBlock = false;
+			}
+
+			i++;
+		}
+
+		return template;
+	}
+
 	exportToExcel() {
-		var columns = this.columns.filter(c => !c.hiddenCol && c.field != "#");
+		var columns = this.displayedColumns;
 		ExportToExcel.export(this.getTableData(columns), columns.map(c => c.heading), 'grid');
 	}
 
 	exportToCsv() {
-		var columns = this.columns.filter(c => !c.hiddenCol && c.field != "#");
+		var columns = this.displayedColumns;
 		ExportToCsv.export(this.getTableData(columns), columns.map(c => c.heading), 'grid');
 	}
 
 	exportToPdf() {
-		var columns = this.columns.filter(c => !c.hiddenCol && c.field != "#");
+		var columns = this.displayedColumns;
 		ExportToPdf.export(this.getTableData(columns), columns.map(c => c.heading), 'grid');
 	}
-	exportToExcelWithHeaders(data, headers, name){
-		ExportToExcel.export(data, headers, name);
-	}
-	
-	exportToCsvWithHeaders(data, headers, name){
-		ExportToCsv.export(data, headers, name);
-	}
-	exportToPdfWithHeaders(data, headers, name){
-		ExportToPdf.export(data, headers, name);
-	}
+    exportToExcelWithHeaders(data, headers, name){
+        ExportToExcel.export(data, headers, name);
+    }
+
+    exportToCsvWithHeaders(data, headers, name){
+        ExportToCsv.export(data, headers, name);
+    }
+    exportToPdfWithHeaders(data, headers, name){
+        ExportToPdf.export(data, headers, name);
+    }
 }
 
 function processUserTemplate(element) {

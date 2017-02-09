@@ -148,6 +148,14 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     enumerable: true,
                     configurable: true
                 });
+                Object.defineProperty(Grid.prototype, "displayedColumns", {
+                    get: function () {
+                        var _this = this;
+                        return this.visibleColumns.filter(function (c) { return _this.isDisplayColumn(c.showColNameIf, c.hideColNameIf, _this.showColName) && c.field != "#"; });
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 /* === Lifecycle === */
                 Grid.prototype.attached = function () {
                     this.gridHeightChanged();
@@ -775,23 +783,41 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     var data = this.filterSort(this.cache);
                     var tableData = data.map(function (d) {
                         return columns.map(function (c) {
-                            var view = _this.viewCompiler.compile("<template>" + c.template.split('${ $').join('${').split('${$').join('${') + "</template>", _this.viewResources).create(_this.container);
+                            var view = _this.viewCompiler.compile("<template>" + _this.removeOneLevelD(c.template) + "</template>", _this.viewResources).create(_this.container);
                             view.bind({ item: d });
                             return view.fragment.textContent.replace(/(\r\n|\n|\r)/gm, "").trim();
                         });
                     });
                     return tableData;
                 };
+                Grid.prototype.removeOneLevelD = function (template) {
+                    var i = 0;
+                    var inBlock = false;
+                    while (template.length > i + 1) {
+                        if (template[i] == '$' && template[i + 1] == "{") {
+                            inBlock = true;
+                            i++;
+                        }
+                        if (inBlock && template[i] == "$") {
+                            template = template.slice(0, i) + template.slice(i + 1);
+                        }
+                        if (inBlock && template[i] == '}') {
+                            inBlock = false;
+                        }
+                        i++;
+                    }
+                    return template;
+                };
                 Grid.prototype.exportToExcel = function () {
-                    var columns = this.columns.filter(function (c) { return !c.hiddenCol && c.field != "#"; });
+                    var columns = this.displayedColumns;
                     export_to_excel_1.ExportToExcel.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }), 'grid');
                 };
                 Grid.prototype.exportToCsv = function () {
-                    var columns = this.columns.filter(function (c) { return !c.hiddenCol && c.field != "#"; });
+                    var columns = this.displayedColumns;
                     export_to_csv_1.ExportToCsv.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }), 'grid');
                 };
                 Grid.prototype.exportToPdf = function () {
-                    var columns = this.columns.filter(function (c) { return !c.hiddenCol && c.field != "#"; });
+                    var columns = this.displayedColumns;
                     export_to_pdf_1.ExportToPdf.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }), 'grid');
                 };
                 Grid.prototype.exportToExcelWithHeaders = function (data, headers, name) {
