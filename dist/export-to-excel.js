@@ -46,7 +46,7 @@ System.register(["./blob", "./fileSaver", "xlsx", 'aurelia-framework'], function
                         var cell_ref = XLSX.utils.encode_cell({ c: C, r: 0 });
                         ws[cell_ref] = cell;
                     }
-                    for (var R = 1; R <= data.length; R++) {
+                    for (var R = 1; R != data.length + 1; ++R) {
                         var C = 0;
                         for (var property in data[R - 1]) {
                             if (data[R - 1].hasOwnProperty(property)) {
