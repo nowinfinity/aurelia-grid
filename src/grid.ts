@@ -112,6 +112,7 @@ export class Grid {
 	// Tracking
 	cache = [];
 	data = [];
+	currentSortedData = [];
 	count = 0;
 
 	// Subscription handling
@@ -370,7 +371,8 @@ export class Grid {
 		// Applies filter, sort then page
 		// 1. First filter the data down to the set we want, if we are using local data
 		var tempData = this.filterSort(data)
-
+		this.currentSortedData = tempData;
+		
 		// 3. Now apply paging
 		if (this.pageable && !this.serverPaging)
 			tempData = this.applyPage(tempData);

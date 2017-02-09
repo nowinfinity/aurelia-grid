@@ -129,6 +129,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     // Tracking
                     this.cache = [];
                     this.data = [];
+                    this.currentSortedData = [];
                     this.count = 0;
                     // Subscription handling
                     this.unbinding = false;
@@ -326,6 +327,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     // Applies filter, sort then page
                     // 1. First filter the data down to the set we want, if we are using local data
                     var tempData = this.filterSort(data);
+                    this.currentSortedData = tempData;
                     // 3. Now apply paging
                     if (this.pageable && !this.serverPaging)
                         tempData = this.applyPage(tempData);

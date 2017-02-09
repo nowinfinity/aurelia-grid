@@ -26,7 +26,7 @@ System.register(["./blob", "./fileSaver", 'aurelia-framework'], function(exports
                 ExportToCsv.export = function (tableData, headers, name) {
                     var file = "sep=,\n" + headers.join(',') + "\n" +
                         tableData.map(function (cols) { return cols.join(","); }).join("\n");
-                    saveAs(new Blob([file], { type: "Content-type: text/csv" }), name + ".csv");
+                    saveAs(new Blob([file], { type: "Content-type: text/csv; charset=UTF-8" }), name + ".csv");
                 };
                 ExportToCsv = __decorate([
                     aurelia_framework_1.noView,
