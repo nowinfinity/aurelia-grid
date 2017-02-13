@@ -357,7 +357,7 @@ export class Grid {
 			data = data.filter(row => this.filteringSettings.filterFunction(row));
 
 		//Searching
-		if (this.search)
+        if (this.search && !this.serverPaging)
 			data = this.applySearch(data);
 
 		// Count the data now before the sort/page
