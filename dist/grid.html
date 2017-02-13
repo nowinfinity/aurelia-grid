@@ -109,6 +109,12 @@
 		.sorting-container > .content > select {
 			width: 100%;
 		}
+        
+        .alert-warning {
+            text-align:center;
+            color:#f44336;
+            margin-top:30px;
+        }
 		@-webkit-keyframes load4 {
 			0%,
 			100% {
@@ -245,7 +251,7 @@
 		<div class="table-content" show.bind="!showNoRowsMessage || (showNoRowsMessage && count > 0) || !loading">
 			<div class="table-row" click.delegate="$parent.select($item)"></div>
 		</div>
-		<div show.bind="showNoRowsMessage && count == 0 || !loading" class="alert alert-warning ">${ noRowsMessage }</div>
+		<div show.bind="showNoRowsMessage && count == 0 && !loading" class="alert alert-warning ">${ noRowsMessage }</div>
         <div class="grid-overlay " if.bind="loading "></div>
         
         <!-- Footer div -->
