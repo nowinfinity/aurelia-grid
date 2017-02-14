@@ -321,7 +321,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     if (this.filteringSettings && this.filteringSettings.filterFunction)
                         data = data.filter(function (row) { return _this.filteringSettings.filterFunction(row); });
                     //Searching
-                    if (this.search)
+                    if (this.search && !this.serverPaging)
                         data = this.applySearch(data);
                     // Count the data now before the sort/page
                     if (!this.serverPaging)
