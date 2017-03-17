@@ -420,6 +420,13 @@ export class Grid {
 						dir = -1;
 						o = o.substring(1);
 					}
+					//empty last
+					if (o[0] === '~') {
+						o = o.substring(1);
+						if (!a[o]) return dir;
+						if (!b[o]) return -dir;
+
+					}
 					if (!a[o]) return -(dir);
 					if (!b[o]) return dir;
 					if (a[o] > b[o]) return dir;
@@ -664,7 +671,23 @@ export class Grid {
 
 			for (var prop in this.sorting) {
 				if (sort == prop && this.sorting[prop] !== "")
-					fields.push(this.sorting[prop] === "asc" ? (prop) : ("-" + prop));
+				{
+					let sortFieldCode = this.sorting[prop];
+
+					switch (sortFieldCode) {
+						case "asc":
+							sortFieldCode = prop;
+							break;
+						case "desc":
+							sortFieldCode = "-" + prop;
+							break;
+						case "asc-empty-last":
+							sortFieldCode = "~" + prop;
+							break;
+					}
+
+					fields.push(sortFieldCode);
+				}
 			}
 		};
 

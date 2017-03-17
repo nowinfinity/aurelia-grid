@@ -369,6 +369,13 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                                 dir = -1;
                                 o = o.substring(1);
                             }
+                            if (o[0] === '~') {
+                                o = o.substring(1);
+                                if (!a[o])
+                                    return dir;
+                                if (!b[o])
+                                    return -dir;
+                            }
                             if (!a[o])
                                 return -(dir);
                             if (!b[o])
@@ -569,8 +576,21 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     for (var i = 0; i < this.sortProcessingOrder.length; i++) {
                         var sort = this.sortProcessingOrder[i];
                         for (var prop in this.sorting) {
-                            if (sort == prop && this.sorting[prop] !== "")
-                                fields.push(this.sorting[prop] === "asc" ? (prop) : ("-" + prop));
+                            if (sort == prop && this.sorting[prop] !== "") {
+                                var sortFieldCode = this.sorting[prop];
+                                switch (sortFieldCode) {
+                                    case "asc":
+                                        sortFieldCode = prop;
+                                        break;
+                                    case "desc":
+                                        sortFieldCode = "-" + prop;
+                                        break;
+                                    case "asc-empty-last":
+                                        sortFieldCode = "~" + prop;
+                                        break;
+                                }
+                                fields.push(sortFieldCode);
+                            }
                         }
                     }
                     ;
@@ -992,10 +1012,9 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         return true;
                     }),
                     aurelia_framework_1.autoinject(), 
-                    __metadata('design:paramtypes', [Element, (typeof (_a = typeof aurelia_framework_2.ViewCompiler !== 'undefined' && aurelia_framework_2.ViewCompiler) === 'function' && _a) || Object, (typeof (_b = typeof aurelia_framework_2.ViewResources !== 'undefined' && aurelia_framework_2.ViewResources) === 'function' && _b) || Object, (typeof (_c = typeof aurelia_framework_2.Container !== 'undefined' && aurelia_framework_2.Container) === 'function' && _c) || Object, (typeof (_d = typeof aurelia_framework_1.TargetInstruction !== 'undefined' && aurelia_framework_1.TargetInstruction) === 'function' && _d) || Object, (typeof (_e = typeof aurelia_framework_1.BindingEngine !== 'undefined' && aurelia_framework_1.BindingEngine) === 'function' && _e) || Object])
+                    __metadata('design:paramtypes', [Element, aurelia_framework_2.ViewCompiler, aurelia_framework_2.ViewResources, aurelia_framework_2.Container, aurelia_framework_1.TargetInstruction, aurelia_framework_1.BindingEngine])
                 ], Grid);
                 return Grid;
-                var _a, _b, _c, _d, _e;
             }());
             exports_1("Grid", Grid);
         }
