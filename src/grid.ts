@@ -1,4 +1,4 @@
-import {child, bindable, autoinject, BindingEngine, customElement, processContent, TargetInstruction } from 'aurelia-framework';
+import {child, bindable, autoinject, BindingEngine, customElement, processContent, TargetInstruction, bindingMode } from 'aurelia-framework';
 import {GridColumn} from './grid-column';
 import {GridColumnsExpander} from './grid-columns-expander';
 import {ViewCompiler, ViewSlot, ViewResources, Container} from 'aurelia-framework';
@@ -32,7 +32,11 @@ export class Grid {
 	// Initial load flag (for client side)
 	@bindable initialLoad = false;
 
-	@bindable model: any;
+    @bindable model: any;
+
+    @bindable({ defaultBindingMode: bindingMode.twoWay }) showAllCheckbox: boolean = false;
+
+    @bindable checkedAll: boolean;
 
 	// Filtering
 	@bindable showColumnFilters = false;

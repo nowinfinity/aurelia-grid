@@ -75,6 +75,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     /* == Options == */
                     // Initial load flag (for client side)
                     this.initialLoad = false;
+                    this.showAllCheckbox = false;
                     // Filtering
                     this.showColumnFilters = false;
                     this.serverFiltering = false;
@@ -369,6 +370,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                                 dir = -1;
                                 o = o.substring(1);
                             }
+                            //empty last
                             if (o[0] === '~') {
                                 o = o.substring(1);
                                 if (!a[o])
@@ -870,6 +872,14 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     __metadata('design:type', Object)
                 ], Grid.prototype, "model", void 0);
                 __decorate([
+                    aurelia_framework_1.bindable({ defaultBindingMode: aurelia_framework_1.bindingMode.twoWay }), 
+                    __metadata('design:type', Boolean)
+                ], Grid.prototype, "showAllCheckbox", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Boolean)
+                ], Grid.prototype, "checkedAll", void 0);
+                __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
                 ], Grid.prototype, "showColumnFilters", void 0);
@@ -1012,9 +1022,10 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         return true;
                     }),
                     aurelia_framework_1.autoinject(), 
-                    __metadata('design:paramtypes', [Element, aurelia_framework_2.ViewCompiler, aurelia_framework_2.ViewResources, aurelia_framework_2.Container, aurelia_framework_1.TargetInstruction, aurelia_framework_1.BindingEngine])
+                    __metadata('design:paramtypes', [Element, (typeof (_a = typeof aurelia_framework_2.ViewCompiler !== 'undefined' && aurelia_framework_2.ViewCompiler) === 'function' && _a) || Object, (typeof (_b = typeof aurelia_framework_2.ViewResources !== 'undefined' && aurelia_framework_2.ViewResources) === 'function' && _b) || Object, aurelia_framework_2.Container, (typeof (_c = typeof aurelia_framework_1.TargetInstruction !== 'undefined' && aurelia_framework_1.TargetInstruction) === 'function' && _c) || Object, aurelia_framework_1.BindingEngine])
                 ], Grid);
                 return Grid;
+                var _a, _b, _c;
             }());
             exports_1("Grid", Grid);
         }
