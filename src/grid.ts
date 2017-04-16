@@ -3,9 +3,11 @@ import { GridColumn } from './grid-column';
 import { GridColumnsExpander } from './grid-columns-expander';
 import { ViewCompiler, ViewSlot, ViewResources, Container } from 'aurelia-framework';
 import { Pager } from "./pager";
-import { ExportToExcel } from './export-to-excel'
-import { ExportToCsv } from './export-to-csv'
-import { ExportToPdf } from './export-to-pdf'
+import { ExportToExcel } from './export-to-excel';
+import { ExportToCsv } from './export-to-csv';
+import { ExportToPdf } from './export-to-pdf';
+import {CheckedAll, CheckBoxStatus, CheckBoxState} from "./checked-all";
+
 
 @customElement('grid')
 @processContent(function (viewCompiler, viewResources, element, instruction) {
@@ -34,13 +36,28 @@ export class Grid {
 
     @bindable model: any;
 
-    @bindable({ defaultBindingMode: bindingMode.twoWay }) showAllCheckbox: boolean = false;
+    //Checked All
+    @bindable showAllCheckbox: boolean;
+    @bindable({ defaultBindingMode: bindingMode.twoWay }) checkedAll: boolean;
+    checkBoxStatus: CheckBoxStatus;
 
-    @bindable checkedAll: boolean;
+    checkBoxEnum = CheckBoxStatus;
 
-    checkedAllChanged() {
-        this.showAllCheckbox = true;
+    checkBoxStatusChanged() {
+
+        switch (this.checkBoxStatus) {
+            case CheckBoxStatus.Checked:
+            case CheckBoxStatus.NotAllChacked:
+                this.checkedAll = true;
+                break;
+            case CheckBoxStatus.UnChecked:
+                this.checkedAll = false;
+                break
+        }
     }
+
+    selected: string[]=[];
+    selectedCount: number;
 
     // Filtering
     @bindable showColumnFilters = false;
@@ -147,7 +164,8 @@ export class Grid {
         public viewResources: ViewResources,
         public container: Container,
         private targetInstruction: TargetInstruction,
-        public bindingEngine: BindingEngine
+        public bindingEngine: BindingEngine,
+        public checkbox: CheckedAll
     ) {
         var behavior = (<any>targetInstruction).behaviorInstructions[0];
 
@@ -1015,6 +1033,50 @@ export class Grid {
     }
     exportToPdfWithHeaders(data, headers, name) {
         ExportToPdf.export(data, headers, name);
+    }
+
+
+    checkUnchek(id, updateState: boolean = true) {
+
+        if ((this.isChecked(id)))
+            this.selected.splice(this.selected.indexOf(id), 1);
+        else
+            this.selected.push(id);
+
+        if (this.selectedCount == 0) {
+
+            this.checkBoxStatus = CheckBoxStatus.UnChecked;
+        }
+
+        if (this.selectedCount == this.checkbox.current.count) {
+
+            this.checkBoxStatus = CheckBoxStatus.Checked;
+        }
+
+        if (updateState && this.selectedCount < this.checkbox.current.count) {
+
+            this.checkBoxStatus = CheckBoxStatus.NotAllChacked;
+        }
+        console.log(this.checkbox.current)
+        this.checkbox.updateCheckBoxState(this.count, this.checkBoxStatus);
+
+    }
+
+    setCheckBoxState(filterValue: string, statusFilter: string = "", status: CheckBoxStatus) {
+        this.checkbox.setState(filterValue, statusFilter, status);
+    }
+
+    isChecked(id: string) {
+        return this.selected.indexOf(id) > -1;
+    }
+
+    unckeckSelected() {
+
+        this.selectedCount = 0;
+
+        this.selected = [];
+
+        this.checkBoxStatus = CheckBoxStatus.UnChecked;
     }
 }
 
