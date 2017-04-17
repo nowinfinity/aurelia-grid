@@ -39,23 +39,7 @@ export class Grid {
     //Checked All
     @bindable showAllCheckbox: boolean;
     @bindable({ defaultBindingMode: bindingMode.twoWay }) checkedAll: boolean;
-    checkBoxStatus: CheckBoxStatus;
-
     checkBoxEnum = CheckBoxStatus;
-
-    checkBoxStatusChanged() {
-
-        switch (this.checkBoxStatus) {
-            case CheckBoxStatus.Checked:
-            case CheckBoxStatus.NotAllChacked:
-                this.checkedAll = true;
-                break;
-            case CheckBoxStatus.UnChecked:
-                this.checkedAll = false;
-                break
-        }
-    }
-
     selected: string[]=[];
     selectedCount: number;
 
@@ -1043,27 +1027,53 @@ export class Grid {
         else
             this.selected.push(id);
 
+        this.updateState(updateState);     
+    }
+
+    setCheckBoxState(filterValue: string, statusFilter: string = "", status: CheckBoxStatus) {
+
+        if (status == null && this.checkbox.current == null) {
+
+            status = this.checkedAll ? CheckBoxStatus.Checked : CheckBoxStatus.UnChecked;
+        }
+
+        this.checkbox.setState(filterValue, statusFilter, this.count, status);
+        //console.log(this.checkbox.state);
+    }
+
+    updateState(updateState: boolean = true) {
+
         if (this.selectedCount == 0) {
 
-            this.checkBoxStatus = CheckBoxStatus.UnChecked;
+            this.checkbox.current.checkBoxStatus = CheckBoxStatus.UnChecked;
+
+            this.checkbox.update = true;
+
+            this.checkedAll = false;
+
+            return;
+
         }
 
         if (this.selectedCount == this.checkbox.current.count) {
 
-            this.checkBoxStatus = CheckBoxStatus.Checked;
+            this.checkbox.current.checkBoxStatus = CheckBoxStatus.Checked;
+
+            this.checkbox.update = true;
+
+            this.checkedAll = true;
+
+            return;
         }
 
         if (updateState && this.selectedCount < this.checkbox.current.count) {
 
-            this.checkBoxStatus = CheckBoxStatus.NotAllChacked;
+            this.checkbox.update = false;
+
+            this.checkbox.current.checkBoxStatus = CheckBoxStatus.NotAllChacked;
+
+            this.checkedAll = true;
         }
-        console.log(this.checkbox.current)
-        this.checkbox.updateCheckBoxState(this.count, this.checkBoxStatus);
-
-    }
-
-    setCheckBoxState(filterValue: string, statusFilter: string = "", status: CheckBoxStatus) {
-        this.checkbox.setState(filterValue, statusFilter, status);
     }
 
     isChecked(id: string) {
@@ -1076,7 +1086,7 @@ export class Grid {
 
         this.selected = [];
 
-        this.checkBoxStatus = CheckBoxStatus.UnChecked;
+        this.checkbox.current.checkBoxStatus = CheckBoxStatus.UnChecked;
     }
 }
 

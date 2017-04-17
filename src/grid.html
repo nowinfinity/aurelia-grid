@@ -213,7 +213,7 @@
 
 
                     <div class='check-row' if.bind="$column.field=='checkedAll' && $parent.showAllCheckbox">
-                        <div class="custom-checkbox check-all ${!$parent.checkBoxStatus  == checkBoxEnum.NotAllChacked ?'checked-minus':''}">
+                        <div class="custom-checkbox check-all ${$parent.checkbox.current.checkBoxStatus  == $parent.checkBoxEnum.NotAllChacked ?'checked-minus':''}">
                             <input type='checkbox' checked.bind="$parent.checkedAll">
                             <span></span>
                         </div>
