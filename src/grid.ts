@@ -1030,20 +1030,20 @@ export class Grid {
         this.updateState(updateState);     
     }
 
-    setCheckBoxState(filterValue: string, statusFilter: string = "", status: CheckBoxStatus) {
+    setCheckBoxState(filterValue: string, statusFilter: string = "",selected: number, status: CheckBoxStatus) {
 
         if (status == null && this.checkbox.current == null) {
 
             status = this.checkedAll ? CheckBoxStatus.Checked : CheckBoxStatus.UnChecked;
         }
 
-        this.checkbox.setState(filterValue, statusFilter, this.count, status);
-        //console.log(this.checkbox.state);
+        this.checkbox.setState(filterValue, statusFilter, this.count, selected, status);
+        console.log(this.checkbox.state);
     }
 
     updateState(updateState: boolean = true) {
 
-        if (this.selectedCount == 0) {
+        if (updateState &&  this.checkbox.current.selected == 0) {
 
             this.checkbox.current.checkBoxStatus = CheckBoxStatus.UnChecked;
 
@@ -1055,7 +1055,7 @@ export class Grid {
 
         }
 
-        if (this.selectedCount == this.checkbox.current.count) {
+        if (updateState && this.checkbox.current.selected == this.checkbox.current.count) {
 
             this.checkbox.current.checkBoxStatus = CheckBoxStatus.Checked;
 
@@ -1066,7 +1066,7 @@ export class Grid {
             return;
         }
 
-        if (updateState && this.selectedCount < this.checkbox.current.count) {
+        if (updateState && this.checkbox.current.selected < this.checkbox.current.count) {
 
             this.checkbox.update = false;
 
@@ -1087,6 +1087,8 @@ export class Grid {
         this.selected = [];
 
         this.checkbox.current.checkBoxStatus = CheckBoxStatus.UnChecked;
+
+        this.checkbox.current.selected = 0;
     }
 }
 

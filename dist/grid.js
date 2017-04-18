@@ -864,29 +864,29 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         this.selected.push(id);
                     this.updateState(updateState);
                 };
-                Grid.prototype.setCheckBoxState = function (filterValue, statusFilter, status) {
+                Grid.prototype.setCheckBoxState = function (filterValue, statusFilter, selected, status) {
                     if (statusFilter === void 0) { statusFilter = ""; }
                     if (status == null && this.checkbox.current == null) {
                         status = this.checkedAll ? checked_all_1.CheckBoxStatus.Checked : checked_all_1.CheckBoxStatus.UnChecked;
                     }
-                    this.checkbox.setState(filterValue, statusFilter, this.count, status);
-                    //console.log(this.checkbox.state);
+                    this.checkbox.setState(filterValue, statusFilter, this.count, selected, status);
+                    console.log(this.checkbox.state);
                 };
                 Grid.prototype.updateState = function (updateState) {
                     if (updateState === void 0) { updateState = true; }
-                    if (this.selectedCount == 0) {
+                    if (updateState && this.checkbox.current.selected == 0) {
                         this.checkbox.current.checkBoxStatus = checked_all_1.CheckBoxStatus.UnChecked;
                         this.checkbox.update = true;
                         this.checkedAll = false;
                         return;
                     }
-                    if (this.selectedCount == this.checkbox.current.count) {
+                    if (updateState && this.checkbox.current.selected == this.checkbox.current.count) {
                         this.checkbox.current.checkBoxStatus = checked_all_1.CheckBoxStatus.Checked;
                         this.checkbox.update = true;
                         this.checkedAll = true;
                         return;
                     }
-                    if (updateState && this.selectedCount < this.checkbox.current.count) {
+                    if (updateState && this.checkbox.current.selected < this.checkbox.current.count) {
                         this.checkbox.update = false;
                         this.checkbox.current.checkBoxStatus = checked_all_1.CheckBoxStatus.NotAllChacked;
                         this.checkedAll = true;
@@ -899,6 +899,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     this.selectedCount = 0;
                     this.selected = [];
                     this.checkbox.current.checkBoxStatus = checked_all_1.CheckBoxStatus.UnChecked;
+                    this.checkbox.current.selected = 0;
                 };
                 __decorate([
                     aurelia_framework_1.child('pager'), 

@@ -23,17 +23,19 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                     this.state = [];
                     this.update = true;
                 }
-                CheckedAll.prototype.setState = function (filterValue, statusFilter, count, status) {
+                CheckedAll.prototype.setState = function (filterValue, statusFilter, count, selected, status) {
                     if (statusFilter === void 0) { statusFilter = ""; }
                     if (status === void 0) { status = CheckBoxStatus.UnChecked; }
                     this.current = this.state.filter(function (x) { return x.filterValue == filterValue && x.statusFilterValue == statusFilter; })[0];
                     if (this.current == null) {
-                        this.current = new CheckBoxState(filterValue, statusFilter, count, status);
+                        this.current = new CheckBoxState(filterValue, statusFilter, count, selected, status);
                         this.state.push(this.current);
                     }
                     else {
                         // this.current.checkBoxStatus = status,
                         this.current.count = count;
+                        if (selected != null)
+                            this.current.selected = selected;
                     }
                 };
                 CheckedAll = __decorate([
@@ -44,15 +46,17 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
             }());
             exports_1("CheckedAll", CheckedAll);
             CheckBoxState = (function () {
-                function CheckBoxState(filterValue, statusFilterValue, count, status) {
+                function CheckBoxState(filterValue, statusFilterValue, count, selected, status) {
+                    if (selected === void 0) { selected = 0; }
                     this.filterValue = filterValue;
                     this.statusFilterValue = statusFilterValue;
                     this.checkBoxStatus = status;
                     this.count = count;
+                    this.selected = selected;
                 }
                 CheckBoxState = __decorate([
                     aurelia_framework_1.transient(), 
-                    __metadata('design:paramtypes', [String, String, Number, Number])
+                    __metadata('design:paramtypes', [String, String, Number, Number, Number])
                 ], CheckBoxState);
                 return CheckBoxState;
             }());
