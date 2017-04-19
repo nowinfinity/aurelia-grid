@@ -9,7 +9,7 @@ export class CheckedAll {
 
     update: boolean = true;
 
-    setState(filterValue: string, statusFilter: string = "", count: number, selected: number, status: CheckBoxStatus = CheckBoxStatus.UnChecked) {
+    setState(filterValue: string, statusFilter: string = "", count: number, selected : number=0, status: CheckBoxStatus = CheckBoxStatus.UnChecked) {
 
         this.current = this.state.filter(x => { return x.filterValue == filterValue && x.statusFilterValue == statusFilter })[0];
 
@@ -18,10 +18,9 @@ export class CheckedAll {
             this.state.push(this.current);
         }
         else {
-            // this.current.checkBoxStatus = status,
+            this.current.checkBoxStatus = status,
             this.current.count = count;
-            if (selected != null)
-                this.current.selected = selected;
+            this.current.selected = selected;
         }
     }
 }

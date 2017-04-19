@@ -25,6 +25,7 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                 }
                 CheckedAll.prototype.setState = function (filterValue, statusFilter, count, selected, status) {
                     if (statusFilter === void 0) { statusFilter = ""; }
+                    if (selected === void 0) { selected = 0; }
                     if (status === void 0) { status = CheckBoxStatus.UnChecked; }
                     this.current = this.state.filter(function (x) { return x.filterValue == filterValue && x.statusFilterValue == statusFilter; })[0];
                     if (this.current == null) {
@@ -32,10 +33,9 @@ System.register(['aurelia-framework'], function(exports_1, context_1) {
                         this.state.push(this.current);
                     }
                     else {
-                        // this.current.checkBoxStatus = status,
-                        this.current.count = count;
-                        if (selected != null)
-                            this.current.selected = selected;
+                        this.current.checkBoxStatus = status,
+                            this.current.count = count;
+                        this.current.selected = selected;
                     }
                 };
                 CheckedAll = __decorate([

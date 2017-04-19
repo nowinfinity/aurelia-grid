@@ -864,13 +864,19 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         this.selected.push(id);
                     this.updateState(updateState);
                 };
-                Grid.prototype.setCheckBoxState = function (filterValue, statusFilter, selected, status) {
+                Grid.prototype.setCheckBoxState = function (filterValue, statusFilter, selected, updateState) {
                     if (statusFilter === void 0) { statusFilter = ""; }
-                    if (status == null && this.checkbox.current == null) {
+                    if (selected === void 0) { selected = 0; }
+                    if (updateState === void 0) { updateState = false; }
+                    var status;
+                    if (!updateState) {
                         status = this.checkedAll ? checked_all_1.CheckBoxStatus.Checked : checked_all_1.CheckBoxStatus.UnChecked;
                     }
+                    else {
+                        status = this.checkbox.current != null ? this.checkbox.current.checkBoxStatus : null;
+                    }
+                    this.checkbox.update = true;
                     this.checkbox.setState(filterValue, statusFilter, this.count, selected, status);
-                    console.log(this.checkbox.state);
                 };
                 Grid.prototype.updateState = function (updateState) {
                     if (updateState === void 0) { updateState = true; }

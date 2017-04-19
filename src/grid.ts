@@ -6,7 +6,7 @@ import { Pager } from "./pager";
 import { ExportToExcel } from './export-to-excel';
 import { ExportToCsv } from './export-to-csv';
 import { ExportToPdf } from './export-to-pdf';
-import {CheckedAll, CheckBoxStatus, CheckBoxState} from "./checked-all";
+import { CheckedAll, CheckBoxStatus, CheckBoxState } from "./checked-all";
 
 
 @customElement('grid')
@@ -40,7 +40,7 @@ export class Grid {
     @bindable showAllCheckbox: boolean;
     @bindable({ defaultBindingMode: bindingMode.twoWay }) checkedAll: boolean;
     checkBoxEnum = CheckBoxStatus;
-    selected: string[]=[];
+    selected: string[] = [];
     selectedCount: number;
 
     // Filtering
@@ -1027,23 +1027,29 @@ export class Grid {
         else
             this.selected.push(id);
 
-        this.updateState(updateState);     
+        this.updateState(updateState);
     }
 
-    setCheckBoxState(filterValue: string, statusFilter: string = "",selected: number, status: CheckBoxStatus) {
+    setCheckBoxState(filterValue: string, statusFilter: string = "", selected: number = 0, updateState: boolean=false) {
 
-        if (status == null && this.checkbox.current == null) {
+        let status: CheckBoxStatus;
 
+        if (!updateState) {
             status = this.checkedAll ? CheckBoxStatus.Checked : CheckBoxStatus.UnChecked;
+        } else
+        {
+            status =  this.checkbox.current != null ? this.checkbox.current.checkBoxStatus : null
         }
 
+        this.checkbox.update = true;
+
         this.checkbox.setState(filterValue, statusFilter, this.count, selected, status);
-        console.log(this.checkbox.state);
+
     }
 
     updateState(updateState: boolean = true) {
 
-        if (updateState &&  this.checkbox.current.selected == 0) {
+        if (updateState && this.checkbox.current.selected == 0) {
 
             this.checkbox.current.checkBoxStatus = CheckBoxStatus.UnChecked;
 
