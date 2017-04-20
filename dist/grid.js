@@ -864,7 +864,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         this.selected.push(id);
                     this.updateState(updateState);
                 };
-                Grid.prototype.setCheckBoxState = function (filterValue, statusFilter, selected, updateState) {
+                Grid.prototype.setCheckBoxState = function (filterValue, statusFilter, selected, updateState, gridCount) {
                     if (statusFilter === void 0) { statusFilter = ""; }
                     if (selected === void 0) { selected = 0; }
                     if (updateState === void 0) { updateState = false; }
@@ -876,7 +876,8 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         status = this.checkbox.current != null ? this.checkbox.current.checkBoxStatus : null;
                     }
                     this.checkbox.update = true;
-                    this.checkbox.setState(filterValue, statusFilter, this.count, selected, status);
+                    var count = gridCount || this.count;
+                    this.checkbox.setState(filterValue, statusFilter, count, selected, status);
                 };
                 Grid.prototype.updateState = function (updateState) {
                     if (updateState === void 0) { updateState = true; }

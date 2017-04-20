@@ -1030,7 +1030,7 @@ export class Grid {
         this.updateState(updateState);
     }
 
-    setCheckBoxState(filterValue: string, statusFilter: string = "", selected: number = 0, updateState: boolean=false) {
+    setCheckBoxState(filterValue: string, statusFilter: string = "", selected: number = 0, updateState: boolean = false, gridCount?: number) {
 
         let status: CheckBoxStatus;
 
@@ -1043,7 +1043,9 @@ export class Grid {
 
         this.checkbox.update = true;
 
-        this.checkbox.setState(filterValue, statusFilter, this.count, selected, status);
+        let count = gridCount || this.count;
+
+        this.checkbox.setState(filterValue, statusFilter, count, selected, status);
 
     }
 
