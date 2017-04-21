@@ -1024,7 +1024,7 @@ export class Grid {
 
         if ((this.isChecked(id)))
             this.selected.splice(this.selected.indexOf(id), 1);
-        else
+        else if (this.checkedAll || updateState)
             this.selected.push(id);
 
         this.updateState(updateState);
