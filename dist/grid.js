@@ -860,7 +860,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     if (updateState === void 0) { updateState = true; }
                     if ((this.isChecked(id)))
                         this.selected.splice(this.selected.indexOf(id), 1);
-                    else
+                    else if (this.checkedAll || updateState)
                         this.selected.push(id);
                     this.updateState(updateState);
                 };
