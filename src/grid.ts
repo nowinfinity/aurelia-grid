@@ -3,9 +3,11 @@ import { GridColumn } from './grid-column';
 import { GridColumnsExpander } from './grid-columns-expander';
 import { ViewCompiler, ViewSlot, ViewResources, Container } from 'aurelia-framework';
 import { Pager } from "./pager";
-import { ExportToExcel } from './export-to-excel'
-import { ExportToCsv } from './export-to-csv'
-import { ExportToPdf } from './export-to-pdf'
+import { ExportToExcel } from './export-to-excel';
+import { ExportToCsv } from './export-to-csv';
+import { ExportToPdf } from './export-to-pdf';
+import { CheckedAll, CheckBoxStatus, CheckBoxState } from "./checked-all";
+
 
 @customElement('grid')
 @processContent(function (viewCompiler, viewResources, element, instruction) {
@@ -34,13 +36,12 @@ export class Grid {
 
     @bindable model: any;
 
-    @bindable({ defaultBindingMode: bindingMode.twoWay }) showAllCheckbox: boolean = false;
-
-    @bindable checkedAll: boolean;
-
-    checkedAllChanged() {
-        this.showAllCheckbox = true;
-    }
+    //Checked All
+    @bindable showAllCheckbox: boolean;
+    @bindable({ defaultBindingMode: bindingMode.twoWay }) checkedAll: boolean;
+    checkBoxEnum = CheckBoxStatus;
+    selected: string[] = [];
+    selectedCount: number;
 
     // Filtering
     @bindable showColumnFilters = false;
@@ -147,7 +148,8 @@ export class Grid {
         public viewResources: ViewResources,
         public container: Container,
         private targetInstruction: TargetInstruction,
-        public bindingEngine: BindingEngine
+        public bindingEngine: BindingEngine,
+        public checkbox: CheckedAll
     ) {
         var behavior = (<any>targetInstruction).behaviorInstructions[0];
 
@@ -1015,6 +1017,86 @@ export class Grid {
     }
     exportToPdfWithHeaders(data, headers, name) {
         ExportToPdf.export(data, headers, name);
+    }
+
+
+    checkUnchek(id, updateState: boolean = true) {
+
+        if ((this.isChecked(id)))
+            this.selected.splice(this.selected.indexOf(id), 1);
+        else
+            this.selected.push(id);
+
+        this.updateState(updateState);
+    }
+
+    setCheckBoxState(filterValue: string, statusFilter: string = "", selected: number = 0, updateState: boolean = false, gridCount?: number) {
+
+        let status: CheckBoxStatus;
+
+        if (!updateState) {
+            status = this.checkedAll ? CheckBoxStatus.Checked : CheckBoxStatus.UnChecked;
+        } else
+        {
+            status =  this.checkbox.current != null ? this.checkbox.current.checkBoxStatus : null
+        }
+
+        this.checkbox.update = true;
+
+        let count = gridCount || this.count;
+
+        this.checkbox.setState(filterValue, statusFilter, count, selected, status);
+
+    }
+
+    updateState(updateState: boolean = true) {
+
+        if (updateState && this.checkbox.current.selected == 0) {
+
+            this.checkbox.current.checkBoxStatus = CheckBoxStatus.UnChecked;
+
+            this.checkbox.update = true;
+
+            this.checkedAll = false;
+
+            return;
+
+        }
+
+        if (updateState && this.checkbox.current.selected == this.checkbox.current.count) {
+
+            this.checkbox.current.checkBoxStatus = CheckBoxStatus.Checked;
+
+            this.checkbox.update = true;
+
+            this.checkedAll = true;
+
+            return;
+        }
+
+        if (updateState && this.checkbox.current.selected < this.checkbox.current.count) {
+
+            this.checkbox.update = false;
+
+            this.checkbox.current.checkBoxStatus = CheckBoxStatus.NotAllChacked;
+
+            this.checkedAll = true;
+        }
+    }
+
+    isChecked(id: string) {
+        return this.selected.indexOf(id) > -1;
+    }
+
+    unckeckSelected() {
+
+        this.selectedCount = 0;
+
+        this.selected = [];
+
+        this.checkbox.current.checkBoxStatus = CheckBoxStatus.UnChecked;
+
+        this.checkbox.current.selected = 0;
     }
 }
 
