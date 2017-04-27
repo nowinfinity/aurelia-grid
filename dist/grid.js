@@ -147,6 +147,9 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     this.rowAttrs = behavior.rowAttrs;
                     this.expanderAttrs = behavior.expanderAttrs;
                 }
+                Grid.prototype.checkedAllChanged = function () {
+                    this.showAllCheckbox = true;
+                };
                 Object.defineProperty(Grid.prototype, "visibleColumns", {
                     get: function () {
                         return this.columns.filter(function (c) { return !c.hiddenCol; });
@@ -644,6 +647,10 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                 };
                 Grid.prototype.searchChanged = function () {
                     this.refresh();
+                    if (this.selected.length > 0) {
+                        this.checkbox.current.count = this.count;
+                        this.updateState();
+                    }
                 };
                 /* === Filtering === */
                 Grid.prototype.applyFilter = function (data) {
