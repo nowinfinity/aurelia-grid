@@ -752,7 +752,14 @@ export class Grid {
     }
 
     searchChanged() {
+
         this.refresh();
+
+        if (this.selected.length > 0) {
+            this.checkbox.current.count = this.count;
+            this.updateState();
+
+        }
     }
 
     /* === Filtering === */
