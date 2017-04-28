@@ -34,12 +34,13 @@ export class ExportToExcel {
 			
 		}
 
-		for (var R = 1; R <= data.length; R++) {
+		for (var R = 1; R != data.length+1; ++R) {
 			var C = 0;
 			for (var property in data[R-1]) {
 				if (data[R-1].hasOwnProperty(property)) {
 					var cell = { v: data[R-1][property], c: null, t: 's', z: null, s: null };
-					if (cell.v == null) continue;
+					if (cell.v == null)
+						continue;
 					var cell_ref = XLSX.utils.encode_cell({ c: C, r: R });
 					ws[cell_ref] = cell;
 					C = C + 1;

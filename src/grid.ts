@@ -41,7 +41,7 @@ export class Grid {
     @bindable({ defaultBindingMode: bindingMode.twoWay }) checkedAll: boolean;
     checkBoxEnum = CheckBoxStatus;
     selected: string[] = [];
-    selectedCount: number;
+    selectedCount: number = 0;
 
     // Filtering
     @bindable showColumnFilters = false;
@@ -1096,6 +1096,9 @@ export class Grid {
     }
 
     unckeckSelected() {
+
+        if(this.selectedCount == 0)
+            return;
 
         this.selectedCount = 0;
 
