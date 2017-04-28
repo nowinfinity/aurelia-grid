@@ -1,4 +1,4 @@
-System.register(['aurelia-framework', './grid-column', './grid-columns-expander', "./pager", './export-to-excel', './export-to-csv', './export-to-pdf'], function(exports_1, context_1) {
+System.register(['aurelia-framework', './grid-column', './grid-columns-expander', "./pager", './export-to-excel', './export-to-csv', './export-to-pdf', "./checked-all"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var aurelia_framework_1, grid_column_1, grid_columns_expander_1, aurelia_framework_2, pager_1, export_to_excel_1, export_to_csv_1, export_to_pdf_1;
+    var aurelia_framework_1, grid_column_1, grid_columns_expander_1, aurelia_framework_2, pager_1, export_to_excel_1, export_to_csv_1, export_to_pdf_1, checked_all_1;
     var Grid;
     function processUserTemplate(element) {
         var cols = [];
@@ -58,16 +58,20 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
             },
             function (export_to_pdf_1_1) {
                 export_to_pdf_1 = export_to_pdf_1_1;
+            },
+            function (checked_all_1_1) {
+                checked_all_1 = checked_all_1_1;
             }],
         execute: function() {
             Grid = (function () {
-                function Grid(element, viewCompiler, viewResources, container, targetInstruction, bindingEngine) {
+                function Grid(element, viewCompiler, viewResources, container, targetInstruction, bindingEngine, checkbox) {
                     this.element = element;
                     this.viewCompiler = viewCompiler;
                     this.viewResources = viewResources;
                     this.container = container;
                     this.targetInstruction = targetInstruction;
                     this.bindingEngine = bindingEngine;
+                    this.checkbox = checkbox;
                     this.showNoRowsMessage = false;
                     /* == Styling == */
                     this.gridHeight = 0;
@@ -75,6 +79,8 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     /* == Options == */
                     // Initial load flag (for client side)
                     this.initialLoad = false;
+                    this.checkBoxEnum = checked_all_1.CheckBoxStatus;
+                    this.selected = [];
                     // Filtering
                     this.showColumnFilters = false;
                     this.serverFiltering = false;
@@ -141,6 +147,9 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     this.rowAttrs = behavior.rowAttrs;
                     this.expanderAttrs = behavior.expanderAttrs;
                 }
+                Grid.prototype.checkedAllChanged = function () {
+                    this.showAllCheckbox = true;
+                };
                 Object.defineProperty(Grid.prototype, "visibleColumns", {
                     get: function () {
                         return this.columns.filter(function (c) { return !c.hiddenCol; });
@@ -321,7 +330,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     if (this.filteringSettings && this.filteringSettings.filterFunction)
                         data = data.filter(function (row) { return _this.filteringSettings.filterFunction(row); });
                     //Searching
-                    if (this.search)
+                    if (this.search && !this.serverPaging)
                         data = this.applySearch(data);
                     // Count the data now before the sort/page
                     if (!this.serverPaging)
@@ -368,6 +377,14 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                             if (o[0] === '-') {
                                 dir = -1;
                                 o = o.substring(1);
+                            }
+                            //empty last
+                            if (o[0] === '~') {
+                                o = o.substring(1);
+                                if (!a[o])
+                                    return dir;
+                                if (!b[o])
+                                    return -dir;
                             }
                             if (!a[o])
                                 return -(dir);
@@ -569,8 +586,21 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     for (var i = 0; i < this.sortProcessingOrder.length; i++) {
                         var sort = this.sortProcessingOrder[i];
                         for (var prop in this.sorting) {
-                            if (sort == prop && this.sorting[prop] !== "")
-                                fields.push(this.sorting[prop] === "asc" ? (prop) : ("-" + prop));
+                            if (sort == prop && this.sorting[prop] !== "") {
+                                var sortFieldCode = this.sorting[prop];
+                                switch (sortFieldCode) {
+                                    case "asc":
+                                        sortFieldCode = prop;
+                                        break;
+                                    case "desc":
+                                        sortFieldCode = "-" + prop;
+                                        break;
+                                    case "asc-empty-last":
+                                        sortFieldCode = "~" + prop;
+                                        break;
+                                }
+                                fields.push(sortFieldCode);
+                            }
                         }
                     }
                     ;
@@ -617,6 +647,10 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                 };
                 Grid.prototype.searchChanged = function () {
                     this.refresh();
+                    if (this.selected.length > 0) {
+                        this.checkbox.current.count = this.count;
+                        this.updateState();
+                    }
                 };
                 /* === Filtering === */
                 Grid.prototype.applyFilter = function (data) {
@@ -829,6 +863,58 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                 Grid.prototype.exportToPdfWithHeaders = function (data, headers, name) {
                     export_to_pdf_1.ExportToPdf.export(data, headers, name);
                 };
+                Grid.prototype.checkUnchek = function (id, updateState) {
+                    if (updateState === void 0) { updateState = true; }
+                    if ((this.isChecked(id)))
+                        this.selected.splice(this.selected.indexOf(id), 1);
+                    else if (this.checkedAll || updateState)
+                        this.selected.push(id);
+                    this.updateState(updateState);
+                };
+                Grid.prototype.setCheckBoxState = function (filterValue, statusFilter, selected, updateState, gridCount) {
+                    if (statusFilter === void 0) { statusFilter = ""; }
+                    if (selected === void 0) { selected = 0; }
+                    if (updateState === void 0) { updateState = false; }
+                    var status;
+                    if (!updateState) {
+                        status = this.checkedAll ? checked_all_1.CheckBoxStatus.Checked : checked_all_1.CheckBoxStatus.UnChecked;
+                    }
+                    else {
+                        status = this.checkbox.current != null ? this.checkbox.current.checkBoxStatus : null;
+                    }
+                    this.checkbox.update = true;
+                    var count = gridCount || this.count;
+                    this.checkbox.setState(filterValue, statusFilter, count, selected, status);
+                };
+                Grid.prototype.updateState = function (updateState) {
+                    if (updateState === void 0) { updateState = true; }
+                    if (updateState && this.checkbox.current.selected == 0) {
+                        this.checkbox.current.checkBoxStatus = checked_all_1.CheckBoxStatus.UnChecked;
+                        this.checkbox.update = true;
+                        this.checkedAll = false;
+                        return;
+                    }
+                    if (updateState && this.checkbox.current.selected == this.checkbox.current.count) {
+                        this.checkbox.current.checkBoxStatus = checked_all_1.CheckBoxStatus.Checked;
+                        this.checkbox.update = true;
+                        this.checkedAll = true;
+                        return;
+                    }
+                    if (updateState && this.checkbox.current.selected < this.checkbox.current.count) {
+                        this.checkbox.update = false;
+                        this.checkbox.current.checkBoxStatus = checked_all_1.CheckBoxStatus.NotAllChacked;
+                        this.checkedAll = true;
+                    }
+                };
+                Grid.prototype.isChecked = function (id) {
+                    return this.selected.indexOf(id) > -1;
+                };
+                Grid.prototype.unckeckSelected = function () {
+                    this.selectedCount = 0;
+                    this.selected = [];
+                    this.checkbox.current.checkBoxStatus = checked_all_1.CheckBoxStatus.UnChecked;
+                    this.checkbox.current.selected = 0;
+                };
                 __decorate([
                     aurelia_framework_1.child('pager'), 
                     __metadata('design:type', pager_1.Pager)
@@ -849,6 +935,14 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
                 ], Grid.prototype, "model", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Boolean)
+                ], Grid.prototype, "showAllCheckbox", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable({ defaultBindingMode: aurelia_framework_1.bindingMode.twoWay }), 
+                    __metadata('design:type', Boolean)
+                ], Grid.prototype, "checkedAll", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
@@ -992,9 +1086,10 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         return true;
                     }),
                     aurelia_framework_1.autoinject(), 
-                    __metadata('design:paramtypes', [Element, aurelia_framework_2.ViewCompiler, aurelia_framework_2.ViewResources, aurelia_framework_2.Container, aurelia_framework_1.TargetInstruction, aurelia_framework_1.BindingEngine])
+                    __metadata('design:paramtypes', [Element, (typeof (_a = typeof aurelia_framework_2.ViewCompiler !== 'undefined' && aurelia_framework_2.ViewCompiler) === 'function' && _a) || Object, (typeof (_b = typeof aurelia_framework_2.ViewResources !== 'undefined' && aurelia_framework_2.ViewResources) === 'function' && _b) || Object, (typeof (_c = typeof aurelia_framework_2.Container !== 'undefined' && aurelia_framework_2.Container) === 'function' && _c) || Object, (typeof (_d = typeof aurelia_framework_1.TargetInstruction !== 'undefined' && aurelia_framework_1.TargetInstruction) === 'function' && _d) || Object, (typeof (_e = typeof aurelia_framework_1.BindingEngine !== 'undefined' && aurelia_framework_1.BindingEngine) === 'function' && _e) || Object, checked_all_1.CheckedAll])
                 ], Grid);
                 return Grid;
+                var _a, _b, _c, _d, _e;
             }());
             exports_1("Grid", Grid);
         }
