@@ -12,5 +12,6 @@
 		
 		".git*": true
 	},
-    "editor.insertSpaces": false
+	"editor.insertSpaces": false,
+	"vsicons.presets.angular": false
 }
