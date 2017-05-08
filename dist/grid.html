@@ -212,7 +212,7 @@
                      if.bind="isDisplayColumn($column.showColNameIf, $column.hideColNameIf, showColName)">
 
 
-                    <div class='check-row' if.bind="$column.field=='checkedAll' && $parent.showAllCheckbox">
+                    <div class='check-row' if.bind="$column.field=='checkedAll' && $parent.showAllCheckbox && $parent.count>0">
                         <div class="custom-checkbox check-all ${$parent.checkbox.current.checkBoxStatus  == $parent.checkBoxEnum.NotAllChacked ?'checked-minus':''}">
                             <input type='checkbox' checked.bind="$parent.checkedAll">
                             <span></span>
