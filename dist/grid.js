@@ -610,6 +610,29 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     return data;
                 };
                 /* === Searching === */
+                Grid.prototype.isRowContainsTerm = function (rowObj, term) {
+                    var containsTerm = false;
+                    term = term.toLowerCase();
+                    if (Array.isArray(rowObj)) {
+                        for (var _i = 0, rowObj_1 = rowObj; _i < rowObj_1.length; _i++) {
+                            var element = rowObj_1[_i];
+                            if (element == null)
+                                return false;
+                            var values = Object.values(element).map(function (value) { return (value ? value : '').toString().toLowerCase(); });
+                            for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
+                                var propertyValue = values_1[_a];
+                                containsTerm = propertyValue.indexOf(term) > -1;
+                                console.log("Row Value: " + propertyValue + " - Term " + term + " Result: " + containsTerm);
+                                if (containsTerm)
+                                    return true;
+                            }
+                        }
+                    }
+                    else {
+                        return (rowObj ? rowObj : '').toString().toLowerCase().indexOf(term) > -1;
+                    }
+                    return false;
+                };
                 Grid.prototype.applySearch = function (data) {
                     var _this = this;
                     return data.filter(function (row) {
@@ -618,17 +641,15 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                             var columns = _this.getSearchingColumns();
                             for (var i = 0; i < columns.length; i++) {
                                 var col = columns[i];
-                                if (row[col.field].toString().toLowerCase().indexOf(_this.search.toLowerCase()) > -1) {
+                                if (row[col.field] && _this.isRowContainsTerm(row[col.field], _this.search))
                                     include = true;
-                                }
                             }
                         }
                         else {
                             for (var i = _this.columns.length - 1; i >= 0; i--) {
                                 var col = _this.columns[i];
-                                if (row[col.field] && row[col.field].toString().toLowerCase().indexOf(_this.search.toLowerCase()) > -1) {
+                                if (row[col.field] && _this.isRowContainsTerm(row[col.field], _this.search))
                                     include = true;
-                                }
                             }
                         }
                         return include;

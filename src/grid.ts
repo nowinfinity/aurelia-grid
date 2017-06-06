@@ -709,8 +709,31 @@ export class Grid {
 
         return data;
     }
-
+    
     /* === Searching === */
+    private isRowContainsTerm(rowObj, term) {
+        let containsTerm = false;
+        term = term.toLowerCase();
+
+        if(Array.isArray(rowObj)){
+             for (let element of rowObj) {
+                if (element == null) return false;
+                let values = Object.values(element).map(value => (value? value: '').toString().toLowerCase());
+                
+                for (let propertyValue of values) {
+                    containsTerm = propertyValue.indexOf(term) > -1;
+                    console.log(`Row Value: ${propertyValue} - Term ${term} Result: ${containsTerm}`);
+                    if (containsTerm) return true;
+                }
+            }
+        }
+        else {
+            return (rowObj? rowObj : '').toString().toLowerCase().indexOf(term) > -1;
+        }
+
+        return false;
+    }
+
     applySearch(data) {
         return data.filter((row) => {
             var include = false;
@@ -720,19 +743,15 @@ export class Grid {
 
                 for (var i = 0; i < columns.length; i++) {
                     var col = columns[i];
-
-                    if (row[col.field].toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1) {
+                    if (row[col.field] && this.isRowContainsTerm(row[col.field], this.search))
                         include = true;
-                    }
                 }
             }
             else {
                 for (var i = this.columns.length - 1; i >= 0; i--) {
                     var col = this.columns[i];
-
-                    if (row[col.field] && row[col.field].toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1) {
+                    if (row[col.field] && this.isRowContainsTerm(row[col.field], this.search))
                         include = true;
-                    }
                 }
             }
 
