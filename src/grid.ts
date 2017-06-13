@@ -1078,7 +1078,7 @@ export class Grid {
 
             this.checkbox.current.checkBoxStatus = CheckBoxStatus.Checked;
 
-            this.checkbox.update = true;
+            this.checkbox.update = false;
 
             this.checkedAll = true;
 
