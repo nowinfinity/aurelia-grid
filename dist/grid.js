@@ -622,7 +622,6 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                             for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
                                 var propertyValue = values_1[_a];
                                 containsTerm = propertyValue.indexOf(term) > -1;
-                                console.log("Row Value: " + propertyValue + " - Term " + term + " Result: " + containsTerm);
                                 if (containsTerm)
                                     return true;
                             }
