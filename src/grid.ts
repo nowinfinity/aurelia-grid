@@ -722,7 +722,6 @@ export class Grid {
                 
                 for (let propertyValue of values) {
                     containsTerm = propertyValue.indexOf(term) > -1;
-                    console.log(`Row Value: ${propertyValue} - Term ${term} Result: ${containsTerm}`);
                     if (containsTerm) return true;
                 }
             }
