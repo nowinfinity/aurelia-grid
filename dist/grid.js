@@ -78,7 +78,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     this.class = "";
                     /* == Options == */
                     // Initial load flag (for client side)
-                    this.initialLoad = false;
+                    this.initialLoad = true;
                     this.checkBoxEnum = checked_all_1.CheckBoxStatus;
                     this.selected = [];
                     this.selectedCount = 0;
@@ -726,7 +726,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         this.updatePager();
                     }
                     this.dontWatchForChanges();
-                    if (this.serverPaging || this.serverSorting || this.serverFiltering || !this.initialLoad)
+                    if (this.serverPaging || this.serverSorting || this.serverFiltering || this.initialLoad)
                         this.getData();
                     else if (this.filteringByProperty)
                         this.filterSortPage(this.sortedData);
@@ -734,14 +734,14 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         this.filterSortPage(this.cache);
                 };
                 Grid.prototype.reload = function () {
-                    this.initialLoad = false;
+                    this.initialLoad = true;
                     this.refresh();
                 };
                 Grid.prototype.getData = function () {
                     var _this = this;
                     if (!this.read)
                         throw new Error("No read method specified for grid");
-                    this.initialLoad = true;
+                    this.initialLoad = false;
                     // TODO: Implement progress indicator
                     this.loading = true;
                     // Try to read from the data adapter
