@@ -32,7 +32,7 @@ export class Grid {
     /* == Options == */
 
     // Initial load flag (for client side)
-    @bindable initialLoad = false;
+    @bindable initialLoad = true;
 
     @bindable model: any;
 
@@ -858,7 +858,7 @@ export class Grid {
 
         this.dontWatchForChanges();
 
-        if (this.serverPaging || this.serverSorting || this.serverFiltering || !this.initialLoad)
+        if (this.serverPaging || this.serverSorting || this.serverFiltering || this.initialLoad)
             this.getData();
         else if (this.filteringByProperty)
             this.filterSortPage(this.sortedData);
@@ -868,7 +868,7 @@ export class Grid {
     }
 
     reload() {
-        this.initialLoad = false;
+        this.initialLoad = true;
         this.refresh();
     }
 
@@ -876,7 +876,7 @@ export class Grid {
         if (!this.read)
             throw new Error("No read method specified for grid");
 
-        this.initialLoad = true;
+        this.initialLoad = false;
 
         // TODO: Implement progress indicator
         this.loading = true;
