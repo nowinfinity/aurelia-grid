@@ -336,9 +336,6 @@ export class Grid {
         this.cache = this.cache.filter(r => !func(r));
 
         this.refresh(true);
-        if (this.data.length == 0) {
-            this.pager.last();
-        }
     }
 
     /* === Paging === */
