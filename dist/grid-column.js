@@ -7,6 +7,8 @@ System.register([], function(exports_1, context_1) {
         execute: function() {
             GridColumn = (function () {
                 function GridColumn(config, template) {
+                    //indicates if we are going to export this column to excel file
+                    this.export = true;
                     this.specialColumns = ["heading", "nosort"];
                     this.showColNameIf = "";
                     this.hideColNameIf = "";
