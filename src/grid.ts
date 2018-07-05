@@ -106,6 +106,10 @@ export class Grid {
         return this.visibleColumns.filter(c => this.isDisplayColumn(c.showColNameIf, c.hideColNameIf, this.showColName) && c.field != "#");
     }
 
+    get exportedColumns() {
+        return this.visibleColumns.filter(c => this.isDisplayColumn(c.showColNameIf, c.hideColNameIf, this.showColName) && c.field != "#" && JSON.parse(c.export));
+    }
+
     // Selection
     @bindable selectable = false;
     @bindable selectedItem = null;
@@ -965,7 +969,8 @@ export class Grid {
     }
 
     getTableData(columns = null) {
-        var data = this.filterSort(this.cache);
+        var data = this.selected.length? this.cache.filter(item => this.selected.includes(item.Id)): this.filterSort(this.cache);
+
 
         var tableData = data.map(d => {
             return columns.map(c => {
@@ -1002,17 +1007,17 @@ export class Grid {
     }
 
     exportToExcel() {
-        var columns = this.displayedColumns;
+        var columns = this.exportedColumns;
         ExportToExcel.export(this.getTableData(columns), columns.map(c => c.heading), 'grid');
     }
 
     exportToCsv() {
-        var columns = this.displayedColumns;
+        var columns = this.exportedColumns;
         ExportToCsv.export(this.getTableData(columns), columns.map(c => c.heading), 'grid');
     }
 
     exportToPdf() {
-        var columns = this.displayedColumns;
+        var columns = this.exportedColumns;
         ExportToPdf.export(this.getTableData(columns), columns.map(c => c.heading), 'grid');
     }
     exportToExcelWithHeaders(data, headers, name) {

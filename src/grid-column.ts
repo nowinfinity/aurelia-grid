@@ -1,10 +1,12 @@
 export class GridColumn {
+	//indicates if we are going to export this column to excel file
+	export: boolean = true;
 	template: any;
 	field: any;
 	heading:any;
 	nosort: any;
 	filterValue: any;
-	showFilter: any;
+	showFilter: any;	
 	specialColumns = ["heading", "nosort"];
 	hiddenCol: boolean;
     showColNameIf: string = "";

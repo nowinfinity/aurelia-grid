@@ -163,6 +163,14 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     enumerable: true,
                     configurable: true
                 });
+                Object.defineProperty(Grid.prototype, "exportedColumns", {
+                    get: function () {
+                        var _this = this;
+                        return this.visibleColumns.filter(function (c) { return _this.isDisplayColumn(c.showColNameIf, c.hideColNameIf, _this.showColName) && c.field != "#" && JSON.parse(c.export); });
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 /* === Lifecycle === */
                 Grid.prototype.attached = function () {
                     this.gridHeightChanged();
@@ -818,7 +826,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                 Grid.prototype.getTableData = function (columns) {
                     var _this = this;
                     if (columns === void 0) { columns = null; }
-                    var data = this.filterSort(this.cache);
+                    var data = this.selected.length ? this.cache.filter(function (item) { return _this.selected.includes(item.Id); }) : this.filterSort(this.cache);
                     var tableData = data.map(function (d) {
                         return columns.map(function (c) {
                             var view = _this.viewCompiler.compile("<template>" + _this.removeOneLevelD(c.template) + "</template>", _this.viewResources).create(_this.container);
@@ -847,15 +855,15 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     return template;
                 };
                 Grid.prototype.exportToExcel = function () {
-                    var columns = this.displayedColumns;
+                    var columns = this.exportedColumns;
                     export_to_excel_1.ExportToExcel.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }), 'grid');
                 };
                 Grid.prototype.exportToCsv = function () {
-                    var columns = this.displayedColumns;
+                    var columns = this.exportedColumns;
                     export_to_csv_1.ExportToCsv.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }), 'grid');
                 };
                 Grid.prototype.exportToPdf = function () {
-                    var columns = this.displayedColumns;
+                    var columns = this.exportedColumns;
                     export_to_pdf_1.ExportToPdf.export(this.getTableData(columns), columns.map(function (c) { return c.heading; }), 'grid');
                 };
                 Grid.prototype.exportToExcelWithHeaders = function (data, headers, name) {
@@ -1092,9 +1100,10 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         return true;
                     }),
                     aurelia_framework_1.autoinject(), 
-                    __metadata('design:paramtypes', [Element, aurelia_framework_2.ViewCompiler, aurelia_framework_2.ViewResources, aurelia_framework_2.Container, aurelia_framework_1.TargetInstruction, aurelia_framework_1.BindingEngine, checked_all_1.CheckedAll])
+                    __metadata('design:paramtypes', [Element, (typeof (_a = typeof aurelia_framework_2.ViewCompiler !== 'undefined' && aurelia_framework_2.ViewCompiler) === 'function' && _a) || Object, (typeof (_b = typeof aurelia_framework_2.ViewResources !== 'undefined' && aurelia_framework_2.ViewResources) === 'function' && _b) || Object, (typeof (_c = typeof aurelia_framework_2.Container !== 'undefined' && aurelia_framework_2.Container) === 'function' && _c) || Object, (typeof (_d = typeof aurelia_framework_1.TargetInstruction !== 'undefined' && aurelia_framework_1.TargetInstruction) === 'function' && _d) || Object, (typeof (_e = typeof aurelia_framework_1.BindingEngine !== 'undefined' && aurelia_framework_1.BindingEngine) === 'function' && _e) || Object, checked_all_1.CheckedAll])
                 ], Grid);
                 return Grid;
+                var _a, _b, _c, _d, _e;
             }());
             exports_1("Grid", Grid);
         }
