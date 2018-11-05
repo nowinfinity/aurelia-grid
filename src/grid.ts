@@ -36,6 +36,9 @@ export class Grid {
 
     @bindable model: any;
 
+    //callbacks
+    @bindable dataBoundCallback = undefined;
+
     //Checked All
     @bindable showAllCheckbox: boolean;
     @bindable({ defaultBindingMode: bindingMode.twoWay }) checkedAll: boolean;
@@ -894,6 +897,10 @@ export class Grid {
                 this.handleResult(result);
 
                 this.loading = false;
+
+                if(this.dataBoundCallback){
+                    this.dataBoundCallback();
+                }
             }, (result) => {
                 // Something went terribly wrong, notify the consumer
                 if (this.onReadError)
