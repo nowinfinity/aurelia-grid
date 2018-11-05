@@ -79,6 +79,8 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     /* == Options == */
                     // Initial load flag (for client side)
                     this.initialLoad = true;
+                    //callbacks
+                    this.dataBoundCallback = undefined;
                     this.checkBoxEnum = checked_all_1.CheckBoxStatus;
                     this.selected = [];
                     this.selectedCount = 0;
@@ -759,6 +761,9 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         // Data should be in the result so grab it and assign it to the data property
                         _this.handleResult(result);
                         _this.loading = false;
+                        if (_this.dataBoundCallback) {
+                            _this.dataBoundCallback();
+                        }
                     }, function (result) {
                         // Something went terribly wrong, notify the consumer
                         if (_this.onReadError)
@@ -949,6 +954,10 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Object)
                 ], Grid.prototype, "model", void 0);
+                __decorate([
+                    aurelia_framework_1.bindable, 
+                    __metadata('design:type', Object)
+                ], Grid.prototype, "dataBoundCallback", void 0);
                 __decorate([
                     aurelia_framework_1.bindable, 
                     __metadata('design:type', Boolean)
