@@ -263,11 +263,12 @@
         <div class="table-content" show.bind="!showNoRowsMessage || (showNoRowsMessage && count > 0) || !loading">
             <div class="table-row" click.delegate="$parent.select($item)"></div>
         </div>
-        <div show.bind="showNoRowsMessage && count == 0 && !loading" class="alert alert-warning ">${ noRowsMessage }</div>
+        
         <div class="grid-overlay " if.bind="loading "></div>
 
         <!-- Footer div -->
     </div>
+	<div show.bind="showNoRowsMessage && count == 0 && !loading" class="alert alert-warning ">${ noRowsMessage }</div>
     <div if.bind="loading " class="progress grid-progress-indicator ">
         <div class="loader ">${ loadingMessage}</div>
     </div>
