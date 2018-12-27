@@ -10,9 +10,6 @@ export class GridColumnsExpander{
 		this.template = template;
 		this.viewModel = config.template;
 		this.model = config.model;
-		
-		console.log(this.model);
-		
 	}
 			
 }
