@@ -220,14 +220,7 @@ export class Grid {
                 }
             }
             tableContainer.appendChild(row);
-            var innerDiv = document.createElement("div");
-            innerDiv.setAttribute("class", "inner-container");
-            innerDiv.setAttribute("style", "display:none");
 
-            innerDiv.innerHTML = '<compose  view-model="' + this.expanderAttrs.viewModel + '"      model.bind="' + this.expanderAttrs.model + '"  ></compose>';
-            //view="'+ this.expanderAttrs.viewModel+'"
-
-            tableContainer.appendChild(innerDiv);
             this.rowTemplate = document.createDocumentFragment();
             this.rowTemplate.appendChild(tableContainer);
             this.buildTemplates();
@@ -258,7 +251,7 @@ export class Grid {
             }
         }
     }
-
+    
     buildTemplates() {
         // Create a fragment we will manipulate the DOM in
         var rowTemplate = this.rowTemplate.cloneNode(true);
@@ -298,6 +291,19 @@ export class Grid {
 
         if (removeResponse instanceof Promise) {
             removeResponse.then(() => this.viewSlot.add(view));
+        }
+
+        if(this.expanderAttrs){
+            //compile expander container one time and place inside grid, then it's inserted and shown below active row
+            var innerDiv = document.createElement("div");
+            innerDiv.setAttribute("id", "expander-container");
+            innerDiv.setAttribute("class", "inner-container");
+            innerDiv.setAttribute("style", "display:none");
+            innerDiv.innerHTML = '<compose view-model="' + this.expanderAttrs.viewModel + '"model.bind="' + this.expanderAttrs.model + '"  ></compose>';
+
+            var expanderView = this.viewCompiler.compile(innerDiv, this.viewResources).create(this.container);
+            expanderView.bind(this);
+            this.viewSlot.add(expanderView);  
         }
 
         this.viewSlot.add(view);
