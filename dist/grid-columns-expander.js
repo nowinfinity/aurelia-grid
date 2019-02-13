@@ -10,7 +10,6 @@ System.register([], function(exports_1, context_1) {
                     this.template = template;
                     this.viewModel = config.template;
                     this.model = config.model;
-                    console.log(this.model);
                 }
                 return GridColumnsExpander;
             }());

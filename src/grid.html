@@ -202,6 +202,15 @@
 
     <require from="./pager"></require>
 
+    <div class="grid-container table  ${class} grid-container-outer"  if.bind="lastVisibleItem > 10">
+        <div class="grid-footer-container " if.bind="pageable && !loading && count > pageSize">
+            <pager page-size.bind="pageSize " num-to-show.bind="pagerSize " pager.ref="pager " on-page-changed.call="pageChanged($event)
+		" show-first-last-buttons.bind="showFirstLastButtons " show-jump-buttons.bind="showJumpButtons "
+                   show-paging-summary.bind="showPagingSummary " show-page-size-box.bind="showPageSizeBox
+		" first-visible-item.bind="firstVisibleItem " last-visible-item.bind="lastVisibleItem " page-sizes.bind="pageSizes "
+                   hide-jump-buttons-if-not-possible.bind="hideJumpButtonsIfNotPossible " count.bind="count "></pager>
+        </div>
+    </div>
     <div class="grid-container table  ${class}">
         <!-- Header table -->
         <div if.bind="showColumnHeaders"
