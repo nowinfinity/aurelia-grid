@@ -25,6 +25,8 @@ export class Grid {
     subscription: any;
     showNoRowsMessage: boolean = false;
     debouncedUpdateFilters: any;
+    isBound: boolean = false;
+
     @child('pager') pager: Pager;
     /* == Styling == */
     @bindable gridHeight = 0;
@@ -178,6 +180,11 @@ export class Grid {
 
 
     bind(executionContext) {
+        if (this.isBound) {
+            return;
+        }
+        this.isBound = true;
+
         if (this.sortField) {
             var sort = this.parseSortValue(this.sortField);
             this.sortBySingleFieldChangeValues(sort.field, sort.direction)
