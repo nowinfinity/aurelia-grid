@@ -931,13 +931,14 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                 Grid.prototype.isChecked = function (id) {
                     return this.selected.indexOf(id) > -1;
                 };
-                Grid.prototype.unckeckSelected = function () {
+                Grid.prototype.uncheckSelected = function () {
                     if (this.selectedCount == 0)
                         return;
                     this.selectedCount = 0;
                     this.selected = [];
                     this.checkbox.current.checkBoxStatus = checked_all_1.CheckBoxStatus.UnChecked;
                     this.checkbox.current.selected = 0;
+                    this.checkedAll = false;
                 };
                 __decorate([
                     aurelia_framework_1.child('pager'), 
