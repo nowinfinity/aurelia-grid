@@ -1114,7 +1114,7 @@ export class Grid {
         return this.selected.indexOf(id) > -1;
     }
 
-    unckeckSelected() {
+    uncheckSelected() {
 
         if(this.selectedCount == 0)
             return;
@@ -1126,6 +1126,8 @@ export class Grid {
         this.checkbox.current.checkBoxStatus = CheckBoxStatus.UnChecked;
 
         this.checkbox.current.selected = 0;
+	
+	this.checkedAll = false;
     }
 }
 
