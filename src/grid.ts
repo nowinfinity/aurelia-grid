@@ -435,7 +435,9 @@ export class Grid {
     fieldSorter(fields) {
         return function (a, b) {
             return fields
-                .map(function (o) {
+                .map(function (field) {
+                    var o = field.sortFieldCode;
+                    var pinValue = field.sortPinTopValue;
                     var dir = 1;
                     if (o[0] === '-') {
                         dir = -1;
@@ -447,6 +449,12 @@ export class Grid {
                         if (!a[o]) return dir;
                         if (!b[o]) return -dir;
 
+                    }
+
+                    if(pinValue !== '') {
+                        if(a[o] === b[o] && a[o] === pinValue) return 0;   
+                        if(a[o] === pinValue) return -dir;
+                        if(b[o] === pinValue) return dir;
                     }
                     if (!a[o]) return -(dir);
                     if (!b[o]) return dir;
@@ -692,8 +700,13 @@ export class Grid {
 
             for (var prop in this.sorting) {
                 if (sort == prop && this.sorting[prop] !== "") {
-                    let sortFieldCode = this.sorting[prop];
-
+                    let sortField = this.sorting[prop];
+                    let sortFieldCode = sortField;
+                    let sortPinTopValue = '';
+                    if(sortField.indexOf("$") !== -1) {
+                        sortFieldCode = "asc";
+                        sortPinTopValue = sortField.split('$')[1];
+                    }
                     switch (sortFieldCode) {
                         case "asc":
                             sortFieldCode = prop;
@@ -706,7 +719,7 @@ export class Grid {
                             break;
                     }
 
-                    fields.push(sortFieldCode);
+                    fields.push({sortFieldCode:sortFieldCode, sortPinTopValue: sortPinTopValue});
                 }
             }
         };
