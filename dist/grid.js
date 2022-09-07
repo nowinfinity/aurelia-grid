@@ -382,7 +382,9 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                 Grid.prototype.fieldSorter = function (fields) {
                     return function (a, b) {
                         return fields
-                            .map(function (o) {
+                            .map(function (field) {
+                            var o = field.sortFieldCode;
+                            var pinValue = field.sortPinTopValue;
                             var dir = 1;
                             if (o[0] === '-') {
                                 dir = -1;
@@ -400,6 +402,11 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                                 return -(dir);
                             if (!b[o])
                                 return dir;
+                            if(pinValue !== '') {
+                                if(a[o] === b[o] && a[o] === pinValue) return 0;   
+                                if(a[o] === pinValue) return -dir;
+                                if(b[o] === pinValue) return dir;
+                            }
                             if (a[o] > b[o])
                                 return dir;
                             if (a[o] < b[o])
@@ -597,7 +604,13 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                         var sort = this.sortProcessingOrder[i];
                         for (var prop in this.sorting) {
                             if (sort == prop && this.sorting[prop] !== "") {
-                                var sortFieldCode = this.sorting[prop];
+                                let sortField = this.sorting[prop];
+                                let sortFieldCode = sortField;
+                                let sortPinTopValue = '';
+                                if(sortField.indexOf("$") !== -1) {
+                                    sortFieldCode = "asc";
+                                    sortPinTopValue = sortField.split('$')[1];
+                                }
                                 switch (sortFieldCode) {
                                     case "asc":
                                         sortFieldCode = prop;
@@ -609,7 +622,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                                         sortFieldCode = "~" + prop;
                                         break;
                                 }
-                                fields.push(sortFieldCode);
+                                fields.push({sortFieldCode:sortFieldCode, sortPinTopValue: sortPinTopValue});
                             }
                         }
                     }
