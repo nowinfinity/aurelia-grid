@@ -609,7 +609,7 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                                 var sortPinTopValue = '';
                                 if(sortField.indexOf("$") !== -1) {
                                     sortFieldCode = "asc";
-                                    sortPinTopValue = sortField.split('$')[1];
+                                    sortPinTopValue = sortProperties.split('$')[1];
                                 }
                                 switch (sortFieldCode) {
                                     case "asc":
