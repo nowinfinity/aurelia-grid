@@ -700,12 +700,12 @@ export class Grid {
 
             for (var prop in this.sorting) {
                 if (sort == prop && this.sorting[prop] !== "") {
-                    let sortField = this.sorting[prop];
-                    let sortFieldCode = sortField;
+                    let sortProperties = this.sorting[prop];
+                    let sortFieldCode = sortProperties;
                     let sortPinTopValue = '';
-                    if(sortField.indexOf("$") !== -1) {
+                    if(sortProperties.indexOf("$") !== -1) {
                         sortFieldCode = "asc";
-                        sortPinTopValue = sortField.split('$')[1];
+                        sortPinTopValue = sortProperties.split('$')[1];
                     }
                     switch (sortFieldCode) {
                         case "asc":
