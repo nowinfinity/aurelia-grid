@@ -700,9 +700,9 @@ export class Grid {
 
             for (var prop in this.sorting) {
                 if (sort == prop && this.sorting[prop] !== "") {
-                    let sortField = this.sorting[prop];
-                    let sortFieldCode = sortField;
-                    let sortPinTopValue = '';
+                    var sortField = this.sorting[prop];
+                    var sortFieldCode = sortField;
+                    var sortPinTopValue = '';
                     if(sortField.indexOf("$") !== -1) {
                         sortFieldCode = "asc";
                         sortPinTopValue = sortField.split('$')[1];
