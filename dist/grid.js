@@ -407,9 +407,11 @@ System.register(['aurelia-framework', './grid-column', './grid-columns-expander'
                                 if(a[o] === pinValue) return -dir;
                                 if(b[o] === pinValue) return dir;
                             }
-                            if (a[o] > b[o])
+                            var ao = typeof a[o] === 'string' ? a[o].toLowerCase() : a[o];
+                            var bo = typeof b[o] === 'string' ? b[o].toLowerCase() : b[o];
+                            if (ao > bo)
                                 return dir;
-                            if (a[o] < b[o])
+                            if (ao < bo)
                                 return -(dir);
                             return 0;
                         })

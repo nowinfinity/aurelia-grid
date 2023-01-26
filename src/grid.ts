@@ -458,8 +458,10 @@ export class Grid {
                     }
                     if (!a[o]) return -(dir);
                     if (!b[o]) return dir;
-                    if (a[o] > b[o]) return dir;
-                    if (a[o] < b[o]) return -(dir);
+                    var ao = typeof a[o] === 'string' ? a[o].toLowerCase() : a[o];
+                    var bo = typeof b[o] === 'string' ? b[o].toLowerCase() : b[o];
+                    if (ao > bo) return dir;
+                    if (ao < bo) return -(dir);
                     return 0;
                 })
                 .reduce(function firstNonZeroValue(p, n) {
